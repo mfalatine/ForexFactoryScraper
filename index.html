@@ -494,8 +494,8 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
         
         // Construct URLs
         const baseUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/${BRANCH}`;
-        const jsonUrl = `${baseUrl}/data/forex_calendar.json`;
-        const csvUrl = `${baseUrl}/data/forex_calendar.csv`;
+        const jsonUrlBase = `${baseUrl}/data/forex_calendar.json`;
+        const csvUrlBase = `${baseUrl}/data/forex_calendar.csv`;
         const githubUrl = `https://github.com/${GITHUB_USER}/${REPO_NAME}`;
         
         let calendarData = [];
@@ -508,15 +508,18 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
             document.getElementById('startDate').value = todayString;
             
             // Update URLs in code examples
-            document.getElementById('jsonUrl').textContent = jsonUrl;
-            document.getElementById('csvUrl').textContent = csvUrl;
-            document.getElementById('fetchUrl').textContent = jsonUrl;
-            document.getElementById('pythonUrl').textContent = jsonUrl;
-            document.getElementById('pandasUrl').textContent = csvUrl;
+            const cacheBust = `?t=${Date.now()}`;
+            const jsonUrl = jsonUrlBase + cacheBust;
+            const csvUrl = csvUrlBase + cacheBust;
+            document.getElementById('jsonUrl').textContent = jsonUrlBase;
+            document.getElementById('csvUrl').textContent = csvUrlBase;
+            document.getElementById('fetchUrl').textContent = jsonUrlBase;
+            document.getElementById('pythonUrl').textContent = jsonUrlBase;
+            document.getElementById('pandasUrl').textContent = csvUrlBase;
             
             // Load the data
             try {
-                const response = await fetch(jsonUrl);
+                const response = await fetch(jsonUrl, { cache: 'no-store' });
                 if (!response.ok) throw new Error('Failed to load data');
                 
                 calendarData = await response.json();
