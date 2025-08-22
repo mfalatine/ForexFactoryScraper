@@ -433,11 +433,11 @@
             <p>You can fetch this data directly in your applications using these URLs:</p>
             
             <div class="code-block">
-                <code id="jsonUrl">Loading...</code>
+                <code id="jsonUrl">/.netlify/functions/scrape?start=YYYY-MM-DD</code>
             </div>
             
             <div class="code-block">
-                <code id="csvUrl">Loading...</code>
+                <code id="csvUrl">/.netlify/functions/scrape?start=YYYY-MM-DD&format=csv</code>
             </div>
             
             <h3>Example Usage (JavaScript):</h3>
@@ -488,10 +488,9 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
         const REPO_NAME = 'ForexFactoryScraper';
         const BRANCH = 'main';
         
-        // Construct URLs
-        const baseUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/${BRANCH}`;
-        const jsonUrlBase = `${baseUrl}/data/forex_calendar.json`;
-        const csvUrlBase = `${baseUrl}/data/forex_calendar.csv`;
+        // Construct URLs now provided by Netlify Function
+        const jsonUrlBase = '/.netlify/functions/scrape';
+        const csvUrlBase = '/.netlify/functions/scrape?format=csv';
         let jsonUrl = jsonUrlBase;
         let csvUrl = csvUrlBase;
         const githubUrl = `https://github.com/${GITHUB_USER}/${REPO_NAME}`;
@@ -511,18 +510,15 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
             document.getElementById('startDate').value = todayString;
             
             // Update URLs in code examples
-            const cacheBust = `?t=${Date.now()}`;
-            jsonUrl = jsonUrlBase + cacheBust;
-            csvUrl = csvUrlBase + cacheBust;
-            document.getElementById('jsonUrl').textContent = jsonUrlBase;
-            document.getElementById('csvUrl').textContent = csvUrlBase;
-            document.getElementById('fetchUrl').textContent = jsonUrlBase;
-            document.getElementById('pythonUrl').textContent = jsonUrlBase;
-            document.getElementById('pandasUrl').textContent = csvUrlBase;
+            document.getElementById('jsonUrl').textContent = '/.netlify/functions/scrape?start=YYYY-MM-DD';
+            document.getElementById('csvUrl').textContent = '/.netlify/functions/scrape?start=YYYY-MM-DD&format=csv';
+            document.getElementById('fetchUrl').textContent = '/.netlify/functions/scrape?start=YYYY-MM-DD';
+            document.getElementById('pythonUrl').textContent = '/.netlify/functions/scrape?start=YYYY-MM-DD';
+            document.getElementById('pandasUrl').textContent = '/.netlify/functions/scrape?start=YYYY-MM-DD&format=csv';
             
             // Load the data
             try {
-                const response = await fetch(jsonUrl, { cache: 'no-store' });
+                const response = await fetch(`${jsonUrlBase}?start=${todayString}`, { cache: 'no-store' });
                 if (!response.ok) throw new Error('Failed to load data');
                 
                 calendarData = await response.json();
@@ -605,15 +601,18 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
         }
         
         function downloadJSON() {
-            window.open(jsonUrl, '_blank');
+            const start = document.getElementById('startDate').value;
+            window.open(`${jsonUrlBase}?start=${start}`, '_blank');
         }
         
         function downloadCSV() {
-            window.open(csvUrl, '_blank');
+            const start = document.getElementById('startDate').value;
+            window.open(`${csvUrlBase}&start=${start}`, '_blank');
         }
         
         function viewRawJSON() {
-            window.open(jsonUrlBase, '_blank');
+            const start = document.getElementById('startDate').value;
+            window.open(`${jsonUrlBase}?start=${start}`, '_blank');
         }
         
         function viewGitHub() {

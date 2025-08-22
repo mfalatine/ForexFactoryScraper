@@ -1,0 +1,118 @@
+// Netlify Function: Scrape ForexFactory weekly page and return JSON or CSV
+import fetch from 'node-fetch';
+import cheerio from 'cheerio';
+
+function toWeekParam(dateStr) {
+  const d = new Date(dateStr);
+  if (isNaN(d)) throw new Error('Invalid start date');
+  const month = d.toLocaleString('en-US', { month: 'short' }).toLowerCase();
+  return `${month}${d.getDate()}.${d.getFullYear()}`; // e.g., aug22.2025
+}
+
+function toCsv(rows) {
+  if (!rows.length) return '';
+  const headers = Object.keys(rows[0]);
+  const esc = (v) => {
+    const s = String(v ?? '');
+    return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+  const lines = [headers.join(',')];
+  for (const r of rows) lines.push(headers.map((h) => esc(r[h])).join(','));
+  return lines.join('\n');
+}
+
+export const handler = async (event) => {
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type'
+  };
+  if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers, body: '' };
+
+  try {
+    const start = (event.queryStringParameters?.start || '').trim();
+    if (!start) return { statusCode: 400, headers, body: 'Missing start query param (YYYY-MM-DD)' };
+    const format = (event.queryStringParameters?.format || 'json').toLowerCase();
+
+    const week = toWeekParam(start);
+    const url = `https://www.forexfactory.com/calendar?week=${week}`;
+    const resp = await fetch(url, {
+      headers: { 'user-agent': 'Mozilla/5.0 ForexFactoryScraperBot' }
+    });
+    if (!resp.ok) throw new Error(`Fetch failed ${resp.status}`);
+    const html = await resp.text();
+
+    const $ = cheerio.load(html);
+    const table = $('table.calendar__table');
+    if (!table.length) throw new Error('Calendar table not found');
+
+    // Map day sections to ISO dates based on Monday anchor
+    const d = new Date(start);
+    const monday = new Date(d);
+    const wd = monday.getDay();
+    monday.setDate(monday.getDate() - ((wd + 6) % 7)); // Monday
+
+    let dayIndex = -1;
+    let currentIso = null;
+    const rows = [];
+
+    table.find('tr').each((_, el) => {
+      const row = $(el);
+      const dateCell = row.find('td.calendar__date, td.date');
+      if (dateCell.length && dateCell.text().trim()) {
+        dayIndex += 1;
+        const cur = new Date(monday);
+        cur.setDate(monday.getDate() + dayIndex);
+        currentIso = cur.toISOString().slice(0, 10);
+      }
+
+      const eventCell = row.find('td.calendar__event, td.event');
+      if (!eventCell.length) return;
+      const eventText = eventCell.text().trim();
+      if (!eventText) return;
+
+      const timeCell = row.find('td.calendar__time, td.time');
+      const currencyCell = row.find('td.calendar__currency, td.currency');
+      const impactCell = row.find('td.calendar__impact, td.impact');
+      const actualCell = row.find('td.calendar__actual, td.actual');
+      const forecastCell = row.find('td.calendar__forecast, td.forecast');
+      const previousCell = row.find('td.calendar__previous, td.previous');
+
+      let impact = '';
+      const span = impactCell.find('span');
+      if (span.length) {
+        const cls = (span.attr('class') || '').toLowerCase();
+        if (cls.includes('high') || cls.includes('red')) impact = 'High';
+        else if (cls.includes('medium') || cls.includes('ora') || cls.includes('orange')) impact = 'Medium';
+        else if (cls.includes('low') || cls.includes('yel') || cls.includes('yellow')) impact = 'Low';
+      }
+
+      rows.push({
+        date: currentIso,
+        time: timeCell.text().trim(),
+        currency: currencyCell.text().trim(),
+        impact,
+        event: eventText,
+        actual: actualCell.text().trim(),
+        forecast: forecastCell.text().trim(),
+        previous: previousCell.text().trim(),
+        scraped_at: new Date().toISOString()
+      });
+    });
+
+    // Filter to the requested week bounds
+    const weekStart = monday.toISOString().slice(0, 10);
+    const weekEnd = new Date(monday); weekEnd.setDate(monday.getDate() + 6);
+    const endIso = weekEnd.toISOString().slice(0, 10);
+    const filtered = rows.filter(r => r.date && r.date >= weekStart && r.date <= endIso);
+
+    if (format === 'csv') {
+      return { statusCode: 200, headers: { ...headers, 'Content-Type': 'text/csv' }, body: toCsv(filtered) };
+    }
+    return { statusCode: 200, headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify(filtered) };
+  } catch (e) {
+    return { statusCode: 500, headers, body: JSON.stringify({ error: String(e) }) };
+  }
+};
+
+

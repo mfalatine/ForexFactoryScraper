@@ -215,38 +215,4 @@ def save_data(data):
         return False
 
 if __name__ == "__main__":
-    # Setup command line arguments
-    parser = argparse.ArgumentParser(description='Scrape ForexFactory Calendar')
-    parser.add_argument('--start-date', type=str, help='Start date (YYYY-MM-DD format)')
-    parser.add_argument('--end-date', type=str, help='End date (YYYY-MM-DD format)')
-    parser.add_argument('--days', type=int, default=7, help='Number of days to scrape from start date (default: 7)')
-    
-    args = parser.parse_args()
-    
-    print("=== ForexFactory Calendar Scraper ===")
-    print(f"Starting scrape at {datetime.now().isoformat()}")
-    
-    # Calculate date range
-    start_date = args.start_date
-    end_date = args.end_date
-    
-    # If start date provided but no end date, calculate end date using days
-    if start_date and not end_date:
-        start_dt = datetime.strptime(start_date, '%Y-%m-%d')
-        end_dt = start_dt + timedelta(days=args.days)
-        end_date = end_dt.strftime('%Y-%m-%d')
-        print(f"Scraping from {start_date} to {end_date} ({args.days} days)")
-    elif start_date and end_date:
-        print(f"Scraping from {start_date} to {end_date}")
-    else:
-        print("Scraping current week")
-    
-    # Scrape data
-    data = scrape_forex(start_date, end_date)
-    
-    # Save data
-    if save_data(data):
-        print("✅ Scraping completed successfully!")
-    else:
-        print("❌ Scraping failed - no data extracted")
-        exit(1)
+    print("This script is deprecated. Use the Netlify Function at /.netlify/functions/scrape")
