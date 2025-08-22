@@ -1,33 +1,64 @@
 date,time,currency,impact,event,actual,forecast,previous,scraped_at
-TueJul 1,1:00am,JPY,Low,Consumer Confidence,34.5,33.6,32.8,2025-08-22T23:08:43.955500
-TueJul 1,2:00am,GBP,Low,Nationwide HPI m/m,-0.8%,-0.2%,0.4%,2025-08-22T23:08:43.956185
-TueJul 1,2:30am,AUD,Low,Commodity Prices y/y,-8.7%,,-9.4%,2025-08-22T23:08:43.956848
-TueJul 1,,CHF,Low,Retail Sales y/y,0.0%,0.8%,0.9%,2025-08-22T23:08:43.957490
-TueJul 1,3:15am,EUR,Low,Spanish Manufacturing PMI,51.4,50.6,50.5,2025-08-22T23:08:43.958155
-TueJul 1,3:30am,CHF,Low,Manufacturing PMI,49.6,44.2,42.1,2025-08-22T23:08:43.958857
-TueJul 1,3:45am,EUR,Low,Italian Manufacturing PMI,48.4,49.5,49.2,2025-08-22T23:08:43.959516
-TueJul 1,3:50am,EUR,Low,French Final Manufacturing PMI,48.1,47.8,47.8,2025-08-22T23:08:43.960186
-TueJul 1,3:55am,EUR,Low,German Final Manufacturing PMI,49.0,49.0,49.0,2025-08-22T23:08:43.960880
-TueJul 1,,EUR,Low,German Unemployment Change,11K,18K,33K,2025-08-22T23:08:43.961517
-TueJul 1,4:00am,EUR,Low,Final Manufacturing PMI,49.5,49.4,49.4,2025-08-22T23:08:43.962177
-TueJul 1,4:30am,GBP,Low,Final Manufacturing PMI,47.7,47.7,47.7,2025-08-22T23:08:43.962823
-TueJul 1,5:00am,EUR,Medium,Core CPI Flash Estimate y/y,2.3%,2.3%,2.3%,2025-08-22T23:08:43.963484
-TueJul 1,,EUR,Medium,CPI Flash Estimate y/y,2.0%,2.0%,1.9%,2025-08-22T23:08:43.964123
-TueJul 1,5:03am,GBP,Low,30-y Bond Auction,5.17|3.2,,5.36|3.0,2025-08-22T23:08:43.964763
-TueJul 1,All Day,CAD,,Bank Holiday,,,,2025-08-22T23:08:43.965388
-TueJul 1,9:30am,EUR,Medium,ECB President Lagarde Speaks,,,,2025-08-22T23:08:43.966035
-TueJul 1,,GBP,High,BOE Gov Bailey Speaks,,,,2025-08-22T23:08:43.966651
-TueJul 1,,JPY,High,BOJ Gov Ueda Speaks,,,,2025-08-22T23:08:43.967282
-TueJul 1,,USD,High,Fed Chair Powell Speaks,,,,2025-08-22T23:08:43.967908
-TueJul 1,9:45am,USD,Low,Final Manufacturing PMI,52.9,52.0,52.0,2025-08-22T23:08:43.968545
-TueJul 1,10:00am,USD,High,ISM Manufacturing PMI,49.0,48.8,48.5,2025-08-22T23:08:43.969205
-TueJul 1,,USD,High,JOLTS Job Openings,7.77M,7.32M,7.40M,2025-08-22T23:08:43.969815
-TueJul 1,,USD,Medium,ISM Manufacturing Prices,69.7,69.6,69.4,2025-08-22T23:08:43.970467
-TueJul 1,,USD,Low,Construction Spending m/m,-0.3%,-0.2%,-0.2%,2025-08-22T23:08:43.971114
-TueJul 1,10:03am,USD,Low,RCM/TIPP Economic Optimism,48.6,50.1,49.2,2025-08-22T23:08:43.971757
-TueJul 1,All Day,USD,Low,Wards Total Vehicle Sales,15.3M,15.5M,15.7M,2025-08-22T23:08:43.972412
-TueJul 1,11:21am,NZD,Low,GDT Price Index,-4.1%,,-1.0%,2025-08-22T23:08:43.973059
-TueJul 1,4:30pm,USD,Low,API Weekly Statistical Bulletin,,,,2025-08-22T23:08:43.973687
-TueJul 1,7:50pm,JPY,Low,Monetary Base y/y,-3.5%,-3.5%,-3.4%,2025-08-22T23:08:43.974339
-TueJul 1,9:30pm,AUD,Medium,Retail Sales m/m,0.2%,0.3%,0.0%,2025-08-22T23:08:43.974991
-TueJul 1,,AUD,Low,Building Approvals m/m,3.2%,4.2%,-4.1%,2025-08-22T23:08:43.975607
+2025-06-09,5:07am,GBP,Low,10-y Bond Auction,4.59|2.9,,4.67|3.1,2025-08-22T23:18:04.122404
+2025-06-09,5:31am,EUR,Low,German 10-y Bond Auction,2.54|2.7,,2.66|2.4,2025-08-22T23:18:04.123143
+2025-06-09,8:30am,CAD,Low,Building Permits m/m,-6.6%,1.9%,-5.3%,2025-08-22T23:18:04.123839
+2025-06-09,,USD,High,Core CPI m/m,0.1%,0.3%,0.2%,2025-08-22T23:18:04.124520
+2025-06-09,,USD,High,CPI m/m,0.1%,0.2%,0.2%,2025-08-22T23:18:04.125187
+2025-06-09,,USD,High,CPI y/y,2.4%,2.5%,2.3%,2025-08-22T23:18:04.125833
+2025-06-09,10:30am,USD,Low,Crude Oil Inventories,-3.6M,-2.4M,-4.3M,2025-08-22T23:18:04.126519
+2025-06-09,1:01pm,USD,Low,10-y Bond Auction,4.42|2.5,,4.34|2.6,2025-08-22T23:18:04.127204
+2025-06-09,1:59pm,USD,Low,Federal Budget Balance,-316.0B,-314.3B,258.4B,2025-08-22T23:18:04.127864
+2025-06-09,7:01pm,GBP,Low,RICS House Price Balance,-8%,-3%,-3%,2025-08-22T23:18:04.128552
+2025-06-09,7:50pm,JPY,Low,BSI Manufacturing Index,-4.8,0.8,-2.4,2025-08-22T23:18:04.129240
+2025-06-09,9:00pm,AUD,Low,MI Inflation Expectations,5.0%,,4.1%,2025-08-22T23:18:04.129902
+2025-06-10,2:00am,GBP,High,GDP m/m,-0.3%,-0.1%,0.2%,2025-08-22T23:18:04.130640
+2025-06-10,,GBP,Low,Construction Output m/m,0.9%,0.3%,0.5%,2025-08-22T23:18:04.131301
+2025-06-10,,GBP,Low,Goods Trade Balance,-23.2B,-20.8B,-19.9B,2025-08-22T23:18:04.131965
+2025-06-10,,GBP,Low,Index of Services 3m/3m,0.6%,0.7%,0.7%,2025-08-22T23:18:04.132606
+2025-06-10,,GBP,Low,Industrial Production m/m,-0.6%,-0.4%,-0.7%,2025-08-22T23:18:04.133278
+2025-06-10,,GBP,Low,Manufacturing Production m/m,-0.9%,-0.8%,-0.8%,2025-08-22T23:18:04.133932
+2025-06-10,4:00am,EUR,Low,Italian Quarterly Unemployment Rate,6.1%,6.0%,6.1%,2025-08-22T23:18:04.134594
+2025-06-10,8:30am,USD,High,Core PPI m/m,0.1%,0.3%,-0.2%,2025-08-22T23:18:04.135269
+2025-06-10,,USD,High,PPI m/m,0.1%,0.2%,-0.2%,2025-08-22T23:18:04.135927
+2025-06-10,,USD,High,Unemployment Claims,248K,242K,248K,2025-08-22T23:18:04.136568
+2025-06-10,9:30am,GBP,Low,CB Leading Index m/m,-0.4%,,-0.4%,2025-08-22T23:18:04.137246
+2025-06-10,10:30am,USD,Low,Natural Gas Storage,109B,108B,122B,2025-08-22T23:18:04.137897
+2025-06-10,1:01pm,USD,Low,30-y Bond Auction,4.84|2.4,,4.82|2.3,2025-08-22T23:18:04.138616
+2025-06-10,6:30pm,NZD,Low,BusinessNZ Manufacturing Index,47.5,,53.3,2025-08-22T23:18:04.139301
+2025-06-11,12:30am,JPY,Low,Revised Industrial Production m/m,-1.1%,-1.2%,-0.9%,2025-08-22T23:18:04.140041
+2025-06-11,,JPY,Low,Tertiary Industry Activity m/m,0.3%,0.2%,-1.0%,2025-08-22T23:18:04.140684
+2025-06-11,2:00am,EUR,Low,German Final CPI m/m,0.1%,0.1%,0.1%,2025-08-22T23:18:04.141372
+2025-06-11,,EUR,Low,German WPI m/m,-0.3%,-0.2%,-0.1%,2025-08-22T23:18:04.142045
+2025-06-11,2:45am,EUR,Low,French Final CPI m/m,-0.1%,-0.1%,-0.1%,2025-08-22T23:18:04.142713
+2025-06-11,4:00am,EUR,Low,Italian Trade Balance,2.48B,2.73B,4.71B,2025-08-22T23:18:04.143390
+2025-06-11,4:30am,GBP,Low,Consumer Inflation Expectations,3.2%,,3.4%,2025-08-22T23:18:04.144070
+2025-06-11,4:31am,CNY,Medium,New Loans,620B,890B,280B,2025-08-22T23:18:04.144725
+2025-06-11,,CNY,Low,M2 Money Supply y/y,7.9%,8.1%,8.0%,2025-08-22T23:18:04.145372
+2025-06-11,5:00am,EUR,Low,Industrial Production m/m,-2.4%,-1.6%,2.4%,2025-08-22T23:18:04.146049
+2025-06-11,,EUR,Low,Trade Balance,14.0B,18.2B,28.8B,2025-08-22T23:18:04.146689
+2025-06-11,8:30am,CAD,Low,Capacity Utilization Rate,80.1%,79.6%,79.7%,2025-08-22T23:18:04.147363
+2025-06-11,,CAD,Low,Manufacturing Sales m/m,-2.8%,-2.1%,-1.4%,2025-08-22T23:18:04.148006
+2025-06-11,,CAD,Low,Wholesale Sales m/m,-2.3%,-0.9%,0.0%,2025-08-22T23:18:04.148661
+2025-06-11,10:00am,USD,High,Prelim UoM Consumer Sentiment,60.5,53.5,52.2,2025-08-22T23:18:04.149340
+2025-06-11,,USD,High,Prelim UoM Inflation Expectations,5.1%,,6.6%,2025-08-22T23:18:04.149996
+2025-06-15,2:30am,JPY,High,BOJ Press Conference,,,,2025-08-22T23:18:04.152372
+2025-06-15,Day 2,All,Low,G7 Meetings,,,,2025-08-22T23:18:04.153023
+2025-06-15,5:00am,EUR,Medium,German ZEW Economic Sentiment,47.5,34.8,25.2,2025-08-22T23:18:04.153682
+2025-06-15,,EUR,Low,ZEW Economic Sentiment,35.3,23.5,11.6,2025-08-22T23:18:04.154347
+2025-06-15,6:00am,EUR,Low,German Buba Monthly Report,,,,2025-08-22T23:18:04.155005
+2025-06-15,8:30am,CAD,Low,Foreign Securities Purchases,-9.36B,-2.94B,-4.21B,2025-08-22T23:18:04.155662
+2025-06-15,,USD,High,Core Retail Sales m/m,-0.3%,0.2%,0.0%,2025-08-22T23:18:04.156308
+2025-06-15,,USD,High,Retail Sales m/m,-0.9%,-0.5%,-0.1%,2025-08-22T23:18:04.156956
+2025-06-15,,USD,Low,Import Prices m/m,0.0%,-0.2%,0.1%,2025-08-22T23:18:04.157588
+2025-06-15,9:15am,USD,Low,Capacity Utilization Rate,77.4%,77.7%,77.7%,2025-08-22T23:18:04.158250
+2025-06-15,,USD,Low,Industrial Production m/m,-0.2%,0.0%,0.1%,2025-08-22T23:18:04.158879
+2025-06-15,10:00am,USD,Low,Business Inventories m/m,0.0%,0.0%,0.1%,2025-08-22T23:18:04.159545
+2025-06-15,,USD,Low,NAHB Housing Market Index,32,36,34,2025-08-22T23:18:04.160198
+2025-06-15,11:29am,NZD,Low,GDT Price Index,-1.0%,,-1.6%,2025-08-22T23:18:04.160857
+2025-06-15,1:30pm,CAD,Low,BOC Summary of Deliberations,,,,2025-08-22T23:18:04.161519
+2025-06-15,4:30pm,USD,Low,API Weekly Statistical Bulletin,,,,2025-08-22T23:18:04.162195
+2025-06-15,5:00pm,NZD,Low,Westpac Consumer Sentiment,91.2,,89.2,2025-08-22T23:18:04.162841
+2025-06-15,6:45pm,NZD,Low,Current Account,-2.32B,-2.19B,-6.80B,2025-08-22T23:18:04.163508
+2025-06-15,7:50pm,JPY,Low,Core Machinery Orders m/m,-9.1%,-9.3%,13.0%,2025-08-22T23:18:04.164197
+2025-06-15,,JPY,Low,Trade Balance,-0.31T,-0.37T,-0.35T,2025-08-22T23:18:04.164824
+2025-06-15,8:30pm,AUD,Low,MI Leading Index m/m,-0.1%,,0.0%,2025-08-22T23:18:04.165560
