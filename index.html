@@ -653,11 +653,14 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ start_date: startDate, days })
                 });
-                if (!res.ok) throw new Error(await res.text());
+                if (!res.ok) {
+                    const txt = await res.text();
+                    throw new Error(txt || `HTTP ${res.status}`);
+                }
                 btn.textContent = '✅ Triggered! Check Actions';
             } catch (e) {
                 console.error(e);
-                alert('Trigger failed. See console for details.');
+                alert(`Trigger failed. ${e && e.message ? e.message : ''}`);
                 btn.textContent = '❌ Failed. Retry';
             } finally {
                 setTimeout(() => { btn.disabled = false; btn.textContent = original; }, 4000);
