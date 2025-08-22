@@ -78,7 +78,14 @@ def scrape_forex(start_date=None, end_date=None):
             EC.presence_of_element_located((By.CLASS_NAME, "calendar__table"))
         )
 
+        # Nudge dynamic content to fully render
         time.sleep(2)
+        try:
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            time.sleep(1)
+            driver.execute_script("window.scrollTo(0, 0);")
+        except Exception:
+            pass
 
         if BeautifulSoup is None:
             print("BeautifulSoup (bs4) is required. Install with: pip install beautifulsoup4")
@@ -91,16 +98,18 @@ def scrape_forex(start_date=None, end_date=None):
             return []
 
         print("Extracting data...")
-        rows = table.find_all('tr', class_=['calendar__row', 'calendar_row'])
+        rows = table.find_all('tr')
 
         data = []
-        current_date = None
+        # Determine Monday of that week for stable ISO dates
+        monday = dt - timedelta(days=dt.weekday())
+        current_iso_date = None
+        day_index = -1
         for row in rows:
             date_cell = row.find('td', class_=['calendar__date', 'date'])
-            if date_cell:
-                date_text = date_cell.get_text(strip=True)
-                if date_text:
-                    current_date = date_text
+            if date_cell and date_cell.get_text(strip=True):
+                day_index += 1
+                current_iso_date = (monday + timedelta(days=day_index)).strftime('%Y-%m-%d')
 
             event_cell = row.find('td', class_=['calendar__event', 'event'])
             if not event_cell:
@@ -129,7 +138,7 @@ def scrape_forex(start_date=None, end_date=None):
                         impact = 'Low'
 
             data.append({
-                'date': current_date,
+                'date': current_iso_date,
                 'time': time_cell.get_text(strip=True) if time_cell else '',
                 'currency': currency_cell.get_text(strip=True) if currency_cell else '',
                 'impact': impact,

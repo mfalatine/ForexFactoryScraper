@@ -33,11 +33,12 @@ exports.handler = async function(event) {
     return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid JSON body' }) };
   }
 
-  const { start_date, days } = input || {};
+  const { start_date, days, end_date } = input || {};
 
   const payload = { ref, inputs: {} };
   if (start_date) payload.inputs.start_date = start_date;
-  if (days) payload.inputs.days = String(days);
+  if (end_date) payload.inputs.end_date = end_date;
+  if (days && !end_date) payload.inputs.days = String(days);
 
   try {
     const url = `https://api.github.com/repos/${owner}/${repo}/actions/workflows/${workflow}/dispatches`;
