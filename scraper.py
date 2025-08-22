@@ -1,3 +1,4 @@
+# pyright: reportMissingImports=false
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -5,14 +6,19 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
-from bs4 import BeautifulSoup
-import pandas as pd
+import csv
 import json
 from datetime import datetime, timedelta
 import time
 import os
 import argparse
 from urllib.parse import urlencode
+
+# Optional dependency to avoid Pylance import errors if not installed
+try:
+    from bs4 import BeautifulSoup  # type: ignore
+except Exception:  # pragma: no cover
+    BeautifulSoup = None  # type: ignore
 
 def scrape_forex(start_date=None, end_date=None):
     """
@@ -22,13 +28,30 @@ def scrape_forex(start_date=None, end_date=None):
         start_date (str): Start date in YYYY-MM-DD format (optional)
         end_date (str): End date in YYYY-MM-DD format (optional)
     """
+    # Reduce webdriver_manager and Chrome/Driver noise
+    os.environ.setdefault('WDM_LOG_LEVEL', '0')
+
     # Setup Chrome options
     chrome_options = Options()
-    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--headless=new")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--disable-gpu")
+    chrome_options.add_argument("--disable-software-rasterizer")
+    chrome_options.add_argument("--disable-background-timer-throttling")
+    chrome_options.add_argument("--disable-backgrounding-occluded-windows")
+    chrome_options.add_argument("--disable-renderer-backgrounding")
+    chrome_options.add_argument("--disable-features=TranslateUI")
+    chrome_options.add_argument("--disable-ipc-flooding-protection")
+    chrome_options.add_argument("--disable-extensions")
+    chrome_options.add_argument("--disable-notifications")
+    chrome_options.add_argument("--disable-logging")
+    chrome_options.add_argument("--log-level=3")
     chrome_options.add_argument("--window-size=1920,1080")
+    chrome_options.add_experimental_option("excludeSwitches", ["enable-logging", "enable-automation"])
+    chrome_options.add_experimental_option("useAutomationExtension", False)
+    chrome_options.page_load_strategy = 'eager'
+    chrome_options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
     
     # Setup driver
     service = Service(ChromeDriverManager().install())
@@ -62,6 +85,9 @@ def scrape_forex(start_date=None, end_date=None):
         time.sleep(5)
         
         # Get page source
+        if BeautifulSoup is None:
+            print("BeautifulSoup (bs4) is required. Install with: pip install beautifulsoup4")
+            return []
         soup = BeautifulSoup(driver.page_source, 'html.parser')
         
         # Find calendar table
@@ -143,20 +169,27 @@ def save_data(data):
     if data:
         # Save as JSON
         json_path = 'data/forex_calendar.json'
-        with open(json_path, 'w') as f:
+        with open(json_path, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=2)
         print(f"Saved JSON to {json_path}")
         
-        # Save as CSV
+        # Save as CSV (without pandas)
         csv_path = 'data/forex_calendar.csv'
-        df = pd.DataFrame(data)
-        df.to_csv(csv_path, index=False)
+        if data:
+            fieldnames = list(data[0].keys())
+            with open(csv_path, 'w', encoding='utf-8', newline='') as f:
+                writer = csv.DictWriter(f, fieldnames=fieldnames)
+                writer.writeheader()
+                writer.writerows(data)
+        else:
+            with open(csv_path, 'w', encoding='utf-8', newline='') as f:
+                f.write('')
         print(f"Saved CSV to {csv_path}")
         
         # Also save a backup with timestamp
         timestamp = datetime.now().strftime("%Y%m%d")
         backup_json = f'data/forex_calendar_{timestamp}.json'
-        with open(backup_json, 'w') as f:
+        with open(backup_json, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=2)
         print(f"Saved backup to {backup_json}")
         

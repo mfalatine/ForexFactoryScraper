@@ -5,11 +5,13 @@ A web scraper that automatically fetches economic calendar data from ForexFactor
 ## 🚀 Quick Start
 
 ### Get the Data
-- **JSON**: https://raw.githubusercontent.com/mfalatine/ForexFactoryScraper/main/data/forex_calendar.json
-- **CSV**: https://raw.githubusercontent.com/mfalatine/ForexFactoryScraper/main/data/forex_calendar.csv
-- **Website**: https://mfalatine.github.io/ForexFactoryScraper/
+
+- **JSON**: [forex_calendar.json](https://raw.githubusercontent.com/mfalatine/ForexFactoryScraper/main/data/forex_calendar.json)
+- **CSV**: [forex_calendar.csv](https://raw.githubusercontent.com/mfalatine/ForexFactoryScraper/main/data/forex_calendar.csv)
+- **Website**: [mfalatine.github.io/ForexFactoryScraper](https://mfalatine.github.io/ForexFactoryScraper/)
 
 ### Run the Scraper Manually
+
 1. Go to the [Actions tab](https://github.com/mfalatine/ForexFactoryScraper/actions)
 2. Click "Scrape ForexFactory Calendar"
 3. Click "Run workflow"
@@ -18,6 +20,7 @@ A web scraper that automatically fetches economic calendar data from ForexFactor
 ## 📊 Data Structure
 
 Each event contains:
+
 - `date`: Event date
 - `time`: Event time
 - `currency`: Currency affected (USD, EUR, GBP, etc.)
@@ -31,7 +34,9 @@ Each event contains:
 ## 💻 Usage Examples
 
 ### JavaScript
+
 ```javascript
 fetch('https://raw.githubusercontent.com/mfalatine/ForexFactoryScraper/main/data/forex_calendar.json')
   .then(response => response.json())
   .then(data => console.log(data));
+```
