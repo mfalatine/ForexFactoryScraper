@@ -1,5 +1,25 @@
 // Netlify Function (CommonJS): Scrape ForexFactory weekly page and return JSON or CSV
 const cheerio = require('cheerio');
+const https = require('https');
+
+function fetchText(url) {
+  return new Promise((resolve, reject) => {
+    const req = https.get(url, {
+      headers: { 'user-agent': 'Mozilla/5.0 ForexFactoryScraperBot' }
+    }, (res) => {
+      if (res.statusCode && res.statusCode >= 400) {
+        reject(new Error(`HTTP ${res.statusCode}`));
+        return;
+      }
+      let data = '';
+      res.setEncoding('utf8');
+      res.on('data', (chunk) => { data += chunk; });
+      res.on('end', () => resolve(data));
+    });
+    req.on('error', reject);
+    req.end();
+  });
+}
 
 function toWeekParam(dateStr) {
   const d = new Date(dateStr);
@@ -35,11 +55,7 @@ exports.handler = async (event) => {
 
     const week = toWeekParam(start);
     const url = `https://www.forexfactory.com/calendar?week=${week}`;
-    const resp = await fetch(url, {
-      headers: { 'user-agent': 'Mozilla/5.0 ForexFactoryScraperBot' }
-    });
-    if (!resp.ok) throw new Error(`Fetch failed ${resp.status}`);
-    const html = await resp.text();
+    const html = await fetchText(url);
 
     const $ = cheerio.load(html);
     const table = $('table.calendar__table');
