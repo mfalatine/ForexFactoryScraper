@@ -149,7 +149,24 @@ def scrape_forex(start_date=None, end_date=None):
                 'scraped_at': datetime.now().isoformat()
             })
 
-        print(f"Extracted {len(data)} events")
+        # Validate and keep only events within the requested week
+        week_start = (dt - timedelta(days=dt.weekday())).strftime('%Y-%m-%d')
+        week_end = (dt - timedelta(days=dt.weekday()) + timedelta(days=6)).strftime('%Y-%m-%d')
+
+        def in_week(d: str) -> bool:
+            try:
+                return week_start <= d <= week_end
+            except Exception:
+                return True
+
+        before = len(data)
+        data = [e for e in data if e.get('date') and in_week(e['date'])]
+        after = len(data)
+        print(f"Extracted {before} events; {after} within {week_start}..{week_end}")
+
+        if after == 0:
+            raise Exception("No events within requested week were found; site markup/filters may have changed")
+
         return data
         
     except Exception as e:
