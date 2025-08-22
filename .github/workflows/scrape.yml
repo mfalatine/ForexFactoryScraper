@@ -10,6 +10,9 @@ on:
         description: 'Days to scrape'
         required: false
         default: '7'
+      end_date:
+        description: 'End date YYYY-MM-DD (overrides days if set)'
+        required: false
   schedule:
     - cron: '0 6 * * 1' # Weekly on Monday at 6 AM UTC (optional)
 
@@ -42,6 +45,7 @@ jobs:
         ARGS=""
         if [ -n "${{ github.event.inputs.start_date }}" ]; then ARGS="$ARGS --start-date ${{ github.event.inputs.start_date }}"; fi
         if [ -n "${{ github.event.inputs.days }}" ]; then ARGS="$ARGS --days ${{ github.event.inputs.days }}"; fi
+        if [ -n "${{ github.event.inputs.end_date }}" ]; then ARGS="$ARGS --end-date ${{ github.event.inputs.end_date }}"; fi
         echo "Running: python scraper.py $ARGS"
         python scraper.py $ARGS
     

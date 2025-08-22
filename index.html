@@ -413,6 +413,10 @@
                         <label for="days">Days to scrape:</label>
                         <input type="number" id="days" value="7" min="1" max="30">
                     </div>
+                    <div class="input-group">
+                        <label for="endDate">End Date (optional):</label>
+                        <input type="date" id="endDate" value="">
+                    </div>
                 </div>
                 
                 <button class="btn-scrape" onclick="generateScrapingCommand()">
@@ -624,6 +628,7 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
         function generateScrapingCommand() {
             const startDate = document.getElementById('startDate').value;
             const days = document.getElementById('days').value || 7;
+            const endDate = document.getElementById('endDate').value;
             
             if (!startDate) {
                 alert('Please select a start date');
@@ -631,7 +636,7 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
             }
             
             // Generate command
-            const command = `python scraper.py --start-date ${startDate} --days ${days}`;
+            const command = `python scraper.py --start-date ${startDate} ${endDate ? `--end-date ${endDate}` : `--days ${days}`}`;
             
             // Display command
             document.getElementById('generatedCommand').textContent = command;
@@ -647,6 +652,7 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
         async function runNow(ev) {
             const startDate = document.getElementById('startDate').value;
             const days = document.getElementById('days').value || 7;
+            const endDate = document.getElementById('endDate').value;
             if (!startDate) { alert('Please select a start date'); return; }
 
             const btn = ev.currentTarget;
@@ -656,7 +662,7 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
                 const res = await fetch(TRIGGER_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ start_date: startDate, days })
+                    body: JSON.stringify({ start_date: startDate, days, ...(endDate ? { end_date: endDate } : {}) })
                 });
                 if (!res.ok) {
                     const txt = await res.text();
