@@ -496,6 +496,8 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
         const baseUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/${BRANCH}`;
         const jsonUrlBase = `${baseUrl}/data/forex_calendar.json`;
         const csvUrlBase = `${baseUrl}/data/forex_calendar.csv`;
+        let jsonUrl = jsonUrlBase;
+        let csvUrl = csvUrlBase;
         const githubUrl = `https://github.com/${GITHUB_USER}/${REPO_NAME}`;
         
         let calendarData = [];
@@ -509,8 +511,8 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
             
             // Update URLs in code examples
             const cacheBust = `?t=${Date.now()}`;
-            const jsonUrl = jsonUrlBase + cacheBust;
-            const csvUrl = csvUrlBase + cacheBust;
+            jsonUrl = jsonUrlBase + cacheBust;
+            csvUrl = csvUrlBase + cacheBust;
             document.getElementById('jsonUrl').textContent = jsonUrlBase;
             document.getElementById('csvUrl').textContent = csvUrlBase;
             document.getElementById('fetchUrl').textContent = jsonUrlBase;
@@ -610,7 +612,7 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
         }
         
         function viewRawJSON() {
-            window.open(jsonUrl, '_blank');
+            window.open(jsonUrlBase, '_blank');
         }
         
         function viewGitHub() {
