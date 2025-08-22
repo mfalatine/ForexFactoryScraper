@@ -1,6 +1,7 @@
 // Netlify Function (CommonJS): Scrape ForexFactory weekly page and return JSON or CSV
+// Avoid bringing in undici/fetch polyfills by requiring only Node core modules
 const cheerio = require('cheerio');
-const https = require('https');
+const https = require('node:https');
 
 function fetchText(url) {
   return new Promise((resolve, reject) => {
