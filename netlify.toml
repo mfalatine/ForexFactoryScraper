@@ -9,5 +9,6 @@
 
 [build.environment]
   NODE_VERSION = "18"
+  AWS_LAMBDA_JS_RUNTIME = "nodejs20.x"
 
 
