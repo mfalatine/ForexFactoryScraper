@@ -58,98 +58,88 @@ def scrape_forex(start_date=None, end_date=None):
     driver = webdriver.Chrome(service=service, options=chrome_options)
     
     try:
-        # Construct URL with date parameters
+        # Use ForexFactory's weekly view: ?week=aug22.2025
         base_url = "https://www.forexfactory.com/calendar"
-        params = {}
-        
+
+        # Pick date for the week anchor
         if start_date:
-            params['from'] = start_date
-        if end_date:
-            params['to'] = end_date
-            
-        if params:
-            url = f"{base_url}?{urlencode(params)}"
+            dt = datetime.strptime(start_date, '%Y-%m-%d')
         else:
-            url = base_url
-            
+            dt = datetime.now()
+
+        week_str = f"{dt.strftime('%b').lower()}{dt.day}.{dt.year}"
+        url = f"{base_url}?week={week_str}"
         print(f"Navigating to: {url}")
         driver.get(url)
-        
+
         # Wait for calendar table to load
         print("Waiting for calendar to load...")
         WebDriverWait(driver, 20).until(
             EC.presence_of_element_located((By.CLASS_NAME, "calendar__table"))
         )
-        
-        # Additional wait for dynamic content
-        time.sleep(5)
-        
-        # Get page source
+
+        time.sleep(2)
+
         if BeautifulSoup is None:
             print("BeautifulSoup (bs4) is required. Install with: pip install beautifulsoup4")
             return []
         soup = BeautifulSoup(driver.page_source, 'html.parser')
-        
-        # Find calendar table
+
         table = soup.find('table', class_='calendar__table')
-        
         if not table:
             print("Calendar table not found!")
             return []
-        
+
         print("Extracting data...")
-        
-        # Extract data
-        data = []
         rows = table.find_all('tr', class_=['calendar__row', 'calendar_row'])
-        
+
+        data = []
         current_date = None
         for row in rows:
-            # Check for date cell
             date_cell = row.find('td', class_=['calendar__date', 'date'])
             if date_cell:
                 date_text = date_cell.get_text(strip=True)
                 if date_text:
                     current_date = date_text
-            
-            # Extract event data
+
             event_cell = row.find('td', class_=['calendar__event', 'event'])
-            if event_cell:
-                event_text = event_cell.get_text(strip=True)
-                if event_text:  # Only process if there's an event
-                    time_cell = row.find('td', class_=['calendar__time', 'time'])
-                    currency_cell = row.find('td', class_=['calendar__currency', 'currency'])
-                    impact_cell = row.find('td', class_=['calendar__impact', 'impact'])
-                    actual_cell = row.find('td', class_=['calendar__actual', 'actual'])
-                    forecast_cell = row.find('td', class_=['calendar__forecast', 'forecast'])
-                    previous_cell = row.find('td', class_=['calendar__previous', 'previous'])
-                    
-                    # Determine impact level
-                    impact = ''
-                    if impact_cell:
-                        # Look for impact icon/span
-                        impact_span = impact_cell.find('span')
-                        if impact_span and 'class' in impact_span.attrs:
-                            classes = ' '.join(impact_span['class'])
-                            if 'high' in classes or 'red' in classes:
-                                impact = 'High'
-                            elif 'medium' in classes or 'ora' in classes or 'orange' in classes:
-                                impact = 'Medium'
-                            elif 'low' in classes or 'yel' in classes or 'yellow' in classes:
-                                impact = 'Low'
-                    
-                    data.append({
-                        'date': current_date,
-                        'time': time_cell.get_text(strip=True) if time_cell else '',
-                        'currency': currency_cell.get_text(strip=True) if currency_cell else '',
-                        'impact': impact,
-                        'event': event_text,
-                        'actual': actual_cell.get_text(strip=True) if actual_cell else '',
-                        'forecast': forecast_cell.get_text(strip=True) if forecast_cell else '',
-                        'previous': previous_cell.get_text(strip=True) if previous_cell else '',
-                        'scraped_at': datetime.now().isoformat()
-                    })
-        
+            if not event_cell:
+                continue
+            event_text = event_cell.get_text(strip=True)
+            if not event_text:
+                continue
+
+            time_cell = row.find('td', class_=['calendar__time', 'time'])
+            currency_cell = row.find('td', class_=['calendar__currency', 'currency'])
+            impact_cell = row.find('td', class_=['calendar__impact', 'impact'])
+            actual_cell = row.find('td', class_=['calendar__actual', 'actual'])
+            forecast_cell = row.find('td', class_=['calendar__forecast', 'forecast'])
+            previous_cell = row.find('td', class_=['calendar__previous', 'previous'])
+
+            impact = ''
+            if impact_cell:
+                impact_span = impact_cell.find('span')
+                if impact_span and 'class' in impact_span.attrs:
+                    classes = ' '.join(impact_span['class'])
+                    if 'high' in classes or 'red' in classes:
+                        impact = 'High'
+                    elif 'medium' in classes or 'ora' in classes or 'orange' in classes:
+                        impact = 'Medium'
+                    elif 'low' in classes or 'yel' in classes or 'yellow' in classes:
+                        impact = 'Low'
+
+            data.append({
+                'date': current_date,
+                'time': time_cell.get_text(strip=True) if time_cell else '',
+                'currency': currency_cell.get_text(strip=True) if currency_cell else '',
+                'impact': impact,
+                'event': event_text,
+                'actual': actual_cell.get_text(strip=True) if actual_cell else '',
+                'forecast': forecast_cell.get_text(strip=True) if forecast_cell else '',
+                'previous': previous_cell.get_text(strip=True) if previous_cell else '',
+                'scraped_at': datetime.now().isoformat()
+            })
+
         print(f"Extracted {len(data)} events")
         return data
         

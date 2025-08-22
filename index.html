@@ -402,20 +402,12 @@
             <!-- Manual Scraping Section -->
             <div class="manual-scraping-section">
                 <h3>🔧 Manual Scraping</h3>
-                <p>Select a date range and generate a custom scraping command</p>
+                <p>Select a week start date (scrapes 7 days)</p>
                 
                 <div class="date-inputs">
                     <div class="input-group">
-                        <label for="startDate">Start Date:</label>
+                        <label for="startDate">Week starting:</label>
                         <input type="date" id="startDate" value="">
-                    </div>
-                    <div class="input-group">
-                        <label for="days">Days to scrape:</label>
-                        <input type="number" id="days" value="7" min="1" max="30">
-                    </div>
-                    <div class="input-group">
-                        <label for="endDate">End Date (optional):</label>
-                        <input type="date" id="endDate" value="">
                     </div>
                 </div>
                 
@@ -510,7 +502,12 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
         async function init() {
             // Set today's date as default for start date
             const today = new Date();
-            const todayString = today.toISOString().split('T')[0];
+            // default to Monday of this week
+            const monday = new Date(today);
+            const day = monday.getDay();
+            const diff = (day === 0 ? -6 : 1) - day; // shift to Monday (Mon=1)
+            monday.setDate(monday.getDate() + diff);
+            const todayString = monday.toISOString().split('T')[0];
             document.getElementById('startDate').value = todayString;
             
             // Update URLs in code examples
@@ -627,16 +624,20 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
         const TRIGGER_URL = '/.netlify/functions/trigger-scrape';
         function generateScrapingCommand() {
             const startDate = document.getElementById('startDate').value;
-            const days = document.getElementById('days').value || 7;
-            const endDate = document.getElementById('endDate').value;
             
             if (!startDate) {
                 alert('Please select a start date');
                 return;
             }
             
+            // Compute end date = start + 6 days
+            const d = new Date(startDate);
+            const endDate = new Date(d);
+            endDate.setDate(d.getDate() + 6);
+            const endStr = endDate.toISOString().split('T')[0];
+
             // Generate command
-            const command = `python scraper.py --start-date ${startDate} ${endDate ? `--end-date ${endDate}` : `--days ${days}`}`;
+            const command = `python scraper.py --start-date ${startDate} --end-date ${endStr}`;
             
             // Display command
             document.getElementById('generatedCommand').textContent = command;
@@ -651,9 +652,11 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
         
         async function runNow(ev) {
             const startDate = document.getElementById('startDate').value;
-            const days = document.getElementById('days').value || 7;
-            const endDate = document.getElementById('endDate').value;
             if (!startDate) { alert('Please select a start date'); return; }
+            const d = new Date(startDate);
+            const endDate = new Date(d);
+            endDate.setDate(d.getDate() + 6);
+            const endStr = endDate.toISOString().split('T')[0];
 
             const btn = ev.currentTarget;
             const original = btn.textContent;
@@ -662,7 +665,7 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
                 const res = await fetch(TRIGGER_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ start_date: startDate, days, ...(endDate ? { end_date: endDate } : {}) })
+                    body: JSON.stringify({ start_date: startDate, end_date: endStr })
                 });
                 if (!res.ok) {
                     const txt = await res.text();
