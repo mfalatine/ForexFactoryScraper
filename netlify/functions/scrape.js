@@ -1,5 +1,4 @@
 // Netlify Function: Scrape ForexFactory weekly page and return JSON or CSV
-import fetch from 'node-fetch';
 import cheerio from 'cheerio';
 
 function toWeekParam(dateStr) {
