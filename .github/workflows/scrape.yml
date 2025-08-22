@@ -1,7 +1,15 @@
 name: Scrape ForexFactory Calendar
 
 on:
-  workflow_dispatch: # Manual trigger button
+  workflow_dispatch:
+    inputs:
+      start_date:
+        description: 'Start date YYYY-MM-DD'
+        required: false
+      days:
+        description: 'Days to scrape'
+        required: false
+        default: '7'
   schedule:
     - cron: '0 6 * * 1' # Weekly on Monday at 6 AM UTC (optional)
 
@@ -22,11 +30,15 @@ jobs:
     
     - name: Install dependencies
       run: |
-        pip install selenium beautifulsoup4 pandas webdriver-manager
+        pip install selenium beautifulsoup4 webdriver-manager
     
     - name: Run scraper
       run: |
-        python scraper.py
+        ARGS=""
+        if [ -n "${{ github.event.inputs.start_date }}" ]; then ARGS="$ARGS --start-date ${{ github.event.inputs.start_date }}"; fi
+        if [ -n "${{ github.event.inputs.days }}" ]; then ARGS="$ARGS --days ${{ github.event.inputs.days }}"; fi
+        echo "Running: python scraper.py $ARGS"
+        python scraper.py $ARGS
     
     - name: Commit and push if changed
       run: |
