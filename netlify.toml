@@ -3,6 +3,7 @@
 
 [functions]
   node_bundler = "none"
+  included_files = ["node_modules/**"]
 
 [[plugins]]
   package = "@netlify/plugin-functions-install-core"
