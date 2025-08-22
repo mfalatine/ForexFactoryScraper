@@ -8,11 +8,20 @@ from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 import pandas as pd
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 import time
 import os
+import argparse
+from urllib.parse import urlencode
 
-def scrape_forex():
+def scrape_forex(start_date=None, end_date=None):
+    """
+    Scrape ForexFactory calendar data
+    
+    Args:
+        start_date (str): Start date in YYYY-MM-DD format (optional)
+        end_date (str): End date in YYYY-MM-DD format (optional)
+    """
     # Setup Chrome options
     chrome_options = Options()
     chrome_options.add_argument("--headless")
@@ -26,8 +35,20 @@ def scrape_forex():
     driver = webdriver.Chrome(service=service, options=chrome_options)
     
     try:
-        # Navigate to page - get current week
-        url = "https://www.forexfactory.com/calendar"
+        # Construct URL with date parameters
+        base_url = "https://www.forexfactory.com/calendar"
+        params = {}
+        
+        if start_date:
+            params['from'] = start_date
+        if end_date:
+            params['to'] = end_date
+            
+        if params:
+            url = f"{base_url}?{urlencode(params)}"
+        else:
+            url = base_url
+            
         print(f"Navigating to: {url}")
         driver.get(url)
         
@@ -145,11 +166,34 @@ def save_data(data):
         return False
 
 if __name__ == "__main__":
+    # Setup command line arguments
+    parser = argparse.ArgumentParser(description='Scrape ForexFactory Calendar')
+    parser.add_argument('--start-date', type=str, help='Start date (YYYY-MM-DD format)')
+    parser.add_argument('--end-date', type=str, help='End date (YYYY-MM-DD format)')
+    parser.add_argument('--days', type=int, default=7, help='Number of days to scrape from start date (default: 7)')
+    
+    args = parser.parse_args()
+    
     print("=== ForexFactory Calendar Scraper ===")
     print(f"Starting scrape at {datetime.now().isoformat()}")
     
+    # Calculate date range
+    start_date = args.start_date
+    end_date = args.end_date
+    
+    # If start date provided but no end date, calculate end date using days
+    if start_date and not end_date:
+        start_dt = datetime.strptime(start_date, '%Y-%m-%d')
+        end_dt = start_dt + timedelta(days=args.days)
+        end_date = end_dt.strftime('%Y-%m-%d')
+        print(f"Scraping from {start_date} to {end_date} ({args.days} days)")
+    elif start_date and end_date:
+        print(f"Scraping from {start_date} to {end_date}")
+    else:
+        print("Scraping current week")
+    
     # Scrape data
-    data = scrape_forex()
+    data = scrape_forex(start_date, end_date)
     
     # Save data
     if save_data(data):
