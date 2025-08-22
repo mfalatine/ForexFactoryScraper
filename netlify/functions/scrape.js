@@ -1,5 +1,5 @@
-// Netlify Function: Scrape ForexFactory weekly page and return JSON or CSV
-import cheerio from 'cheerio';
+// Netlify Function (CommonJS): Scrape ForexFactory weekly page and return JSON or CSV
+const cheerio = require('cheerio');
 
 function toWeekParam(dateStr) {
   const d = new Date(dateStr);
@@ -20,7 +20,7 @@ function toCsv(rows) {
   return lines.join('\n');
 }
 
-export const handler = async (event) => {
+exports.handler = async (event) => {
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, OPTIONS',
