@@ -21,7 +21,9 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
     
     - name: Setup Python
       uses: actions/setup-python@v4
@@ -44,9 +46,15 @@ jobs:
         python scraper.py $ARGS
     
     - name: Commit and push if changed
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        REPO: ${{ github.repository }}
+        BRANCH: ${{ github.ref_name }}
       run: |
         git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
+        git config --local user.name "github-actions[bot]"
         git add -A
         git diff --quiet && git diff --staged --quiet || git commit -m "Update forex calendar data [skip ci]"
-        git push
+        # Ensure we are up to date and push with explicit token auth
+        git pull --rebase "https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git" ${BRANCH} || true
+        git push "https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git" HEAD:${BRANCH}
