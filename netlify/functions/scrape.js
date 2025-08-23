@@ -49,7 +49,7 @@ function toCsv(rows) {
 }
 
 // Parse a ForexFactory calendar HTML page and extract rows
-function parseCalendarHtml(html, baseline, timezoneOffset = 1) {
+function parseCalendarHtml(html, baseline, timezoneOffset = 0) {
   const $ = cheerio.load(html);
   const table = $('table.calendar__table');
   if (!table.length) throw new Error('Calendar table not found');
@@ -232,7 +232,7 @@ exports.handler = async (event) => {
     const start = (qs.start || '').trim();
     
     // Timezone offset parameter (default to 1 hour to match ForexFactory display)
-    const timezoneOffset = parseInt(qs.timezoneOffset || '1');
+    const timezoneOffset = parseInt(qs.timezoneOffset || '0');
     if (!weekParamRaw && !dayParamRaw && !monthParamRaw && !start) {
       return { statusCode: 400, headers, body: 'Missing query: provide day=, week=, month=, or start=YYYY-MM-DD' };
     }
