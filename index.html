@@ -237,6 +237,8 @@
             border: 1px solid #e9ecef;
         }
         .manual-scrape-grid { display: grid; grid-template-columns: 1fr 250px; gap: 20px; align-items: start; }
+        .left-column { display: flex; flex-direction: column; align-items: center; }
+        .button-stack { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 300px; margin-top: 15px; }
         .quick-links { background: #fff; border: 1px solid #e9ecef; border-radius: 8px; padding: 12px; }
         .quick-links h4 { margin: 0 0 8px 0; color: #1e3c72; font-size: 0.95em; }
         .quick-links a { display: block; margin: 4px 0; color: #1e3c72; text-decoration: none; font-size: 0.9em; }
@@ -291,25 +293,48 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
         
-        .btn-scrape {
+        .btn-load {
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             color: white;
-            margin: 15px 0;
             font-weight: 600;
             padding: 12px 20px;
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s;
             border: none;
-            display: inline-flex;
+            display: flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
             font-size: 14px;
+            width: 100%;
         }
         
-        .btn-scrape:hover {
+        .btn-open-ff {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 14px;
+            width: 100%;
+        }
+        
+        .btn-load:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+        }
+        
+        .btn-open-ff:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
         }
         
         
@@ -344,6 +369,10 @@
             
             .quick-links {
                 order: -1;
+            }
+            
+            .button-stack {
+                max-width: 100%;
             }
             
             .date-inputs {
@@ -407,22 +436,20 @@
             
             <!-- Manual Scraping Section -->
             <div class="manual-scraping-section">
-                <h3>🔧 Manual Scraping</h3>
-                <p>Select a date then open the matching ForexFactory week URL.</p>
                 <div class="manual-scrape-grid">
-                    <div>
+                    <div class="left-column">
                         <div class="date-inputs">
                             <div class="input-group">
                                 <label for="startDate">Date:</label>
                                 <input type="date" id="startDate" value="">
                             </div>
                         </div>
-                        <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
-                            <button class="btn-scrape" onclick="runNow(event)">
-                                🔗 Open Week on ForexFactory
-                            </button>
-                            <button class="btn-scrape" onclick="fetchIntoPage(event)">
+                        <div class="button-stack">
+                            <button class="btn-load" onclick="fetchIntoPage(event)">
                                 ⤵️ Load Into Page
+                            </button>
+                            <button class="btn-open-ff" onclick="runNow(event)">
+                                🔗 Open Week on ForexFactory
                             </button>
                         </div>
                     </div>
