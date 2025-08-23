@@ -22,6 +22,13 @@ function fetchText(url) {
   });
 }
 
+function formatDateLocal(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
 function toWeekParam(dateStr) {
   const d = new Date(dateStr);
   if (isNaN(d)) throw new Error('Invalid start date');
@@ -133,13 +140,13 @@ exports.handler = async (event) => {
         if (matchedOffset != null) {
           const cur = new Date(baseline);
           cur.setDate(baseline.getDate() + matchedOffset);
-          currentIso = cur.toISOString().slice(0, 10);
+          currentIso = formatDateLocal(cur);
         } else {
           // Fallback to sequential day index if label couldn't be parsed
           dayIndex += 1;
           const cur = new Date(baseline);
           cur.setDate(baseline.getDate() + dayIndex);
-          currentIso = cur.toISOString().slice(0, 10);
+          currentIso = formatDateLocal(cur);
         }
       }
 
@@ -180,17 +187,17 @@ exports.handler = async (event) => {
     // Filter according to mode for stable output window
     let filtered = rows;
     if (mode === 'week') {
-      const weekStart = baseline.toISOString().slice(0, 10);
+      const weekStart = formatDateLocal(baseline);
       const weekEnd = new Date(baseline); weekEnd.setDate(baseline.getDate() + 6);
-      const endIso = weekEnd.toISOString().slice(0, 10);
+      const endIso = formatDateLocal(weekEnd);
       filtered = rows.filter((r) => r.date && r.date >= weekStart && r.date <= endIso);
     } else if (mode === 'day') {
-      const iso = baseline.toISOString().slice(0, 10);
+      const iso = formatDateLocal(baseline);
       filtered = rows.filter((r) => r.date === iso);
     } else if (mode === 'month') {
-      const startIso = new Date(baseline.getFullYear(), baseline.getMonth(), 1).toISOString().slice(0, 10);
+      const startIso = formatDateLocal(new Date(baseline.getFullYear(), baseline.getMonth(), 1));
       const end = new Date(baseline.getFullYear(), baseline.getMonth() + 1, 0);
-      const endIso = end.toISOString().slice(0, 10);
+      const endIso = formatDateLocal(end);
       filtered = rows.filter((r) => r.date && r.date >= startIso && r.date <= endIso);
     }
 

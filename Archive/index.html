@@ -231,6 +231,11 @@
             margin-top: 30px;
             border: 2px solid #e9ecef;
         }
+        .manual-scrape-grid { display: grid; grid-template-columns: 1fr 280px; gap: 24px; align-items: start; }
+        .quick-links { background: #fff; border: 1px solid #e9ecef; border-radius: 8px; padding: 14px; }
+        .quick-links h4 { margin: 0 0 10px 0; color: #1e3c72; }
+        .quick-links a { display: block; margin: 6px 0; color: #1e3c72; text-decoration: none; }
+        .quick-links a:hover { text-decoration: underline; }
         
         .manual-scraping-section h3 {
             color: #1e3c72;
@@ -335,20 +340,12 @@
             
             <div class="info-grid">
                 <div class="info-card">
-                    <h3>📅 Update Schedule</h3>
-                    <p>Every Monday at 6:00 AM UTC</p>
+                    <h3>📦 Returned Data</h3>
+                    <p>Selected Date +6 days = 7 day return</p>
                 </div>
                 <div class="info-card">
                     <h3>📈 Data Points</h3>
                     <p id="eventCount">Loading...</p>
-                </div>
-                <div class="info-card">
-                    <h3>🎯 Format</h3>
-                    <p>JSON & CSV Available</p>
-                </div>
-                <div class="info-card">
-                    <h3>💰 Cost</h3>
-                    <p>Completely Free</p>
                 </div>
             </div>
             
@@ -368,22 +365,50 @@
                     </svg>
                     View on GitHub
                 </button>
+                <button class="btn-secondary" onclick="viewVersionHistory()">
+                    📝 Version History
+                </button>
             </div>
             
             <!-- Manual Scraping Section -->
             <div class="manual-scraping-section">
                 <h3>🔧 Manual Scraping</h3>
-                <p>Select a week start date (scrapes 7 days)</p>
-                
-                <div class="date-inputs">
-                    <div class="input-group">
-                        <label for="startDate">Week starting:</label>
-                        <input type="date" id="startDate" value="">
+                <p>Select a date then open the matching ForexFactory week URL.</p>
+                <div class="manual-scrape-grid">
+                    <div>
+                        <div class="date-inputs">
+                            <div class="input-group">
+                                <label for="startDate">Date:</label>
+                                <input type="date" id="startDate" value="">
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                            <button class="btn-scrape" onclick="runNow(event)">
+                                🔗 Open Week on ForexFactory
+                            </button>
+                            <button class="btn-scrape" onclick="fetchIntoPage(event)">
+                                ⤵️ Load Into Page
+                            </button>
+                        </div>
+                    </div>
+                    <div class="quick-links">
+                        <h4>Quick Links</h4>
+                        <strong>Days</strong>
+                        <a href="#" onclick="fetchQuick('day','yesterday');return false;">Yesterday</a>
+                        <a href="#" onclick="fetchQuick('day','today');return false;">Today</a>
+                        <a href="#" onclick="fetchQuick('day','tomorrow');return false;">Tomorrow</a>
+                        <hr style="border:none;border-top:1px solid #e9ecef;margin:10px 0;">
+                        <strong>Weeks</strong>
+                        <a href="#" onclick="fetchQuick('week','last');return false;">Last Week</a>
+                        <a href="#" onclick="fetchQuick('week','this');return false;">This Week</a>
+                        <a href="#" onclick="fetchQuick('week','next');return false;">Next Week</a>
+                        <hr style="border:none;border-top:1px solid #e9ecef;margin:10px 0;">
+                        <strong>Months</strong>
+                        <a href="#" onclick="fetchQuick('month','last');return false;">Last Month</a>
+                        <a href="#" onclick="fetchQuick('month','this');return false;">This Month</a>
+                        <a href="#" onclick="fetchQuick('month','next');return false;">Next Month</a>
                     </div>
                 </div>
-                <button class="btn-scrape" onclick="runNow(event)">
-                    ⚡ Run Now (online)
-                </button>
             </div>
 
             <div class="data-preview">
@@ -460,14 +485,9 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
         
         // Initialize page
         async function init() {
-            // Set today's date as default for start date
+            // Set today's date as default for start date (no Monday normalization)
             const today = new Date();
-            // default to Monday of this week
-            const monday = new Date(today);
-            const day = monday.getDay();
-            const diff = (day === 0 ? -6 : 1) - day; // shift to Monday (Mon=1)
-            monday.setDate(monday.getDate() + diff);
-            const todayString = monday.toISOString().split('T')[0];
+            const todayString = today.toISOString().split('T')[0];
             document.getElementById('startDate').value = todayString;
             
             // Update URLs in code examples
@@ -580,7 +600,22 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
             window.open(githubUrl, '_blank');
         }
         
+        function viewVersionHistory() {
+            window.open('version-history.html', '_blank');
+        }
+        
         async function runNow(ev) {
+            const startDate = document.getElementById('startDate').value;
+            if (!startDate) { alert('Please select a start date'); return; }
+            // Build ForexFactory week URL like aug19.2025
+            const d = new Date(startDate);
+            const month = d.toLocaleString('en-US', { month: 'short' }).toLowerCase();
+            const weekParam = `${month}${d.getDate()}.${d.getFullYear()}`;
+            const url = `https://www.forexfactory.com/calendar?week=${weekParam}`;
+            window.open(url, '_blank', 'noopener');
+        }
+
+        async function fetchIntoPage(ev) {
             const startDate = document.getElementById('startDate').value;
             if (!startDate) { alert('Please select a start date'); return; }
 
@@ -588,7 +623,11 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
             const original = btn.textContent;
             btn.disabled = true; btn.textContent = '⏳ Fetching...';
             try {
-                const res = await fetch(`${jsonUrlBase}?start=${startDate}`, { cache: 'no-store' });
+                // Allow explicit ?week like the site (mon-dd.yyyy)
+                const d = new Date(startDate);
+                const month = d.toLocaleString('en-US', { month: 'short' }).toLowerCase();
+                const weekParam = `${month}${d.getDate()}.${d.getFullYear()}`;
+                const res = await fetch(`${jsonUrlBase}?week=${weekParam}`, { cache: 'no-store' });
                 if (!res.ok) throw new Error(await res.text());
                 calendarData = await res.json();
                 document.getElementById('eventCount').textContent = `${calendarData.length} events`;
@@ -604,7 +643,25 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
                 alert(`Fetch failed. ${e && e.message ? e.message : ''}`);
                 btn.textContent = '❌ Failed. Retry';
             } finally {
-                setTimeout(() => { btn.disabled = false; btn.textContent = original; }, 4000);
+                setTimeout(() => { btn.disabled = false; btn.textContent = original; }, 3000);
+            }
+        }
+
+        async function fetchQuick(mode, value) {
+            try {
+                let url = jsonUrlBase;
+                if (mode === 'day') url += `?day=${encodeURIComponent(value)}`;
+                else if (mode === 'week') url += `?week=${encodeURIComponent(value)}`;
+                else if (mode === 'month') url += `?month=${encodeURIComponent(value)}`;
+                else return;
+                const res = await fetch(url, { cache: 'no-store' });
+                if (!res.ok) throw new Error(await res.text());
+                calendarData = await res.json();
+                document.getElementById('eventCount').textContent = `${calendarData.length} events`;
+                displayTable(calendarData);
+            } catch (e) {
+                console.error(e);
+                alert('Fetch failed. See console for details.');
             }
         }
 
