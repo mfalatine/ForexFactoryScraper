@@ -212,10 +212,19 @@ exports.handler = async (event) => {
       if (dayParamRaw === 'yesterday') base.setDate(base.getDate() - 1);
       else if (dayParamRaw === 'tomorrow') base.setDate(base.getDate() + 1);
       baseline = base; // single day
-    } else if (weekParamRaw || start) {
+    } else if (weekParamRaw) {
       mode = 'week';
-      const d = weekParamRaw ? parseWeekParamToDate(weekParamRaw) : new Date(start);
-      if (!d || isNaN(d)) throw new Error('Invalid week/start');
+      const d = parseWeekParamToDate(weekParamRaw);
+      if (!d || isNaN(d)) throw new Error('Invalid week');
+      const monday = new Date(d);
+      const wd = monday.getDay();
+      monday.setDate(monday.getDate() - ((wd + 6) % 7));
+      baseline = monday;
+    } else if (start) {
+      mode = 'range';
+      const d = new Date(start);
+      if (!d || isNaN(d)) throw new Error('Invalid start');
+      // Use Monday of that week for interpreting weekday-only labels
       const monday = new Date(d);
       const wd = monday.getDay();
       monday.setDate(monday.getDate() - ((wd + 6) % 7));
@@ -259,6 +268,13 @@ exports.handler = async (event) => {
     if (mode === 'day') {
       const iso = formatDateLocal(baseline);
       filtered = rows.filter((r) => r.date === iso);
+    } else if (mode === 'range') {
+      const startDate = new Date(start);
+      const startIso = `${startDate.getFullYear()}-${String(startDate.getMonth()+1).padStart(2,'0')}-${String(startDate.getDate()).padStart(2,'0')}`;
+      const end = new Date(startDate);
+      end.setDate(startDate.getDate() + 6);
+      const endIso = `${end.getFullYear()}-${String(end.getMonth()+1).padStart(2,'0')}-${String(end.getDate()).padStart(2,'0')}`;
+      filtered = rows.filter((r) => r.date && r.date >= startIso && r.date <= endIso);
     } else if (mode === 'month') {
       const startIso = formatDateLocal(new Date(baseline.getFullYear(), baseline.getMonth(), 1));
       const end = new Date(baseline.getFullYear(), baseline.getMonth() + 1, 0);
