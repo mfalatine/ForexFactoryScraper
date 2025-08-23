@@ -213,6 +213,35 @@ function parseCalendarHtml(html, baseline, timezoneOffset = 0) {
     });
   });
 
+  return fillMissingTimes(rows);
+}
+
+// Post-process to fill in missing times for events in the same time block
+function fillMissingTimes(rows) {
+  if (!rows || rows.length === 0) return rows;
+  
+  let currentTime = null;
+  let currentDate = null;
+  
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    
+    // If we encounter a new date, reset the current time
+    if (row.date !== currentDate) {
+      currentDate = row.date;
+      currentTime = null;
+    }
+    
+    // If this row has a time, update our current time
+    if (row.time && row.time.trim() !== '') {
+      currentTime = row.time;
+    } 
+    // If this row has no time but we have a current time from a previous row on the same date
+    else if ((!row.time || row.time.trim() === '') && currentTime && row.date === currentDate) {
+      row.time = currentTime;
+    }
+  }
+  
   return rows;
 }
 
