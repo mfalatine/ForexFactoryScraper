@@ -404,7 +404,7 @@
                     View on GitHub
                 </button>
                 <button class="btn-secondary" onclick="viewChangeHistory()">
-                    📝 Change History
+                    📜 Change History
                 </button>
             </div>
             
@@ -474,6 +474,11 @@
         let calendarData = [];
         let currentQuery = ''; // Track the current query parameters
         
+        // Helper function to prevent caching
+        function fetchNoCache(url) {
+            return fetch(`${url}&_t=${Date.now()}`, { cache: 'no-store' });
+        }
+        
         // Initialize page
         async function init() {
             // Set today's date as default for start date using LOCAL date (avoid UTC shift)
@@ -492,7 +497,7 @@
                 // Store the current query
                 currentQuery = `week=${weekParam}`;
                 
-                const response = await fetch(`${jsonUrlBase}?${currentQuery}`, { cache: 'no-store' });
+                const response = await fetchNoCache(`${jsonUrlBase}?${currentQuery}`);
                 if (!response.ok) throw new Error('Failed to load data');
                 
                 calendarData = await response.json();
@@ -575,15 +580,15 @@
         }
         
         function downloadJSON() {
-            window.open(`${jsonUrlBase}?${currentQuery}`, '_blank');
+            window.open(`${jsonUrlBase}?${currentQuery}&_t=${Date.now()}`, '_blank');
         }
         
         function downloadCSV() {
-            window.open(`${jsonUrlBase}?${currentQuery}&format=csv`, '_blank');
+            window.open(`${jsonUrlBase}?${currentQuery}&format=csv&_t=${Date.now()}`, '_blank');
         }
         
         function viewRawJSON() {
-            window.open(`${jsonUrlBase}?${currentQuery}`, '_blank');
+            window.open(`${jsonUrlBase}?${currentQuery}&_t=${Date.now()}`, '_blank');
         }
         
         function viewGitHub() {
@@ -620,7 +625,7 @@
             
             try {
                 // Use start= to get exactly selected date + 6 days
-                const res = await fetch(`${jsonUrlBase}?${currentQuery}`, { cache: 'no-store' });
+                const res = await fetchNoCache(`${jsonUrlBase}?${currentQuery}`);
                 if (!res.ok) throw new Error(await res.text());
                 calendarData = await res.json();
                 document.getElementById('eventCount').textContent = `${calendarData.length} events`;
@@ -648,7 +653,7 @@
                 else if (mode === 'month') currentQuery = `month=${encodeURIComponent(value)}`;
                 else return;
                 
-                const res = await fetch(`${jsonUrlBase}?${currentQuery}`, { cache: 'no-store' });
+                const res = await fetchNoCache(`${jsonUrlBase}?${currentQuery}`);
                 if (!res.ok) throw new Error(await res.text());
                 calendarData = await res.json();
                 document.getElementById('eventCount').textContent = `${calendarData.length} events`;
