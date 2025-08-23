@@ -460,7 +460,6 @@
             </p>
         </footer>
     </div>
-    
     <script>
         // Configuration - Update these with your GitHub details
         const GITHUB_USER = 'mfalatine';
@@ -470,11 +469,10 @@
         // Construct URLs now provided by Netlify Function
         const jsonUrlBase = '/.netlify/functions/scrape';
         const csvUrlBase = '/.netlify/functions/scrape?format=csv';
-        let jsonUrl = jsonUrlBase;
-        let csvUrl = csvUrlBase;
         const githubUrl = `https://github.com/${GITHUB_USER}/${REPO_NAME}`;
         
         let calendarData = [];
+        let currentQuery = ''; // Track the current query parameters
         
         // Initialize page
         async function init() {
@@ -490,7 +488,11 @@
                 const tDate = new Date(ty, tm - 1, td);
                 const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
                 const weekParam = `${months[tDate.getMonth()]}${tDate.getDate()}.${tDate.getFullYear()}`;
-                const response = await fetch(`${jsonUrlBase}?week=${weekParam}`, { cache: 'no-store' });
+                
+                // Store the current query
+                currentQuery = `week=${weekParam}`;
+                
+                const response = await fetch(`${jsonUrlBase}?${currentQuery}`, { cache: 'no-store' });
                 if (!response.ok) throw new Error('Failed to load data');
                 
                 calendarData = await response.json();
@@ -573,18 +575,15 @@
         }
         
         function downloadJSON() {
-            const start = document.getElementById('startDate').value;
-            window.open(`${jsonUrlBase}?start=${start}`, '_blank');
+            window.open(`${jsonUrlBase}?${currentQuery}`, '_blank');
         }
         
         function downloadCSV() {
-            const start = document.getElementById('startDate').value;
-            window.open(`${csvUrlBase}&start=${start}`, '_blank');
+            window.open(`${jsonUrlBase}?${currentQuery}&format=csv`, '_blank');
         }
         
         function viewRawJSON() {
-            const start = document.getElementById('startDate').value;
-            window.open(`${jsonUrlBase}?start=${start}`, '_blank');
+            window.open(`${jsonUrlBase}?${currentQuery}`, '_blank');
         }
         
         function viewGitHub() {
@@ -607,17 +606,21 @@
             const url = `https://www.forexfactory.com/calendar?week=${weekParam}`;
             window.open(url, '_blank', 'noopener');
         }
-
-                async function fetchIntoPage(ev) {
+    
+        async function fetchIntoPage(ev) {
             const startDate = document.getElementById('startDate').value;
             if (!startDate) { alert('Please select a start date'); return; }
-
+    
             const btn = ev.currentTarget;
             const original = btn.textContent;
             btn.disabled = true; btn.textContent = '⏳ Fetching...';
+            
+            // Store the current query
+            currentQuery = `start=${startDate}`;
+            
             try {
                 // Use start= to get exactly selected date + 6 days
-                const res = await fetch(`${jsonUrlBase}?start=${startDate}`, { cache: 'no-store' });
+                const res = await fetch(`${jsonUrlBase}?${currentQuery}`, { cache: 'no-store' });
                 if (!res.ok) throw new Error(await res.text());
                 calendarData = await res.json();
                 document.getElementById('eventCount').textContent = `${calendarData.length} events`;
@@ -636,29 +639,37 @@
                 setTimeout(() => { btn.disabled = false; btn.textContent = original; }, 3000);
             }
         }
-
+    
         async function fetchQuick(mode, value) {
             try {
-                let url = jsonUrlBase;
-                if (mode === 'day') url += `?day=${encodeURIComponent(value)}`;
-                else if (mode === 'week') url += `?week=${encodeURIComponent(value)}`;
-                else if (mode === 'month') url += `?month=${encodeURIComponent(value)}`;
+                // Build and store the current query
+                if (mode === 'day') currentQuery = `day=${encodeURIComponent(value)}`;
+                else if (mode === 'week') currentQuery = `week=${encodeURIComponent(value)}`;
+                else if (mode === 'month') currentQuery = `month=${encodeURIComponent(value)}`;
                 else return;
-                const res = await fetch(url, { cache: 'no-store' });
+                
+                const res = await fetch(`${jsonUrlBase}?${currentQuery}`, { cache: 'no-store' });
                 if (!res.ok) throw new Error(await res.text());
                 calendarData = await res.json();
                 document.getElementById('eventCount').textContent = `${calendarData.length} events`;
+                
+                // Update last update time
+                if (calendarData.length > 0 && calendarData[0].scraped_at) {
+                    const date = new Date(calendarData[0].scraped_at);
+                    document.getElementById('lastUpdate').textContent = 
+                        `Last Updated: ${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+                }
+                
                 displayTable(calendarData);
             } catch (e) {
                 console.error(e);
                 alert('Fetch failed. See console for details.');
             }
         }
-
-        
         
         // Initialize on load
         init();
-    </script>
+    </script>  
+ 
 </body>
 </html>
