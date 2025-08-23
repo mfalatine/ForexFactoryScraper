@@ -232,14 +232,10 @@ exports.handler = async (event) => {
         baseline = monday;
       } else {
         // Handle explicit week format (e.g., aug19.2025)
+        // For explicit dates, use the exact date selected, not the Monday of that week
         const d = parseWeekParamToDate(weekParamRaw);
         if (!d || isNaN(d)) throw new Error('Invalid week');
-        const monday = new Date(d);
-        const wd = monday.getDay();
-        // Same fix for explicit dates
-        const daysBack = wd === 0 ? 6 : wd - 1;
-        monday.setDate(monday.getDate() - daysBack);
-        baseline = monday;
+        baseline = new Date(d.getFullYear(), d.getMonth(), d.getDate());
       }
     } else if (start) {
       mode = 'range';
@@ -331,5 +327,3 @@ exports.handler = async (event) => {
     return { statusCode: 500, headers, body: JSON.stringify({ error: String(e) }) };
   }
 };
-
-
