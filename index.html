@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Free Forex Calendar Data - Updated Weekly</title>
-    <meta name="description" content="Free ForexFactory calendar data, updated weekly. Download as JSON or CSV.">
+    <title>Forex Factory Data Scaper</title>
+    <meta name="description" content="Forex Factory Data Scaper, updated weekly. Download as JSON or CSV.">
     
     <style>
         * {
@@ -467,7 +467,7 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
         </div>
         
         <div class="data-preview">
-            <h2>📊 Data Preview (Latest 20 Events)</h2>
+            <h2>📊 Data Preview (All Events)</h2>
             <div id="tableContainer" class="loading">
                 Loading data...
             </div>
@@ -534,7 +534,7 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
                 }
                 
                 // Display preview table
-                displayTable(calendarData.slice(0, 20));
+                displayTable(calendarData);
                 
             } catch (error) {
                 console.error('Error loading data:', error);
@@ -593,7 +593,7 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
                     </tbody>
                 </table>
                 <p style="margin-top: 20px; color: #666; text-align: center;">
-                    Showing first 20 of ${calendarData.length} events. Download full dataset above.
+                    Showing all ${calendarData.length} events.
                 </p>
             `;
             
@@ -665,7 +665,7 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
                     document.getElementById('lastUpdate').textContent = 
                         `Last Updated: ${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
                 }
-                displayTable(calendarData.slice(0, 20));
+                displayTable(calendarData);
                 btn.textContent = '✅ Fetched!';
             } catch (e) {
                 console.error(e);
