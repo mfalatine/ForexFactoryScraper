@@ -116,11 +116,71 @@ exports.handler = async (event) => {
       });
     });
 
-    // Filter to the requested week bounds
-    const weekStart = monday.toISOString().slice(0, 10);
-    const weekEnd = new Date(monday); weekEnd.setDate(monday.getDate() + 6);
-    const endIso = weekEnd.toISOString().slice(0, 10);
-    const filtered = rows.filter(r => r.date && r.date >= weekStart && r.date <= endIso);
+    // If the rolling 7-day window crosses into next week, fetch the next page too
+    const windowEnd = new Date(d); windowEnd.setDate(d.getDate() + 6);
+    const weekSunday = new Date(monday); weekSunday.setDate(monday.getDate() + 6);
+    if (windowEnd > weekSunday) {
+      const nextWeekParam = toWeekParam(windowEnd.toISOString().slice(0, 10));
+      const url2 = `https://www.forexfactory.com/calendar?week=${nextWeekParam}`;
+      const html2 = await fetchText(url2);
+      const $2 = cheerio.load(html2);
+      const table2 = $2('table.calendar__table');
+      if (table2.length) {
+        const monday2 = new Date(windowEnd);
+        const wd2 = monday2.getDay();
+        monday2.setDate(monday2.getDate() - ((wd2 + 6) % 7));
+        let dayIndex2 = -1; let currentIso2 = null;
+        table2.find('tr').each((_, el) => {
+          const row2 = $2(el);
+          const dateCell2 = row2.find('td.calendar__date, td.date');
+          if (dateCell2.length && dateCell2.text().trim()) {
+            dayIndex2 += 1;
+            const cur2 = new Date(monday2);
+            cur2.setDate(monday2.getDate() + dayIndex2);
+            currentIso2 = cur2.toISOString().slice(0, 10);
+          }
+
+          const eventCell2 = row2.find('td.calendar__event, td.event');
+          if (!eventCell2.length) return;
+          const eventText2 = eventCell2.text().trim();
+          if (!eventText2) return;
+
+          const timeCell2 = row2.find('td.calendar__time, td.time');
+          const currencyCell2 = row2.find('td.calendar__currency, td.currency');
+          const impactCell2 = row2.find('td.calendar__impact, td.impact');
+          const actualCell2 = row2.find('td.calendar__actual, td.actual');
+          const forecastCell2 = row2.find('td.calendar__forecast, td.forecast');
+          const previousCell2 = row2.find('td.calendar__previous, td.previous');
+
+          let impact2 = '';
+          const span2 = impactCell2.find('span');
+          if (span2.length) {
+            const cls2 = (span2.attr('class') || '').toLowerCase();
+            if (cls2.includes('high') || cls2.includes('red')) impact2 = 'High';
+            else if (cls2.includes('medium') || cls2.includes('ora') || cls2.includes('orange')) impact2 = 'Medium';
+            else if (cls2.includes('low') || cls2.includes('yel') || cls2.includes('yellow')) impact2 = 'Low';
+          }
+
+          rows.push({
+            date: currentIso2,
+            time: timeCell2.text().trim(),
+            currency: currencyCell2.text().trim(),
+            impact: impact2,
+            event: eventText2,
+            actual: actualCell2.text().trim(),
+            forecast: forecastCell2.text().trim(),
+            previous: previousCell2.text().trim(),
+            scraped_at: new Date().toISOString()
+          });
+        });
+      }
+    }
+
+    // Filter to a rolling 7-day window from the selected start date (inclusive)
+    const startIso = d.toISOString().slice(0, 10);
+    const endDate = new Date(d); endDate.setDate(d.getDate() + 6);
+    const endIso = endDate.toISOString().slice(0, 10);
+    const filtered = rows.filter((r) => r.date && r.date >= startIso && r.date <= endIso);
 
     if (format === 'csv') {
       return { statusCode: 200, headers: { ...headers, 'Content-Type': 'text/csv' }, body: toCsv(filtered) };

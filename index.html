@@ -460,14 +460,9 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
         
         // Initialize page
         async function init() {
-            // Set today's date as default for start date
+            // Set today's date as default for start date (no Monday normalization)
             const today = new Date();
-            // default to Monday of this week
-            const monday = new Date(today);
-            const day = monday.getDay();
-            const diff = (day === 0 ? -6 : 1) - day; // shift to Monday (Mon=1)
-            monday.setDate(monday.getDate() + diff);
-            const todayString = monday.toISOString().split('T')[0];
+            const todayString = today.toISOString().split('T')[0];
             document.getElementById('startDate').value = todayString;
             
             // Update URLs in code examples
