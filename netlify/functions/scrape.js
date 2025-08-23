@@ -54,28 +54,40 @@ function parseCalendarHtml(html, baseline, timezoneOffset = 1) {
   const table = $('table.calendar__table');
   if (!table.length) throw new Error('Calendar table not found');
 
-  const dowToIndex = { mon: 0, tue: 1, wed: 2, thu: 3, fri: 4, sat: 5, sun: 6 };
-
-  // Helper: parse an explicit date label from the table (e.g., "Sat Aug 23")
-  function parseExplicitDateLabel(label, baselineDate) {
+  // Helper: parse date labels like "Mon Aug 25" or "Aug 25" or "Monday August 25, 2024"
+  function parseExplicitDateLabel(label) {
     if (!label) return null;
+    
     const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
-    const m = /(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\s*(\d{1,2})(?:\s*,?\s*(\d{4}))?/i.exec(label);
+    
+    // Match patterns like "Aug 25" or "Mon Aug 25" or "August 25, 2024"
+    const m = /(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*\s+(\d{1,2})(?:\s*,?\s*(\d{4}))?/i.exec(label);
     if (!m) return null;
-    const monthIdx = months.indexOf(m[1].toLowerCase());
-    const dayNum = Number(m[2]);
-    let year = baselineDate.getFullYear();
-    if (m[3]) {
-      year = Number(m[3]);
-    } else {
-      const baseMonth = baselineDate.getMonth();
-      if (baseMonth === 11 && monthIdx === 0) year = year + 1;
-      else if (baseMonth === 0 && monthIdx === 11) year = year - 1;
+    
+    const monthIdx = months.indexOf(m[1].toLowerCase().slice(0,3));
+    if (monthIdx < 0) return null;
+    
+    const dayNum = parseInt(m[2]);
+    let year = m[3] ? parseInt(m[3]) : new Date().getFullYear();
+    
+    // If no year specified and we're looking at a month that might be next year
+    // (e.g., viewing January data in December), adjust the year
+    if (!m[3]) {
+      const currentMonth = new Date().getMonth();
+      // If current month is Nov/Dec (10,11) and viewing Jan/Feb (0,1), assume next year
+      if (currentMonth >= 10 && monthIdx <= 1) {
+        year = new Date().getFullYear() + 1;
+      }
+      // If current month is Jan/Feb (0,1) and viewing Nov/Dec (10,11), assume last year
+      else if (currentMonth <= 1 && monthIdx >= 10) {
+        year = new Date().getFullYear() - 1;
+      }
     }
+    
     return new Date(year, monthIdx, dayNum);
   }
 
-  // Helper: adjust time by timezone offset
+  // Helper: adjust time by timezone offset (keep this as is, it works)
   function adjustTimeAndDate(timeStr, dateIso, offsetHours) {
     // Skip if no time or special values
     if (!timeStr || timeStr === '' || /Day\s+All/i.test(timeStr) || /All\s+Day/i.test(timeStr)) {
@@ -136,47 +148,36 @@ function parseCalendarHtml(html, baseline, timezoneOffset = 1) {
     return { time: newTimeStr, date: newDateIso };
   }
 
-  let dayIndex = -1;
+  // Process the table rows
   let currentIso = null;
   const rows = [];
 
   table.find('tr').each((_, el) => {
     const row = $(el);
+    
+    // Check if this row has a date header
     const dateCell = row.find('td.calendar__date, td.date');
     if (dateCell.length && dateCell.text().trim()) {
       const label = dateCell.text().trim();
-      const explicit = parseExplicitDateLabel(label, baseline);
-      if (explicit) {
-        currentIso = formatDateLocal(explicit);
-        const diffMs = explicit - new Date(formatDateLocal(baseline));
-        const diffDays = Math.round(diffMs / (24*60*60*1000));
-        if (!isNaN(diffDays)) dayIndex = diffDays;
-      } else {
-        let matchedOffset = null;
-        const m = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)/i.exec(label);
-        if (m) {
-          const idx = dowToIndex[m[1].toLowerCase().slice(0,3)];
-          if (typeof idx === 'number') matchedOffset = idx;
-        }
-        if (matchedOffset != null) {
-          const cur = new Date(baseline);
-          cur.setDate(baseline.getDate() + matchedOffset);
-          currentIso = formatDateLocal(cur);
-          dayIndex = matchedOffset;
-        } else {
-          dayIndex += 1;
-          const cur = new Date(baseline);
-          cur.setDate(baseline.getDate() + Math.max(0, dayIndex));
-          currentIso = formatDateLocal(cur);
-        }
+      const parsedDate = parseExplicitDateLabel(label);
+      
+      if (parsedDate) {
+        // Use the exact date from ForexFactory
+        currentIso = formatDateLocal(parsedDate);
       }
+      // If we can't parse the date, keep using the previous currentIso
     }
 
+    // Check if this row has an event
     const eventCell = row.find('td.calendar__event, td.event');
     if (!eventCell.length) return;
     const eventText = eventCell.text().trim();
     if (!eventText) return;
 
+    // Only process if we have a current date
+    if (!currentIso) return;
+
+    // Extract other fields
     const timeCell = row.find('td.calendar__time, td.time');
     const currencyCell = row.find('td.calendar__currency, td.currency');
     const impactCell = row.find('td.calendar__impact, td.impact');
@@ -184,6 +185,7 @@ function parseCalendarHtml(html, baseline, timezoneOffset = 1) {
     const forecastCell = row.find('td.calendar__forecast, td.forecast');
     const previousCell = row.find('td.calendar__previous, td.previous');
 
+    // Parse impact level
     let impact = '';
     const span = impactCell.find('span');
     if (span.length) {
@@ -193,9 +195,11 @@ function parseCalendarHtml(html, baseline, timezoneOffset = 1) {
       else if (cls.includes('low') || cls.includes('yel') || cls.includes('yellow')) impact = 'Low';
     }
 
+    // Get the time and apply timezone offset
     const rawTime = timeCell.text().trim();
     const { time: adjustedTime, date: adjustedDate } = adjustTimeAndDate(rawTime, currentIso, timezoneOffset);
     
+    // Add the event to results
     rows.push({
       date: adjustedDate,
       time: adjustedTime,
