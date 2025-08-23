@@ -215,14 +215,10 @@ exports.handler = async (event) => {
       });
     });
 
-    // Filter according to mode for stable output window
+    // Filter according to mode
+    // For week mode: return exactly what is on the weekly page without extra filtering.
     let filtered = rows;
-    if (mode === 'week') {
-      const weekStart = formatDateLocal(baseline);
-      const weekEnd = new Date(baseline); weekEnd.setDate(baseline.getDate() + 6);
-      const endIso = formatDateLocal(weekEnd);
-      filtered = rows.filter((r) => r.date && r.date >= weekStart && r.date <= endIso);
-    } else if (mode === 'day') {
+    if (mode === 'day') {
       const iso = formatDateLocal(baseline);
       filtered = rows.filter((r) => r.date === iso);
     } else if (mode === 'month') {
