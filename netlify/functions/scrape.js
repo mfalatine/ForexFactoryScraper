@@ -50,23 +50,68 @@ exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers, body: '' };
 
   try {
-    const start = (event.queryStringParameters?.start || '').trim();
-    if (!start) return { statusCode: 400, headers, body: 'Missing start query param (YYYY-MM-DD)' };
+    const qs = event.queryStringParameters || {};
+    const weekParamRaw = (qs.week || '').trim();
+    const dayParamRaw = (qs.day || '').trim(); // yesterday|today|tomorrow
+    const monthParamRaw = (qs.month || '').trim(); // last|this|next
+    const start = (qs.start || '').trim();
+    if (!weekParamRaw && !dayParamRaw && !monthParamRaw && !start) {
+      return { statusCode: 400, headers, body: 'Missing query: provide day=, week=, month=, or start=YYYY-MM-DD' };
+    }
     const format = (event.queryStringParameters?.format || 'json').toLowerCase();
 
-    const week = toWeekParam(start);
-    const url = `https://www.forexfactory.com/calendar?week=${week}`;
+    // Build FF URL exactly like the site
+    let url = '';
+    if (dayParamRaw) {
+      url = `https://www.forexfactory.com/calendar?day=${encodeURIComponent(dayParamRaw)}`;
+    } else if (weekParamRaw || start) {
+      const week = weekParamRaw || toWeekParam(start);
+      url = `https://www.forexfactory.com/calendar?week=${week}`;
+    } else if (monthParamRaw) {
+      url = `https://www.forexfactory.com/calendar?month=${encodeURIComponent(monthParamRaw)}`;
+    }
     const html = await fetchText(url);
 
     const $ = cheerio.load(html);
     const table = $('table.calendar__table');
     if (!table.length) throw new Error('Calendar table not found');
 
-    // Map day sections to ISO dates based on Monday anchor
-    const d = new Date(start);
-    const monday = new Date(d);
-    const wd = monday.getDay();
-    monday.setDate(monday.getDate() - ((wd + 6) % 7)); // Monday
+    // Establish baseline date for date headers depending on mode
+    function parseWeekParamToDate(weekParam) {
+      // e.g., aug19.2025
+      const m = /([a-z]{3})(\d{1,2})\.(\d{4})/i.exec(weekParam);
+      if (!m) return null;
+      const monthStr = m[1].toLowerCase();
+      const monthIdx = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'].indexOf(monthStr);
+      if (monthIdx < 0) return null;
+      return new Date(Number(m[3]), monthIdx, Number(m[2]));
+    }
+
+    let mode = 'week';
+    let baseline = null; // Date used when encountering a new date header
+    if (dayParamRaw) {
+      mode = 'day';
+      const now = new Date();
+      const base = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      if (dayParamRaw === 'yesterday') base.setDate(base.getDate() - 1);
+      else if (dayParamRaw === 'tomorrow') base.setDate(base.getDate() + 1);
+      baseline = base; // single day
+    } else if (weekParamRaw || start) {
+      mode = 'week';
+      const d = weekParamRaw ? parseWeekParamToDate(weekParamRaw) : new Date(start);
+      if (!d || isNaN(d)) throw new Error('Invalid week/start');
+      const monday = new Date(d);
+      const wd = monday.getDay();
+      monday.setDate(monday.getDate() - ((wd + 6) % 7));
+      baseline = monday;
+    } else if (monthParamRaw) {
+      mode = 'month';
+      const now = new Date();
+      let y = now.getFullYear(); let m = now.getMonth();
+      if (monthParamRaw === 'last') { m -= 1; if (m < 0) { m = 11; y -= 1; } }
+      else if (monthParamRaw === 'next') { m += 1; if (m > 11) { m = 0; y += 1; } }
+      baseline = new Date(y, m, 1);
+    }
 
     let dayIndex = -1;
     let currentIso = null;
@@ -77,8 +122,8 @@ exports.handler = async (event) => {
       const dateCell = row.find('td.calendar__date, td.date');
       if (dateCell.length && dateCell.text().trim()) {
         dayIndex += 1;
-        const cur = new Date(monday);
-        cur.setDate(monday.getDate() + dayIndex);
+        const cur = new Date(baseline);
+        cur.setDate(baseline.getDate() + dayIndex);
         currentIso = cur.toISOString().slice(0, 10);
       }
 
@@ -116,11 +161,22 @@ exports.handler = async (event) => {
       });
     });
 
-    // Filter to the selected date's week (Mon..Sun), matching ForexFactory week view
-    const weekStart = monday.toISOString().slice(0, 10);
-    const weekEnd = new Date(monday); weekEnd.setDate(monday.getDate() + 6);
-    const endIso = weekEnd.toISOString().slice(0, 10);
-    const filtered = rows.filter((r) => r.date && r.date >= weekStart && r.date <= endIso);
+    // Filter according to mode for stable output window
+    let filtered = rows;
+    if (mode === 'week') {
+      const weekStart = baseline.toISOString().slice(0, 10);
+      const weekEnd = new Date(baseline); weekEnd.setDate(baseline.getDate() + 6);
+      const endIso = weekEnd.toISOString().slice(0, 10);
+      filtered = rows.filter((r) => r.date && r.date >= weekStart && r.date <= endIso);
+    } else if (mode === 'day') {
+      const iso = baseline.toISOString().slice(0, 10);
+      filtered = rows.filter((r) => r.date === iso);
+    } else if (mode === 'month') {
+      const startIso = new Date(baseline.getFullYear(), baseline.getMonth(), 1).toISOString().slice(0, 10);
+      const end = new Date(baseline.getFullYear(), baseline.getMonth() + 1, 0);
+      const endIso = end.toISOString().slice(0, 10);
+      filtered = rows.filter((r) => r.date && r.date >= startIso && r.date <= endIso);
+    }
 
     if (format === 'csv') {
       return { statusCode: 200, headers: { ...headers, 'Content-Type': 'text/csv' }, body: toCsv(filtered) };
