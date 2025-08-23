@@ -553,12 +553,12 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
             const todayString = `${today.getFullYear()}-${pad2(today.getMonth() + 1)}-${pad2(today.getDate())}`;
             document.getElementById('startDate').value = todayString;
             
-            // Update URLs in code examples
-            document.getElementById('jsonUrl').textContent = '/.netlify/functions/scrape?start=YYYY-MM-DD';
-            document.getElementById('csvUrl').textContent = '/.netlify/functions/scrape?start=YYYY-MM-DD&format=csv';
-            document.getElementById('fetchUrl').textContent = '/.netlify/functions/scrape?start=YYYY-MM-DD';
-            document.getElementById('pythonUrl').textContent = '/.netlify/functions/scrape?start=YYYY-MM-DD';
-            document.getElementById('pandasUrl').textContent = '/.netlify/functions/scrape?start=YYYY-MM-DD&format=csv';
+            // Update URLs in code examples (use ForexFactory week format)
+            document.getElementById('jsonUrl').textContent = '/.netlify/functions/scrape?week=aug19.2025';
+            document.getElementById('csvUrl').textContent = '/.netlify/functions/scrape?week=aug19.2025&format=csv';
+            document.getElementById('fetchUrl').textContent = '/.netlify/functions/scrape?week=aug19.2025';
+            document.getElementById('pythonUrl').textContent = '/.netlify/functions/scrape?week=aug19.2025';
+            document.getElementById('pandasUrl').textContent = '/.netlify/functions/scrape?week=aug19.2025&format=csv';
             
             // Load the data using week= (same logic as the FF button)
             try {
@@ -650,17 +650,26 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
         
         function downloadJSON() {
             const start = document.getElementById('startDate').value;
-            window.open(`${jsonUrlBase}?start=${start}`, '_blank');
+            const d = new Date(start);
+            const m = d.toLocaleString('en-US', { month: 'short' }).toLowerCase();
+            const weekParam = `${m}${d.getDate()}.${d.getFullYear()}`;
+            window.open(`${jsonUrlBase}?week=${weekParam}`, '_blank');
         }
         
         function downloadCSV() {
             const start = document.getElementById('startDate').value;
-            window.open(`${csvUrlBase}&start=${start}`, '_blank');
+            const d = new Date(start);
+            const m = d.toLocaleString('en-US', { month: 'short' }).toLowerCase();
+            const weekParam = `${m}${d.getDate()}.${d.getFullYear()}`;
+            window.open(`${csvUrlBase}&week=${weekParam}`, '_blank');
         }
         
         function viewRawJSON() {
             const start = document.getElementById('startDate').value;
-            window.open(`${jsonUrlBase}?start=${start}`, '_blank');
+            const d = new Date(start);
+            const m = d.toLocaleString('en-US', { month: 'short' }).toLowerCase();
+            const weekParam = `${m}${d.getDate()}.${d.getFullYear()}`;
+            window.open(`${jsonUrlBase}?week=${weekParam}`, '_blank');
         }
         
         function viewGitHub() {
@@ -696,7 +705,7 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
                 const d = new Date(startDate);
                 const month = d.toLocaleString('en-US', { month: 'short' }).toLowerCase();
                 const weekParam = `${month}${d.getDate()}.${d.getFullYear()}`;
-                const res = await fetch(`${jsonUrlBase}?start=${startDate}`, { cache: 'no-store' });
+                const res = await fetch(`${jsonUrlBase}?week=${weekParam}`, { cache: 'no-store' });
                 if (!res.ok) throw new Error(await res.text());
                 calendarData = await res.json();
                 document.getElementById('eventCount').textContent = `${calendarData.length} events`;
