@@ -300,36 +300,7 @@
             box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
         }
         
-        .command-output {
-            margin-top: 25px;
-            padding: 20px;
-            background: white;
-            border-radius: 8px;
-            border: 2px solid #28a745;
-        }
         
-        .command-output h4 {
-            color: #28a745;
-            margin-bottom: 15px;
-            font-size: 1.1em;
-        }
-        
-        .btn-copy {
-            background: #6c757d;
-            color: white;
-            padding: 10px 20px;
-            font-size: 14px;
-            margin-top: 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: none;
-        }
-        
-        .btn-copy:hover {
-            background: #5a6268;
-            transform: translateY(-1px);
-        }
         
         @media (max-width: 768px) {
             h1 {
@@ -399,6 +370,13 @@
                 </button>
             </div>
             
+            <div class="data-preview">
+                <h2>📊 Data Preview (All Events)</h2>
+                <div id="tableContainer" class="loading">
+                    Loading data...
+                </div>
+            </div>
+
             <!-- Manual Scraping Section -->
             <div class="manual-scraping-section">
                 <h3>🔧 Manual Scraping</h3>
@@ -410,23 +388,13 @@
                         <input type="date" id="startDate" value="">
                     </div>
                 </div>
-                
-                <button class="btn-scrape" onclick="generateScrapingCommand()">
-                    🚀 Generate Scraping Command
-                </button>
                 <button class="btn-scrape" onclick="runNow(event)">
                     ⚡ Run Now (online)
                 </button>
-                
-                <div id="commandOutput" class="command-output" style="display: none;">
-                    <h4>Copy and run this command:</h4>
-                    <div class="code-block">
-                        <code id="generatedCommand"></code>
-                    </div>
-                    <button class="btn-copy" onclick="copyCommand()">📋 Copy Command</button>
-                </div>
             </div>
         </header>
+        
+        
         
         <div class="api-section">
             <h2>🔌 API Usage</h2>
@@ -463,13 +431,6 @@ data = response.json()<br><br>
 # Or get CSV directly into pandas<br>
 df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
                 </code>
-            </div>
-        </div>
-        
-        <div class="data-preview">
-            <h2>📊 Data Preview (All Events)</h2>
-            <div id="tableContainer" class="loading">
-                Loading data...
             </div>
         </div>
         
@@ -619,35 +580,6 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
             window.open(githubUrl, '_blank');
         }
         
-        // Manual scraping functions (now directly fetch from Netlify Function)
-        function generateScrapingCommand() {
-            const startDate = document.getElementById('startDate').value;
-            
-            if (!startDate) {
-                alert('Please select a start date');
-                return;
-            }
-            
-            // Compute end date = start + 6 days
-            const d = new Date(startDate);
-            const endDate = new Date(d);
-            endDate.setDate(d.getDate() + 6);
-            const endStr = endDate.toISOString().split('T')[0];
-
-            // Generate command
-            const command = `python scraper.py --start-date ${startDate} --end-date ${endStr}`;
-            
-            // Display command
-            document.getElementById('generatedCommand').textContent = command;
-            document.getElementById('commandOutput').style.display = 'block';
-            
-            // Scroll to command output
-            document.getElementById('commandOutput').scrollIntoView({ 
-                behavior: 'smooth',
-                block: 'center'
-            });
-        }
-        
         async function runNow(ev) {
             const startDate = document.getElementById('startDate').value;
             if (!startDate) { alert('Please select a start date'); return; }
@@ -676,66 +608,7 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
             }
         }
 
-        function copyCommand() {
-            const command = document.getElementById('generatedCommand').textContent;
-            
-            // Copy to clipboard
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(command).then(() => {
-                    // Show feedback
-                    const btn = document.querySelector('.btn-copy');
-                    const originalText = btn.textContent;
-                    btn.textContent = '✅ Copied!';
-                    btn.style.background = '#28a745';
-                    
-                    setTimeout(() => {
-                        btn.textContent = originalText;
-                        btn.style.background = '#6c757d';
-                    }, 2000);
-                }).catch(err => {
-                    console.error('Failed to copy command: ', err);
-                    fallbackCopyTextToClipboard(command);
-                });
-            } else {
-                // Fallback for older browsers
-                fallbackCopyTextToClipboard(command);
-            }
-        }
         
-        function fallbackCopyTextToClipboard(text) {
-            const textArea = document.createElement("textarea");
-            textArea.value = text;
-            textArea.style.top = "0";
-            textArea.style.left = "0";
-            textArea.style.position = "fixed";
-            
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-            
-            try {
-                const successful = document.execCommand('copy');
-                if (successful) {
-                    // Show feedback
-                    const btn = document.querySelector('.btn-copy');
-                    const originalText = btn.textContent;
-                    btn.textContent = '✅ Copied!';
-                    btn.style.background = '#28a745';
-                    
-                    setTimeout(() => {
-                        btn.textContent = originalText;
-                        btn.style.background = '#6c757d';
-                    }, 2000);
-                } else {
-                    alert('Unable to copy command. Please copy manually.');
-                }
-            } catch (err) {
-                console.error('Fallback: Oops, unable to copy', err);
-                alert('Unable to copy command. Please copy manually.');
-            }
-            
-            document.body.removeChild(textArea);
-        }
         
         // Initialize on load
         init();
