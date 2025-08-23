@@ -542,6 +542,7 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
         let jsonUrl = jsonUrlBase;
         let csvUrl = csvUrlBase;
         const githubUrl = `https://github.com/${GITHUB_USER}/${REPO_NAME}`;
+        const OFFSET_MINUTES = 0; // Use raw times exactly as shown on FF
         
         let calendarData = [];
         
@@ -566,7 +567,7 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
                 const tDate = new Date(ty, tm - 1, td);
                 const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
                 const weekParam = `${months[tDate.getMonth()]}${tDate.getDate()}.${tDate.getFullYear()}`;
-                const response = await fetch(`${jsonUrlBase}?week=${weekParam}`, { cache: 'no-store' });
+                const response = await fetch(`${jsonUrlBase}?week=${weekParam}&offsetMinutes=${OFFSET_MINUTES}`, { cache: 'no-store' });
                 if (!response.ok) throw new Error('Failed to load data');
                 
                 calendarData = await response.json();
@@ -650,17 +651,17 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
         
         function downloadJSON() {
             const start = document.getElementById('startDate').value;
-            window.open(`${jsonUrlBase}?start=${start}`, '_blank');
+            window.open(`${jsonUrlBase}?start=${start}&offsetMinutes=${OFFSET_MINUTES}`, '_blank');
         }
         
         function downloadCSV() {
             const start = document.getElementById('startDate').value;
-            window.open(`${csvUrlBase}&start=${start}`, '_blank');
+            window.open(`${csvUrlBase}&start=${start}&offsetMinutes=${OFFSET_MINUTES}`, '_blank');
         }
         
         function viewRawJSON() {
             const start = document.getElementById('startDate').value;
-            window.open(`${jsonUrlBase}?start=${start}`, '_blank');
+            window.open(`${jsonUrlBase}?start=${start}&offsetMinutes=${OFFSET_MINUTES}`, '_blank');
         }
         
         function viewGitHub() {
@@ -696,7 +697,7 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
                 const d = new Date(startDate);
                 const month = d.toLocaleString('en-US', { month: 'short' }).toLowerCase();
                 const weekParam = `${month}${d.getDate()}.${d.getFullYear()}`;
-                const res = await fetch(`${jsonUrlBase}?start=${startDate}`, { cache: 'no-store' });
+                const res = await fetch(`${jsonUrlBase}?start=${startDate}&offsetMinutes=${OFFSET_MINUTES}`, { cache: 'no-store' });
                 if (!res.ok) throw new Error(await res.text());
                 calendarData = await res.json();
                 document.getElementById('eventCount').textContent = `${calendarData.length} events`;
@@ -723,6 +724,7 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
                 else if (mode === 'week') url += `?week=${encodeURIComponent(value)}`;
                 else if (mode === 'month') url += `?month=${encodeURIComponent(value)}`;
                 else return;
+                url += (url.includes('?') ? '&' : '?') + `offsetMinutes=${OFFSET_MINUTES}`;
                 const res = await fetch(url, { cache: 'no-store' });
                 if (!res.ok) throw new Error(await res.text());
                 calendarData = await res.json();

@@ -17,7 +17,7 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 15px;
         }
         
         .container {
@@ -27,52 +27,54 @@
         
         header {
             background: white;
-            border-radius: 15px;
-            padding: 40px;
-            margin-bottom: 30px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
             text-align: center;
         }
         
         h1 {
             color: #1e3c72;
-            margin-bottom: 10px;
-            font-size: 2.5em;
+            margin-bottom: 8px;
+            font-size: 2.2em;
         }
         
         .subtitle {
             color: #666;
-            font-size: 1.2em;
-            margin-bottom: 20px;
+            font-size: 1.1em;
+            margin-bottom: 15px;
         }
         
         .last-update {
             background: #e8f4f8;
             display: inline-block;
-            padding: 10px 20px;
-            border-radius: 25px;
+            padding: 8px 16px;
+            border-radius: 20px;
             color: #1e3c72;
             font-weight: 600;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
         }
         
         .info-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin: 30px 0;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
         }
         
         .info-card {
             background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
+            padding: 15px;
+            border-radius: 8px;
             text-align: center;
         }
         
         .info-card h3 {
             color: #1e3c72;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
+            font-size: 1em;
         }
         
         .info-card p {
@@ -82,15 +84,15 @@
         
         .buttons {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             justify-content: center;
             flex-wrap: wrap;
-            margin: 30px 0;
+            margin: 20px 0;
         }
         
         button {
-            padding: 15px 30px;
-            font-size: 16px;
+            padding: 12px 24px;
+            font-size: 15px;
             font-weight: 600;
             border: none;
             border-radius: 8px;
@@ -98,7 +100,7 @@
             transition: all 0.3s;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
         
         .btn-primary {
@@ -119,23 +121,24 @@
         
         .api-section {
             background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
         }
         
         .api-section h2 {
             color: #1e3c72;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            font-size: 1.4em;
         }
         
         .code-block {
             background: #f4f4f4;
             border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 15px 0;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 12px 0;
             font-family: 'Courier New', monospace;
             overflow-x: auto;
         }
@@ -147,9 +150,9 @@
         
         .data-preview {
             background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
             overflow-x: auto;
         }
         
@@ -161,15 +164,17 @@
         th {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: white;
-            padding: 15px;
+            padding: 12px;
             text-align: left;
             position: sticky;
             top: 0;
+            font-size: 0.9em;
         }
         
         td {
-            padding: 12px 15px;
+            padding: 10px 12px;
             border-bottom: 1px solid #e0e0e0;
+            font-size: 0.9em;
         }
         
         tr:hover {
@@ -200,21 +205,21 @@
         
         .loading {
             text-align: center;
-            padding: 40px;
+            padding: 30px;
             color: #666;
         }
         
         .error {
             background: #fee;
             color: #c00;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
         }
         
         footer {
             text-align: center;
-            padding: 30px;
+            padding: 20px;
             color: white;
         }
         
@@ -227,32 +232,35 @@
         .manual-scraping-section {
             background: #f8f9fa;
             border-radius: 10px;
-            padding: 25px;
-            margin-top: 30px;
-            border: 2px solid #e9ecef;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid #e9ecef;
         }
-        .manual-scrape-grid { display: grid; grid-template-columns: 1fr 280px; gap: 24px; align-items: start; }
-        .quick-links { background: #fff; border: 1px solid #e9ecef; border-radius: 8px; padding: 14px; }
-        .quick-links h4 { margin: 0 0 10px 0; color: #1e3c72; }
-        .quick-links a { display: block; margin: 6px 0; color: #1e3c72; text-decoration: none; }
+        .manual-scrape-grid { display: grid; grid-template-columns: 1fr 250px; gap: 20px; align-items: start; }
+        .left-column { display: flex; flex-direction: column; align-items: center; }
+        .button-stack { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 300px; margin-top: 15px; }
+        .quick-links { background: #fff; border: 1px solid #e9ecef; border-radius: 8px; padding: 12px; }
+        .quick-links h4 { margin: 0 0 8px 0; color: #1e3c72; font-size: 0.95em; }
+        .quick-links a { display: block; margin: 4px 0; color: #1e3c72; text-decoration: none; font-size: 0.9em; }
         .quick-links a:hover { text-decoration: underline; }
         
         .manual-scraping-section h3 {
             color: #1e3c72;
-            margin-bottom: 10px;
-            font-size: 1.3em;
+            margin-bottom: 8px;
+            font-size: 1.2em;
         }
         
         .manual-scraping-section p {
             color: #666;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            font-size: 0.95em;
         }
         
         .date-inputs {
             display: flex;
-            gap: 20px;
+            gap: 15px;
             justify-content: center;
-            margin: 20px 0;
+            margin: 15px 0;
             flex-wrap: wrap;
         }
         
@@ -260,7 +268,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
         
         .input-group label {
@@ -270,7 +278,7 @@
         }
         
         .input-group input {
-            padding: 12px 15px;
+            padding: 10px 12px;
             border: 2px solid #ddd;
             border-radius: 6px;
             font-size: 14px;
@@ -285,48 +293,108 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
         
-        .btn-scrape {
+        .btn-load {
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             color: white;
-            margin: 20px 0;
             font-weight: 600;
-            padding: 15px 35px;
+            padding: 12px 20px;
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s;
             border: none;
-            display: inline-flex;
+            display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: center;
+            gap: 8px;
+            font-size: 14px;
+            width: 100%;
         }
         
-        .btn-scrape:hover {
+        .btn-open-ff {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 14px;
+            width: 100%;
+        }
+        
+        .btn-load:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+        }
+        
+        .btn-open-ff:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
         }
         
         
         
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            header {
+                padding: 20px;
+            }
+            
             h1 {
                 font-size: 1.8em;
             }
             
             .buttons {
                 flex-direction: column;
+                gap: 10px;
             }
             
             button {
                 width: 100%;
+                justify-content: center;
+            }
+            
+            .manual-scrape-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .quick-links {
+                order: -1;
+            }
+            
+            .button-stack {
+                max-width: 100%;
             }
             
             .date-inputs {
                 flex-direction: column;
-                gap: 15px;
+                gap: 10px;
             }
             
             .input-group input {
                 width: 200px;
+            }
+            
+            .api-section {
+                padding: 15px;
+            }
+            
+            .data-preview {
+                padding: 15px;
+            }
+            
+            th, td {
+                padding: 8px;
+                font-size: 0.8em;
             }
         }
     </style>
@@ -340,12 +408,8 @@
             
             <div class="info-grid">
                 <div class="info-card">
-                    <h3>📦 Returned Data</h3>
-                    <p>Selected Date +6 days = 7 day return</p>
-                </div>
-                <div class="info-card">
-                    <h3>📈 Data Points</h3>
-                    <p id="eventCount">Loading...</p>
+                    <h3>📊 <span id="eventCount">Loading...</span> Events</h3>
+                    <p>7-day data window from selected date</p>
                 </div>
             </div>
             
@@ -372,22 +436,20 @@
             
             <!-- Manual Scraping Section -->
             <div class="manual-scraping-section">
-                <h3>🔧 Manual Scraping</h3>
-                <p>Select a date then open the matching ForexFactory week URL.</p>
                 <div class="manual-scrape-grid">
-                    <div>
+                    <div class="left-column">
                         <div class="date-inputs">
                             <div class="input-group">
                                 <label for="startDate">Date:</label>
                                 <input type="date" id="startDate" value="">
                             </div>
                         </div>
-                        <div style="display:flex; gap:12px; flex-wrap:wrap;">
-                            <button class="btn-scrape" onclick="runNow(event)">
-                                🔗 Open Week on ForexFactory
-                            </button>
-                            <button class="btn-scrape" onclick="fetchIntoPage(event)">
+                        <div class="button-stack">
+                            <button class="btn-load" onclick="fetchIntoPage(event)">
                                 ⤵️ Load Into Page
+                            </button>
+                            <button class="btn-open-ff" onclick="runNow(event)">
+                                🔗 Open Week on ForexFactory
                             </button>
                         </div>
                     </div>
@@ -485,9 +547,10 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
         
         // Initialize page
         async function init() {
-            // Set today's date as default for start date (no Monday normalization)
+            // Set today's date as default for start date using LOCAL date (avoid UTC shift)
             const today = new Date();
-            const todayString = today.toISOString().split('T')[0];
+            const pad2 = (n) => String(n).padStart(2, '0');
+            const todayString = `${today.getFullYear()}-${pad2(today.getMonth() + 1)}-${pad2(today.getDate())}`;
             document.getElementById('startDate').value = todayString;
             
             // Update URLs in code examples
@@ -497,9 +560,13 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
             document.getElementById('pythonUrl').textContent = '/.netlify/functions/scrape?start=YYYY-MM-DD';
             document.getElementById('pandasUrl').textContent = '/.netlify/functions/scrape?start=YYYY-MM-DD&format=csv';
             
-            // Load the data
+            // Load the data using week= (same logic as the FF button)
             try {
-                const response = await fetch(`${jsonUrlBase}?start=${todayString}`, { cache: 'no-store' });
+                const [ty, tm, td] = todayString.split('-').map(Number);
+                const tDate = new Date(ty, tm - 1, td);
+                const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+                const weekParam = `${months[tDate.getMonth()]}${tDate.getDate()}.${tDate.getFullYear()}`;
+                const response = await fetch(`${jsonUrlBase}?week=${weekParam}`, { cache: 'no-store' });
                 if (!response.ok) throw new Error('Failed to load data');
                 
                 calendarData = await response.json();
@@ -607,9 +674,11 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
         async function runNow(ev) {
             const startDate = document.getElementById('startDate').value;
             if (!startDate) { alert('Please select a start date'); return; }
-            // Build ForexFactory week URL like aug19.2025
-            const d = new Date(startDate);
-            const month = d.toLocaleString('en-US', { month: 'short' }).toLowerCase();
+            // Build ForexFactory week URL like aug19.2025 (parse date as LOCAL to avoid UTC shift)
+            const [yy, mm, dd] = startDate.split('-').map(Number);
+            const d = new Date(yy, mm - 1, dd); // local midnight
+            const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+            const month = months[d.getMonth()];
             const weekParam = `${month}${d.getDate()}.${d.getFullYear()}`;
             const url = `https://www.forexfactory.com/calendar?week=${weekParam}`;
             window.open(url, '_blank', 'noopener');
@@ -627,7 +696,7 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
                 const d = new Date(startDate);
                 const month = d.toLocaleString('en-US', { month: 'short' }).toLowerCase();
                 const weekParam = `${month}${d.getDate()}.${d.getFullYear()}`;
-                const res = await fetch(`${jsonUrlBase}?week=${weekParam}`, { cache: 'no-store' });
+                const res = await fetch(`${jsonUrlBase}?start=${startDate}`, { cache: 'no-store' });
                 if (!res.ok) throw new Error(await res.text());
                 calendarData = await res.json();
                 document.getElementById('eventCount').textContent = `${calendarData.length} events`;

@@ -166,6 +166,11 @@ exports.handler = async (event) => {
       return { statusCode: 400, headers, body: 'Missing query: provide day=, week=, month=, or start=YYYY-MM-DD' };
     }
     const format = (event.queryStringParameters?.format || 'json').toLowerCase();
+    const tzParam = (qs.tz || '').trim();
+    const offsetParam = (qs.offsetMinutes || qs.offset || '').trim();
+    // Default to Eastern Time alignment (+60) unless caller overrides
+    const forceEastern = (qs.toEastern === undefined || qs.toEastern === '1' || qs.toEastern === 'true');
+    const offsetMinutes = offsetParam !== '' ? Number(offsetParam) : (forceEastern ? 60 : 0);
 
     // Build FF URL(s) exactly like the site
     let url = '';
@@ -251,6 +256,43 @@ exports.handler = async (event) => {
       url = `https://www.forexfactory.com/calendar?month=${encodeURIComponent(monthParamRaw)}`;
       html = await fetchText(url);
       rows = parseCalendarHtml(html, baseline);
+    }
+
+    // Optional: adjust times by a fixed offset (minutes) and update date if crossed midnight
+    if (offsetMinutes) {
+      const timeRe = /(\d{1,2})(?::(\d{2}))?\s*(am|pm)/i;
+      const toMinutes = (h, m, ampm) => {
+        let hh = Number(h) % 12;
+        if (ampm.toLowerCase() === 'pm') hh += 12;
+        return hh * 60 + Number(m || 0);
+      };
+      const to12h = (mins) => {
+        let mm = ((mins % 1440) + 1440) % 1440; // 0..1439
+        const hh24 = Math.floor(mm / 60);
+        const m = mm % 60;
+        const ampm = hh24 >= 12 ? 'pm' : 'am';
+        let hh = hh24 % 12; if (hh === 0) hh = 12;
+        const mmStr = String(m).padStart(2, '0');
+        return `${hh}:${mmStr}${ampm}`;
+      };
+      rows = rows.map((r) => {
+        const t = r.time || '';
+        const m = timeRe.exec(t);
+        if (!m) return r; // non-time strings like 'All Day'
+        const curMins = toMinutes(m[1], m[2], m[3]);
+        let newTotal = curMins + offsetMinutes;
+        let dayShift = 0;
+        while (newTotal < 0) { newTotal += 1440; dayShift -= 1; }
+        while (newTotal >= 1440) { newTotal -= 1440; dayShift += 1; }
+        const newTime = to12h(newTotal);
+        let newDate = r.date;
+        if (dayShift !== 0 && r.date) {
+          const d = new Date(r.date + 'T00:00:00');
+          d.setDate(d.getDate() + dayShift);
+          newDate = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        }
+        return { ...r, time: newTime, date: newDate };
+      });
     }
 
     // Filter according to mode
