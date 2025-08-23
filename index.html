@@ -488,11 +488,11 @@
             <p>You can fetch this data directly in your applications using these URLs:</p>
             
             <div class="code-block">
-                <code id="jsonUrl">/.netlify/functions/scrape?start=YYYY-MM-DD</code>
+                <code id="jsonUrl">/.netlify/functions/scrape?week=aug19.2025</code>
             </div>
             
             <div class="code-block">
-                <code id="csvUrl">/.netlify/functions/scrape?start=YYYY-MM-DD&format=csv</code>
+                <code id="csvUrl">/.netlify/functions/scrape?week=aug19.2025&format=csv</code>
             </div>
             
             <h3>Example Usage (JavaScript):</h3>
@@ -553,7 +553,8 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
             const todayString = `${today.getFullYear()}-${pad2(today.getMonth() + 1)}-${pad2(today.getDate())}`;
             document.getElementById('startDate').value = todayString;
             
-            // Update URLs in code examples (use ForexFactory week format)
+            // Update URLs in code examples
+            // Use ForexFactory week parameter format (e.g., aug19.2025)
             document.getElementById('jsonUrl').textContent = '/.netlify/functions/scrape?week=aug19.2025';
             document.getElementById('csvUrl').textContent = '/.netlify/functions/scrape?week=aug19.2025&format=csv';
             document.getElementById('fetchUrl').textContent = '/.netlify/functions/scrape?week=aug19.2025';
