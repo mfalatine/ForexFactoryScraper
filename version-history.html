@@ -33,6 +33,18 @@
         </header>
         <div class="card">
             <div class="entry">
+                <div class="desc"><span class="date">[2025-08-23]</span> Fixed download buttons to use current query parameters - JSON/CSV downloads now match the displayed data when using quick links (Today, Last Week, etc.).</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-23]</span> Removed deprecated Python scraper (<code>scrape.py</code>) and GitHub Actions workflow - project now uses Netlify Functions exclusively.</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-23]</span> Fixed timezone offset issue - removed +1 hour offset that was incorrectly applied to ForexFactory times (changed default from 1 to 0).</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-23]</span> Improved date parsing to use explicit dates from ForexFactory headers directly without complex offset calculations.</div>
+            </div>
+            <div class="entry">
                 <div class="desc"><span class="date">[2025-08-23]</span> Calendar selection now uses <code>start=</code> to return exactly 7 days (date +6).</div>
             </div>
             <div class="entry">
@@ -51,7 +63,7 @@
                 <div class="desc"><span class="date">[2025-08-23]</span> Fixed quick-links JS error (orphaned <code>else</code>) and improved mobile spacing.</div>
             </div>
             <div class="entry">
-                <div class="desc"><span class="date">[2025-08-23]</span> Removed "API Usage" section from the index page to simplify tlhe interface.</div>
+                <div class="desc"><span class="date">[2025-08-23]</span> Removed "API Usage" section from the index page to simplify the interface.</div>
             </div>
             <div class="entry">
                 <div class="desc"><span class="date">[2025-08-23]</span> Fixed date selection bug: explicit dates (e.g., Aug 19, 2025) now return data starting from the selected date, not from Monday of that week.</div>
@@ -60,7 +72,7 @@
                 <div class="desc"><span class="date">[2025-08-23]</span> Default date now uses local time (fixed off-by-one day).</div>
             </div>
             <div class="entry">
-                <div class="desc"><span class="date">[2025-08-23]</span> “Open Week on ForexFactory” builds the exact week URL from the selected date.</div>
+                <div class="desc"><span class="date">[2025-08-23]</span> "Open Week on ForexFactory" builds the exact week URL from the selected date.</div>
             </div>
             <div class="entry">
                 <div class="desc"><span class="date">[2025-08-23]</span> Initial load now fetches data via <code>week=</code> for parity with the FF button.</div>
@@ -87,7 +99,7 @@
                 <div class="desc"><span class="date">[2025-08-23]</span> Removed "Format" and "Cost" info cards from the header stats.</div>
             </div>
             <div class="entry">
-                <div class="desc"><span class="date">[2025-08-23]</span> Updated info card text to "Returned Data — Selected Date +6 days = 7 day return".</div>
+                <div class="desc"><span class="date">[2025-08-23]</span> Updated info card text to "Returned Data – Selected Date +6 days = 7 day return".</div>
             </div>
         </div>
     </div>
