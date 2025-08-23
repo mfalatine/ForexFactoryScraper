@@ -360,6 +360,9 @@
                     </svg>
                     View on GitHub
                 </button>
+                <button class="btn-secondary" onclick="viewVersionHistory()">
+                    📝 Version History
+                </button>
             </div>
             
             <!-- Manual Scraping Section -->
@@ -565,6 +568,10 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
         
         function viewGitHub() {
             window.open(githubUrl, '_blank');
+        }
+        
+        function viewVersionHistory() {
+            window.open('version-history.html', '_blank');
         }
         
         async function runNow(ev) {

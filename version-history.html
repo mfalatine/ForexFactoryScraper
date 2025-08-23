@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Version History - Forex Factory Data Scraper</title>
+    <meta name="description" content="Version history and change log for the Forex Factory Data Scraper site.">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        header { background: white; border-radius: 15px; padding: 30px; margin-bottom: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+        h1 { color: #1e3c72; margin: 0; }
+        .card { background: white; border-radius: 15px; padding: 20px 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+        .entry { border-left: 4px solid #667eea; padding-left: 12px; margin: 18px 0; }
+        .date { font-weight: 700; color: #1e3c72; }
+        .desc { color: #333; margin-top: 4px; }
+        .back { display: inline-block; margin-bottom: 16px; color: #1e3c72; font-weight: 600; text-decoration: none; }
+        .back:hover { text-decoration: underline; }
+    </style>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // If query contains ?from=index allow a back link to try to preserve flow
+        });
+    </script>
+    </head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📌 Version History</h1>
+        </header>
+        <div class="card">
+            <div class="entry">
+                <div class="date">2025-08-23</div>
+                <div class="desc">Data preview now shows all events; removed 20-item cap and updated header/note.</div>
+            </div>
+            <div class="entry">
+                <div class="date">2025-08-23</div>
+                <div class="desc">Fixed markdownlint by ignoring <code>LICENSE</code> via <code>.markdownlintignore</code> (MD041).</div>
+            </div>
+            <div class="entry">
+                <div class="date">2025-08-23</div>
+                <div class="desc">Removed "Generate Scraping Command" feature (button, UI, and related JavaScript).</div>
+            </div>
+            <div class="entry">
+                <div class="date">2025-08-23</div>
+                <div class="desc">Rearranged layout: Data Preview placed below buttons; Manual Scraping above Data Preview; API Usage moved to page bottom.</div>
+            </div>
+            <div class="entry">
+                <div class="date">2025-08-23</div>
+                <div class="desc">Changed backend to return a rolling 7-day window starting from the selected date; frontend default date is today.</div>
+            </div>
+            <div class="entry">
+                <div class="date">2025-08-23</div>
+                <div class="desc">Removed "Format" and "Cost" info cards from the header stats.</div>
+            </div>
+            <div class="entry">
+                <div class="date">2025-08-23</div>
+                <div class="desc">Updated info card text to "Returned Data — Selected Date +6 days = 7 day return".</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+
