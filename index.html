@@ -485,9 +485,10 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
         
         // Initialize page
         async function init() {
-            // Set today's date as default for start date (no Monday normalization)
+            // Set today's date as default for start date using LOCAL date (avoid UTC shift)
             const today = new Date();
-            const todayString = today.toISOString().split('T')[0];
+            const pad2 = (n) => String(n).padStart(2, '0');
+            const todayString = `${today.getFullYear()}-${pad2(today.getMonth() + 1)}-${pad2(today.getDate())}`;
             document.getElementById('startDate').value = todayString;
             
             // Update URLs in code examples
@@ -627,7 +628,7 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
                 const d = new Date(startDate);
                 const month = d.toLocaleString('en-US', { month: 'short' }).toLowerCase();
                 const weekParam = `${month}${d.getDate()}.${d.getFullYear()}`;
-                const res = await fetch(`${jsonUrlBase}?week=${weekParam}`, { cache: 'no-store' });
+                const res = await fetch(`${jsonUrlBase}?start=${startDate}`, { cache: 'no-store' });
                 if (!res.ok) throw new Error(await res.text());
                 calendarData = await res.json();
                 document.getElementById('eventCount').textContent = `${calendarData.length} events`;
