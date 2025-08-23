@@ -409,7 +409,7 @@
             <div class="info-grid">
                 <div class="info-card">
                     <h3>📊 <span id="eventCount">Loading...</span> Events</h3>
-                    <p>7-day data window from selected date</p>
+                    <p>7-day window from selected date</p>
                 </div>
             </div>
             
@@ -554,12 +554,12 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
             document.getElementById('startDate').value = todayString;
             
             // Update URLs in code examples
-            // Use ForexFactory week parameter format (e.g., aug19.2025)
-            document.getElementById('jsonUrl').textContent = '/.netlify/functions/scrape?week=aug19.2025';
-            document.getElementById('csvUrl').textContent = '/.netlify/functions/scrape?week=aug19.2025&format=csv';
-            document.getElementById('fetchUrl').textContent = '/.netlify/functions/scrape?week=aug19.2025';
-            document.getElementById('pythonUrl').textContent = '/.netlify/functions/scrape?week=aug19.2025';
-            document.getElementById('pandasUrl').textContent = '/.netlify/functions/scrape?week=aug19.2025&format=csv';
+            // Update URLs in code examples 
+            document.getElementById('jsonUrl').textContent = '/.netlify/functions/scrape?start=YYYY-MM-DD';
+            document.getElementById('csvUrl').textContent = '/.netlify/functions/scrape?start=YYYY-MM-DD&format=csv';
+            document.getElementById('fetchUrl').textContent = '/.netlify/functions/scrape?start=YYYY-MM-DD';
+            document.getElementById('pythonUrl').textContent = '/.netlify/functions/scrape?start=YYYY-MM-DD';
+            document.getElementById('pandasUrl').textContent = '/.netlify/functions/scrape?start=YYYY-MM-DD&format=csv';
             
             // Load the data using week= (same logic as the FF button)
             try {
@@ -651,26 +651,17 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
         
         function downloadJSON() {
             const start = document.getElementById('startDate').value;
-            const d = new Date(start);
-            const m = d.toLocaleString('en-US', { month: 'short' }).toLowerCase();
-            const weekParam = `${m}${d.getDate()}.${d.getFullYear()}`;
-            window.open(`${jsonUrlBase}?week=${weekParam}`, '_blank');
+            window.open(`${jsonUrlBase}?start=${start}`, '_blank');
         }
         
         function downloadCSV() {
             const start = document.getElementById('startDate').value;
-            const d = new Date(start);
-            const m = d.toLocaleString('en-US', { month: 'short' }).toLowerCase();
-            const weekParam = `${m}${d.getDate()}.${d.getFullYear()}`;
-            window.open(`${csvUrlBase}&week=${weekParam}`, '_blank');
+            window.open(`${csvUrlBase}&start=${start}`, '_blank');
         }
         
         function viewRawJSON() {
             const start = document.getElementById('startDate').value;
-            const d = new Date(start);
-            const m = d.toLocaleString('en-US', { month: 'short' }).toLowerCase();
-            const weekParam = `${m}${d.getDate()}.${d.getFullYear()}`;
-            window.open(`${jsonUrlBase}?week=${weekParam}`, '_blank');
+            window.open(`${jsonUrlBase}?start=${start}`, '_blank');
         }
         
         function viewGitHub() {
@@ -694,7 +685,7 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
             window.open(url, '_blank', 'noopener');
         }
 
-        async function fetchIntoPage(ev) {
+                async function fetchIntoPage(ev) {
             const startDate = document.getElementById('startDate').value;
             if (!startDate) { alert('Please select a start date'); return; }
 
@@ -702,11 +693,8 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
             const original = btn.textContent;
             btn.disabled = true; btn.textContent = '⏳ Fetching...';
             try {
-                // Allow explicit ?week like the site (mon-dd.yyyy)
-                const d = new Date(startDate);
-                const month = d.toLocaleString('en-US', { month: 'short' }).toLowerCase();
-                const weekParam = `${month}${d.getDate()}.${d.getFullYear()}`;
-                const res = await fetch(`${jsonUrlBase}?week=${weekParam}`, { cache: 'no-store' });
+                // Use start= to get exactly selected date + 6 days
+                const res = await fetch(`${jsonUrlBase}?start=${startDate}`, { cache: 'no-store' });
                 if (!res.ok) throw new Error(await res.text());
                 calendarData = await res.json();
                 document.getElementById('eventCount').textContent = `${calendarData.length} events`;

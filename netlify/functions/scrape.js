@@ -158,7 +158,7 @@ exports.handler = async (event) => {
 
   try {
     const qs = event.queryStringParameters || {};
-    const weekParamRaw = (qs.week || '').trim();
+    const weekParamRaw = (qs.week || '').trim(); // last|this|next OR aug19.2025
     const dayParamRaw = (qs.day || '').trim(); // yesterday|today|tomorrow
     const monthParamRaw = (qs.month || '').trim(); // last|this|next
     const start = (qs.start || '').trim();
@@ -214,12 +214,27 @@ exports.handler = async (event) => {
       baseline = base; // single day
     } else if (weekParamRaw) {
       mode = 'week';
-      const d = parseWeekParamToDate(weekParamRaw);
-      if (!d || isNaN(d)) throw new Error('Invalid week');
-      const monday = new Date(d);
-      const wd = monday.getDay();
-      monday.setDate(monday.getDate() - ((wd + 6) % 7));
-      baseline = monday;
+      // Handle relative week params (last, this, next)
+      if (weekParamRaw === 'last' || weekParamRaw === 'this' || weekParamRaw === 'next') {
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const todayDow = today.getDay();
+        const monday = new Date(today);
+        monday.setDate(today.getDate() - ((todayDow + 6) % 7)); // Get this week's Monday
+        
+        if (weekParamRaw === 'last') monday.setDate(monday.getDate() - 7);
+        else if (weekParamRaw === 'next') monday.setDate(monday.getDate() + 7);
+        
+        baseline = monday;
+      } else {
+        // Handle explicit week format (e.g., aug19.2025)
+        const d = parseWeekParamToDate(weekParamRaw);
+        if (!d || isNaN(d)) throw new Error('Invalid week');
+        const monday = new Date(d);
+        const wd = monday.getDay();
+        monday.setDate(monday.getDate() - ((wd + 6) % 7));
+        baseline = monday;
+      }
     } else if (start) {
       mode = 'range';
       const d = new Date(start);
@@ -240,19 +255,26 @@ exports.handler = async (event) => {
       html = await fetchText(url);
       rows = parseCalendarHtml(html, baseline);
     } else if (weekParamRaw) {
-      // Fetch each day in the target week to avoid partial weekly HTML
-      const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
-      const dayUrls = [];
-      for (let i = 0; i < 7; i += 1) {
-        const d = new Date(baseline);
-        d.setDate(baseline.getDate() + i);
-        const dayParam = `${months[d.getMonth()]}${d.getDate()}.${d.getFullYear()}`;
-        dayUrls.push(`https://www.forexfactory.com/calendar?day=${dayParam}`);
+      // For relative weeks, use FF's week parameter directly
+      if (weekParamRaw === 'last' || weekParamRaw === 'this' || weekParamRaw === 'next') {
+        url = `https://www.forexfactory.com/calendar?week=${encodeURIComponent(weekParamRaw)}`;
+        html = await fetchText(url);
+        rows = parseCalendarHtml(html, baseline);
+      } else {
+        // For explicit week format, fetch each day to ensure complete data
+        const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+        const dayUrls = [];
+        for (let i = 0; i < 7; i += 1) {
+          const d = new Date(baseline);
+          d.setDate(baseline.getDate() + i);
+          const dayParam = `${months[d.getMonth()]}${d.getDate()}.${d.getFullYear()}`;
+          dayUrls.push(`https://www.forexfactory.com/calendar?day=${dayParam}`);
+        }
+        const htmls = await Promise.all(dayUrls.map((u) => fetchText(u)));
+        const all = [];
+        for (const page of htmls) all.push(...parseCalendarHtml(page, baseline));
+        rows = all;
       }
-      const htmls = await Promise.all(dayUrls.map((u) => fetchText(u)));
-      const all = [];
-      for (const page of htmls) all.push(...parseCalendarHtml(page, baseline));
-      rows = all;
     } else if (start) {
       // Fetch exactly 7 consecutive days starting from the provided start date
       const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
