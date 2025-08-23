@@ -140,6 +140,7 @@ exports.handler = async (event) => {
       baseline = new Date(y, m, 1);
     }
 
+    let dayIndex = -1; // relative to baseline Monday for week mode
     let currentIso = null;
     const rows = [];
 
@@ -153,6 +154,10 @@ exports.handler = async (event) => {
         const explicit = parseExplicitDateLabel(label, baseline);
         if (explicit) {
           currentIso = formatDateLocal(explicit);
+          // align dayIndex to explicit date within the same week window if possible
+          const diffMs = explicit - new Date(formatDateLocal(baseline));
+          const diffDays = Math.round(diffMs / (24*60*60*1000));
+          if (!isNaN(diffDays)) dayIndex = diffDays;
         } else {
           // Try to parse explicit day-of-week to compute correct offset
           let matchedOffset = null;
@@ -165,10 +170,13 @@ exports.handler = async (event) => {
             const cur = new Date(baseline);
             cur.setDate(baseline.getDate() + matchedOffset);
             currentIso = formatDateLocal(cur);
+            dayIndex = matchedOffset;
           } else {
-            // As a last resort, keep using the current date (do not shift)
-            // This avoids accidental off-by-one drifts when labels are non-standard
-            if (!currentIso) currentIso = formatDateLocal(new Date(baseline));
+            // As a last resort, progress sequentially within the week
+            dayIndex += 1;
+            const cur = new Date(baseline);
+            cur.setDate(baseline.getDate() + Math.max(0, dayIndex));
+            currentIso = formatDateLocal(cur);
           }
         }
       }
