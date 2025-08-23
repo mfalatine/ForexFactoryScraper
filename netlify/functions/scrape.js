@@ -84,6 +84,26 @@ exports.handler = async (event) => {
     if (!table.length) throw new Error('Calendar table not found');
 
     // Establish baseline date for date headers depending on mode
+    // Helper: parse an explicit date label from the table (e.g., "Sat Aug 23")
+    function parseExplicitDateLabel(label, baselineDate) {
+      if (!label) return null;
+      const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+      const m = /(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\s*(\d{1,2})(?:\s*,?\s*(\d{4}))?/i.exec(label);
+      if (!m) return null;
+      const monthIdx = months.indexOf(m[1].toLowerCase());
+      const dayNum = Number(m[2]);
+      let year = baselineDate.getFullYear();
+      if (m[3]) {
+        year = Number(m[3]);
+      } else {
+        // Adjust year for Dec→Jan or Jan→Dec edges when week crosses year boundary
+        const baseMonth = baselineDate.getMonth();
+        if (baseMonth === 11 && monthIdx === 0) year = year + 1; // Dec baseline, Jan label
+        else if (baseMonth === 0 && monthIdx === 11) year = year - 1; // Jan baseline, Dec label
+      }
+      return new Date(year, monthIdx, dayNum);
+    }
+
     function parseWeekParamToDate(weekParam) {
       // e.g., aug19.2025
       const m = /([a-z]{3})(\d{1,2})\.(\d{4})/i.exec(weekParam);
@@ -120,7 +140,6 @@ exports.handler = async (event) => {
       baseline = new Date(y, m, 1);
     }
 
-    let dayIndex = -1;
     let currentIso = null;
     const rows = [];
 
@@ -130,23 +149,27 @@ exports.handler = async (event) => {
       const dateCell = row.find('td.calendar__date, td.date');
       if (dateCell.length && dateCell.text().trim()) {
         const label = dateCell.text().trim();
-        // Try to parse explicit day-of-week to compute correct offset
-        let matchedOffset = null;
-        const m = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)/i.exec(label);
-        if (m) {
-          const idx = dowToIndex[m[1].toLowerCase().slice(0,3)];
-          if (typeof idx === 'number') matchedOffset = idx;
-        }
-        if (matchedOffset != null) {
-          const cur = new Date(baseline);
-          cur.setDate(baseline.getDate() + matchedOffset);
-          currentIso = formatDateLocal(cur);
+        // Prefer explicit month/day parsing to guarantee exact match with site
+        const explicit = parseExplicitDateLabel(label, baseline);
+        if (explicit) {
+          currentIso = formatDateLocal(explicit);
         } else {
-          // Fallback to sequential day index if label couldn't be parsed
-          dayIndex += 1;
-          const cur = new Date(baseline);
-          cur.setDate(baseline.getDate() + dayIndex);
-          currentIso = formatDateLocal(cur);
+          // Try to parse explicit day-of-week to compute correct offset
+          let matchedOffset = null;
+          const m = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)/i.exec(label);
+          if (m) {
+            const idx = dowToIndex[m[1].toLowerCase().slice(0,3)];
+            if (typeof idx === 'number') matchedOffset = idx;
+          }
+          if (matchedOffset != null) {
+            const cur = new Date(baseline);
+            cur.setDate(baseline.getDate() + matchedOffset);
+            currentIso = formatDateLocal(cur);
+          } else {
+            // As a last resort, keep using the current date (do not shift)
+            // This avoids accidental off-by-one drifts when labels are non-standard
+            if (!currentIso) currentIso = formatDateLocal(new Date(baseline));
+          }
         }
       }
 
