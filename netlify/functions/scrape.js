@@ -224,11 +224,8 @@ exports.handler = async (event) => {
       mode = 'range';
       const d = new Date(start);
       if (!d || isNaN(d)) throw new Error('Invalid start');
-      // Use Monday of that week for interpreting weekday-only labels
-      const monday = new Date(d);
-      const wd = monday.getDay();
-      monday.setDate(monday.getDate() - ((wd + 6) % 7));
-      baseline = monday;
+      // For range mode, baseline as the exact selected start date
+      baseline = new Date(d.getFullYear(), d.getMonth(), d.getDate());
     } else if (monthParamRaw) {
       mode = 'month';
       const now = new Date();
@@ -242,7 +239,7 @@ exports.handler = async (event) => {
       url = `https://www.forexfactory.com/calendar?day=${encodeURIComponent(dayParamRaw)}`;
       html = await fetchText(url);
       rows = parseCalendarHtml(html, baseline);
-    } else if (weekParamRaw || start) {
+    } else if (weekParamRaw) {
       // Fetch each day in the target week to avoid partial weekly HTML
       const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
       const dayUrls = [];
@@ -255,6 +252,22 @@ exports.handler = async (event) => {
       const htmls = await Promise.all(dayUrls.map((u) => fetchText(u)));
       const all = [];
       for (const page of htmls) all.push(...parseCalendarHtml(page, baseline));
+      rows = all;
+    } else if (start) {
+      // Fetch exactly 7 consecutive days starting from the provided start date
+      const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+      const startDateObj = new Date(start);
+      const dayUrls = [];
+      for (let i = 0; i < 7; i += 1) {
+        const d = new Date(startDateObj);
+        d.setDate(startDateObj.getDate() + i);
+        const dayParam = `${months[d.getMonth()]}${d.getDate()}.${d.getFullYear()}`;
+        dayUrls.push(`https://www.forexfactory.com/calendar?day=${dayParam}`);
+      }
+      const htmls = await Promise.all(dayUrls.map((u) => fetchText(u)));
+      const all = [];
+      // Use the actual start date as parsing baseline to derive year correctly
+      for (const page of htmls) all.push(...parseCalendarHtml(page, new Date(start)));
       rows = all;
     } else if (monthParamRaw) {
       url = `https://www.forexfactory.com/calendar?month=${encodeURIComponent(monthParamRaw)}`;
