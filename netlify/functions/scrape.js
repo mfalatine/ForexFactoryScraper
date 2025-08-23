@@ -117,14 +117,30 @@ exports.handler = async (event) => {
     let currentIso = null;
     const rows = [];
 
+    const dowToIndex = { mon: 0, tue: 1, wed: 2, thu: 3, fri: 4, sat: 5, sun: 6 };
     table.find('tr').each((_, el) => {
       const row = $(el);
       const dateCell = row.find('td.calendar__date, td.date');
       if (dateCell.length && dateCell.text().trim()) {
-        dayIndex += 1;
-        const cur = new Date(baseline);
-        cur.setDate(baseline.getDate() + dayIndex);
-        currentIso = cur.toISOString().slice(0, 10);
+        const label = dateCell.text().trim();
+        // Try to parse explicit day-of-week to compute correct offset
+        let matchedOffset = null;
+        const m = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)/i.exec(label);
+        if (m) {
+          const idx = dowToIndex[m[1].toLowerCase().slice(0,3)];
+          if (typeof idx === 'number') matchedOffset = idx;
+        }
+        if (matchedOffset != null) {
+          const cur = new Date(baseline);
+          cur.setDate(baseline.getDate() + matchedOffset);
+          currentIso = cur.toISOString().slice(0, 10);
+        } else {
+          // Fallback to sequential day index if label couldn't be parsed
+          dayIndex += 1;
+          const cur = new Date(baseline);
+          cur.setDate(baseline.getDate() + dayIndex);
+          currentIso = cur.toISOString().slice(0, 10);
+        }
       }
 
       const eventCell = row.find('td.calendar__event, td.event');
