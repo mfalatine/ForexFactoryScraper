@@ -220,7 +220,11 @@ exports.handler = async (event) => {
         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         const todayDow = today.getDay();
         const monday = new Date(today);
-        monday.setDate(today.getDate() - ((todayDow + 6) % 7)); // Get this week's Monday
+        // Fix: Sunday is 0, we want to go back 6 days to get Monday
+        // For Mon(1) through Sat(6), we go back (dow-1) days
+        // For Sun(0), we go back 6 days to get the previous Monday
+        const daysBack = todayDow === 0 ? 6 : todayDow - 1;
+        monday.setDate(today.getDate() - daysBack);
         
         if (weekParamRaw === 'last') monday.setDate(monday.getDate() - 7);
         else if (weekParamRaw === 'next') monday.setDate(monday.getDate() + 7);
@@ -232,7 +236,9 @@ exports.handler = async (event) => {
         if (!d || isNaN(d)) throw new Error('Invalid week');
         const monday = new Date(d);
         const wd = monday.getDay();
-        monday.setDate(monday.getDate() - ((wd + 6) % 7));
+        // Same fix for explicit dates
+        const daysBack = wd === 0 ? 6 : wd - 1;
+        monday.setDate(monday.getDate() - daysBack);
         baseline = monday;
       }
     } else if (start) {
