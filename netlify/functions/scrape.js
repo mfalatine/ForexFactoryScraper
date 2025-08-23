@@ -217,14 +217,19 @@ exports.handler = async (event) => {
       if (dayParamRaw === 'yesterday') base.setDate(base.getDate() - 1);
       else if (dayParamRaw === 'tomorrow') base.setDate(base.getDate() + 1);
       baseline = base; // single day
-    } else if (weekParamRaw || start) {
+    } else if (weekParamRaw) {
       mode = 'week';
-      const d = weekParamRaw ? parseWeekParamToDate(weekParamRaw) : new Date(start);
-      if (!d || isNaN(d)) throw new Error('Invalid week/start');
+      const d = parseWeekParamToDate(weekParamRaw);
+      if (!d || isNaN(d)) throw new Error('Invalid week');
       const monday = new Date(d);
       const wd = monday.getDay();
       monday.setDate(monday.getDate() - ((wd + 6) % 7));
       baseline = monday;
+    } else if (start) {
+      mode = 'range';
+      const d = new Date(start);
+      if (!d || isNaN(d)) throw new Error('Invalid start');
+      baseline = new Date(d.getFullYear(), d.getMonth(), d.getDate());
     } else if (monthParamRaw) {
       mode = 'month';
       const now = new Date();
@@ -238,8 +243,22 @@ exports.handler = async (event) => {
       url = `https://www.forexfactory.com/calendar?day=${encodeURIComponent(dayParamRaw)}`;
       html = await fetchText(url);
       rows = parseCalendarHtml(html, baseline);
-    } else if (weekParamRaw || start) {
+    } else if (weekParamRaw) {
       // Fetch each day in the target week to avoid partial weekly HTML
+      const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+      const dayUrls = [];
+      for (let i = 0; i < 7; i += 1) {
+        const d = new Date(baseline);
+        d.setDate(baseline.getDate() + i);
+        const dayParam = `${months[d.getMonth()]}${d.getDate()}.${d.getFullYear()}`;
+        dayUrls.push(`https://www.forexfactory.com/calendar?day=${dayParam}`);
+      }
+      const htmls = await Promise.all(dayUrls.map((u) => fetchText(u)));
+      const all = [];
+      for (const page of htmls) all.push(...parseCalendarHtml(page, baseline));
+      rows = all;
+    } else if (start) {
+      // Fetch a 7-day rolling window starting from the exact start date
       const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
       const dayUrls = [];
       for (let i = 0; i < 7; i += 1) {
