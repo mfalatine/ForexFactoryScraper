@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timezone Offset Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .results {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .controls {
+            margin: 10px 0;
+        }
+        input {
+            padding: 5px;
+            margin: 0 10px;
+        }
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .column {
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .column h3 {
+            margin-top: 0;
+            color: #555;
+        }
+        .highlight {
+            background: yellow;
+            padding: 2px 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Timezone Offset Test for ForexFactory Scraper</h1>
+    
+    <div class="test-section">
+        <h2>Test Controls</h2>
+        <div class="controls">
+            <label>
+                Date: <input type="date" id="testDate" value="">
+            </label>
+            <label>
+                Timezone Offset (hours): <input type="number" id="offsetHours" value="1" min="-12" max="12">
+            </label>
+            <button onclick="runTest('today')">Test Today</button>
+            <button onclick="runTest('custom')">Test Custom Date</button>
+            <button onclick="compareOffsets()">Compare With/Without Offset</button>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Results</h2>
+        <div id="results" class="results">Click a test button to see results...</div>
+    </div>
+
+    <div class="comparison" id="comparison" style="display: none;">
+        <div class="column">
+            <h3>Without Offset (Original)</h3>
+            <div id="withoutOffset" class="results"></div>
+        </div>
+        <div class="column">
+            <h3>With 1 Hour Offset (Corrected)</h3>
+            <div id="withOffset" class="results"></div>
+        </div>
+    </div>
+
+    <script>
+        // Set today's date as default
+        document.getElementById('testDate').value = new Date().toISOString().split('T')[0];
+
+        async function runTest(mode) {
+            const resultsDiv = document.getElementById('results');
+            const offset = document.getElementById('offsetHours').value;
+            resultsDiv.textContent = 'Fetching data...';
+            
+            try {
+                let url = '/.netlify/functions/scrape';
+                
+                if (mode === 'today') {
+                    url += `?day=today&timezoneOffset=${offset}`;
+                } else {
+                    const date = document.getElementById('testDate').value;
+                    if (!date) {
+                        resultsDiv.textContent = 'Please select a date';
+                        return;
+                    }
+                    url += `?start=${date}&timezoneOffset=${offset}`;
+                }
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.error) {
+                    resultsDiv.textContent = `Error: ${data.error}`;
+                    return;
+                }
+                
+                // Format and display results
+                let output = `Fetched ${data.length} events with ${offset} hour offset\n\n`;
+                output += `Sample events showing time adjustments:\n`;
+                output += `${'='.repeat(60)}\n\n`;
+                
+                // Show first 10 events with times
+                const eventsWithTimes = data.filter(e => e.time).slice(0, 10);
+                
+                eventsWithTimes.forEach(event => {
+                    output += `Date: ${event.date}\n`;
+                    output += `Time: ${event.time} (adjusted by ${offset} hour${offset !== '1' ? 's' : ''})\n`;
+                    output += `Currency: ${event.currency}\n`;
+                    output += `Event: ${event.event}\n`;
+                    output += `Impact: ${event.impact}\n`;
+                    output += `${'-'.repeat(40)}\n`;
+                });
+                
+                if (eventsWithTimes.length === 0) {
+                    output += 'No events with times found for this date.\n';
+                }
+                
+                resultsDiv.textContent = output;
+                
+            } catch (error) {
+                resultsDiv.textContent = `Error: ${error.message}`;
+            }
+        }
+
+        async function compareOffsets() {
+            const comparisonDiv = document.getElementById('comparison');
+            const withoutDiv = document.getElementById('withoutOffset');
+            const withDiv = document.getElementById('withOffset');
+            
+            comparisonDiv.style.display = 'grid';
+            withoutDiv.textContent = 'Fetching without offset...';
+            withDiv.textContent = 'Fetching with offset...';
+            
+            try {
+                // Fetch without offset
+                const url = '/.netlify/functions/scrape?day=today';
+                const [response1, response2] = await Promise.all([
+                    fetch(url + '&timezoneOffset=0'),
+                    fetch(url + '&timezoneOffset=1')
+                ]);
+                
+                const [dataWithout, dataWith] = await Promise.all([
+                    response1.json(),
+                    response2.json()
+                ]);
+                
+                // Format comparison
+                const formatEvents = (data, title) => {
+                    let output = `${title}\n${'='.repeat(40)}\n\n`;
+                    const eventsWithTimes = data.filter(e => e.time).slice(0, 5);
+                    
+                    eventsWithTimes.forEach(event => {
+                        output += `${event.date} ${event.time || 'No time'} - ${event.currency} - ${event.event}\n`;
+                    });
+                    
+                    return output;
+                };
+                
+                withoutDiv.textContent = formatEvents(dataWithout, 'Original Times (No Offset)');
+                withDiv.textContent = formatEvents(dataWith, 'Adjusted Times (+1 Hour)');
+                
+                // Highlight differences
+                highlightDifferences();
+                
+            } catch (error) {
+                withoutDiv.textContent = `Error: ${error.message}`;
+                withDiv.textContent = `Error: ${error.message}`;
+            }
+        }
+
+        function highlightDifferences() {
+            // This is a simple visual helper to show the time differences
+            const without = document.getElementById('withoutOffset');
+            const with_ = document.getElementById('withOffset');
+            
+            // Extract times using regex
+            const timeRegex = /\d{1,2}:\d{2}(am|pm)/gi;
+            
+            const withoutTimes = without.textContent.match(timeRegex) || [];
+            const withTimes = with_.textContent.match(timeRegex) || [];
+            
+            console.log('Times without offset:', withoutTimes);
+            console.log('Times with offset:', withTimes);
+        }
+    </script>
+</body>
+</html>

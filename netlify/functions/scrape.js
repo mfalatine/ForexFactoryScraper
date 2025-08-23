@@ -49,7 +49,7 @@ function toCsv(rows) {
 }
 
 // Parse a ForexFactory calendar HTML page and extract rows
-function parseCalendarHtml(html, baseline) {
+function parseCalendarHtml(html, baseline, timezoneOffset = 1) {
   const $ = cheerio.load(html);
   const table = $('table.calendar__table');
   if (!table.length) throw new Error('Calendar table not found');
@@ -73,6 +73,67 @@ function parseCalendarHtml(html, baseline) {
       else if (baseMonth === 0 && monthIdx === 11) year = year - 1;
     }
     return new Date(year, monthIdx, dayNum);
+  }
+
+  // Helper: adjust time by timezone offset
+  function adjustTimeAndDate(timeStr, dateIso, offsetHours) {
+    // Skip if no time or special values
+    if (!timeStr || timeStr === '' || /Day\s+All/i.test(timeStr) || /All\s+Day/i.test(timeStr)) {
+      return { time: timeStr, date: dateIso };
+    }
+
+    // Parse time in format like "5:07am" or "10:30pm"
+    const timeMatch = /^(\d{1,2}):(\d{2})\s*(am|pm)?$/i.exec(timeStr.trim());
+    if (!timeMatch) {
+      return { time: timeStr, date: dateIso };
+    }
+
+    let hours = parseInt(timeMatch[1]);
+    const minutes = parseInt(timeMatch[2]);
+    const ampm = timeMatch[3] ? timeMatch[3].toLowerCase() : null;
+
+    // Convert to 24-hour format
+    if (ampm === 'pm' && hours !== 12) {
+      hours += 12;
+    } else if (ampm === 'am' && hours === 12) {
+      hours = 0;
+    }
+
+    // Add offset
+    hours += offsetHours;
+
+    // Handle date rollover
+    let newDateIso = dateIso;
+    if (hours >= 24) {
+      hours -= 24;
+      // Increment date by 1 day
+      if (dateIso) {
+        const [year, month, day] = dateIso.split('-').map(Number);
+        const date = new Date(year, month - 1, day);
+        date.setDate(date.getDate() + 1);
+        newDateIso = formatDateLocal(date);
+      }
+    } else if (hours < 0) {
+      hours += 24;
+      // Decrement date by 1 day
+      if (dateIso) {
+        const [year, month, day] = dateIso.split('-').map(Number);
+        const date = new Date(year, month - 1, day);
+        date.setDate(date.getDate() - 1);
+        newDateIso = formatDateLocal(date);
+      }
+    }
+
+    // Convert back to 12-hour format
+    let newAmPm = 'am';
+    if (hours >= 12) {
+      newAmPm = 'pm';
+      if (hours > 12) hours -= 12;
+    }
+    if (hours === 0) hours = 12;
+
+    const newTimeStr = `${hours}:${minutes.toString().padStart(2, '0')}${newAmPm}`;
+    return { time: newTimeStr, date: newDateIso };
   }
 
   let dayIndex = -1;
@@ -132,9 +193,12 @@ function parseCalendarHtml(html, baseline) {
       else if (cls.includes('low') || cls.includes('yel') || cls.includes('yellow')) impact = 'Low';
     }
 
+    const rawTime = timeCell.text().trim();
+    const { time: adjustedTime, date: adjustedDate } = adjustTimeAndDate(rawTime, currentIso, timezoneOffset);
+    
     rows.push({
-      date: currentIso,
-      time: timeCell.text().trim(),
+      date: adjustedDate,
+      time: adjustedTime,
       currency: currencyCell.text().trim(),
       impact,
       event: eventText,
@@ -162,6 +226,9 @@ exports.handler = async (event) => {
     const dayParamRaw = (qs.day || '').trim(); // yesterday|today|tomorrow
     const monthParamRaw = (qs.month || '').trim(); // last|this|next
     const start = (qs.start || '').trim();
+    
+    // Timezone offset parameter (default to 1 hour to match ForexFactory display)
+    const timezoneOffset = parseInt(qs.timezoneOffset || '1');
     if (!weekParamRaw && !dayParamRaw && !monthParamRaw && !start) {
       return { statusCode: 400, headers, body: 'Missing query: provide day=, week=, month=, or start=YYYY-MM-DD' };
     }
@@ -255,13 +322,13 @@ exports.handler = async (event) => {
     if (dayParamRaw) {
       url = `https://www.forexfactory.com/calendar?day=${encodeURIComponent(dayParamRaw)}`;
       html = await fetchText(url);
-      rows = parseCalendarHtml(html, baseline);
+      rows = parseCalendarHtml(html, baseline, timezoneOffset);
     } else if (weekParamRaw) {
       // For relative weeks, use FF's week parameter directly
       if (weekParamRaw === 'last' || weekParamRaw === 'this' || weekParamRaw === 'next') {
         url = `https://www.forexfactory.com/calendar?week=${encodeURIComponent(weekParamRaw)}`;
         html = await fetchText(url);
-        rows = parseCalendarHtml(html, baseline);
+        rows = parseCalendarHtml(html, baseline, timezoneOffset);
       } else {
         // For explicit week format, fetch each day to ensure complete data
         const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
@@ -274,7 +341,7 @@ exports.handler = async (event) => {
         }
         const htmls = await Promise.all(dayUrls.map((u) => fetchText(u)));
         const all = [];
-        for (const page of htmls) all.push(...parseCalendarHtml(page, baseline));
+        for (const page of htmls) all.push(...parseCalendarHtml(page, baseline, timezoneOffset));
         rows = all;
       }
     } else if (start) {
@@ -291,12 +358,12 @@ exports.handler = async (event) => {
       const htmls = await Promise.all(dayUrls.map((u) => fetchText(u)));
       const all = [];
       // Use the actual start date as parsing baseline to derive year correctly
-      for (const page of htmls) all.push(...parseCalendarHtml(page, new Date(start)));
+      for (const page of htmls) all.push(...parseCalendarHtml(page, new Date(start), timezoneOffset));
       rows = all;
     } else if (monthParamRaw) {
       url = `https://www.forexfactory.com/calendar?month=${encodeURIComponent(monthParamRaw)}`;
       html = await fetchText(url);
-      rows = parseCalendarHtml(html, baseline);
+      rows = parseCalendarHtml(html, baseline, timezoneOffset);
     }
 
     // Filter according to mode
