@@ -498,9 +498,13 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
             document.getElementById('pythonUrl').textContent = '/.netlify/functions/scrape?start=YYYY-MM-DD';
             document.getElementById('pandasUrl').textContent = '/.netlify/functions/scrape?start=YYYY-MM-DD&format=csv';
             
-            // Load the data
+            // Load the data using week= (same logic as the FF button)
             try {
-                const response = await fetch(`${jsonUrlBase}?start=${todayString}`, { cache: 'no-store' });
+                const [ty, tm, td] = todayString.split('-').map(Number);
+                const tDate = new Date(ty, tm - 1, td);
+                const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+                const weekParam = `${months[tDate.getMonth()]}${tDate.getDate()}.${tDate.getFullYear()}`;
+                const response = await fetch(`${jsonUrlBase}?week=${weekParam}`, { cache: 'no-store' });
                 if (!response.ok) throw new Error('Failed to load data');
                 
                 calendarData = await response.json();
