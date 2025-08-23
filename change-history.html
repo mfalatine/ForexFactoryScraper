@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Change History - Forex Factory Data Scraper</title>
+    <meta name="description" content="Change history and change log for the Forex Factory Data Scraper site.">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        header { background: white; border-radius: 15px; padding: 30px; margin-bottom: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+        h1 { color: #1e3c72; margin: 0; }
+        .card { background: white; border-radius: 15px; padding: 20px 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+        .entry { border-left: 4px solid #667eea; padding-left: 12px; margin: 18px 0; }
+        .date { font-weight: 700; color: #1e3c72; }
+        .desc { color: #333; margin-top: 4px; }
+        .back { display: inline-block; margin-bottom: 16px; color: #1e3c72; font-weight: 600; text-decoration: none; }
+        .back:hover { text-decoration: underline; }
+    </style>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // If query contains ?from=index allow a back link to try to preserve flow
+        });
+    </script>
+    </head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📌 Change History - Forex Factory Data Scraper</h1>
+        </header>
+        <div class="card">
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-23]</span> Fixed download buttons to use current query parameters - JSON/CSV downloads now match the displayed data when using quick links (Today, Last Week, etc.).</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-23]</span> Removed deprecated Python scraper (<code>scrape.py</code>) and GitHub Actions workflow - project now uses Netlify Functions exclusively.</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-23]</span> Fixed timezone offset issue - removed +1 hour offset that was incorrectly applied to ForexFactory times (changed default from 1 to 0).</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-23]</span> Improved date parsing to use explicit dates from ForexFactory headers directly without complex offset calculations.</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-23]</span> Calendar selection now uses <code>start=</code> to return exactly 7 days (date +6).</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-23]</span> Week quick-links use <code>week=last|this|next</code> and compute correct Monday (Sunday bug fixed).</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-23]</span> Explicit <code>week=aug19.2025</code> parsing updated; baseline uses the explicit date.</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-23]</span> Frontend buttons (Load/Download/Raw) aligned with <code>start=</code> behavior.</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-23]</span> Manual scraping UI compacted; columns aligned; stacked action buttons.</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-23]</span> Fixed quick-links JS error (orphaned <code>else</code>) and improved mobile spacing.</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-23]</span> Removed "API Usage" section from the index page to simplify the interface.</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-23]</span> Fixed date selection bug: explicit dates (e.g., Aug 19, 2025) now return data starting from the selected date, not from Monday of that week.</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-23]</span> Default date now uses local time (fixed off-by-one day).</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-23]</span> "Open Week on ForexFactory" builds the exact week URL from the selected date.</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-23]</span> Initial load now fetches data via <code>week=</code> for parity with the FF button.</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-23]</span> Added Change History page and link from the home page.</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-23]</span> Data preview now shows all events; removed 20-item cap and updated header/note.</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-23]</span> Fixed markdownlint by ignoring <code>LICENSE</code> via <code>.markdownlintignore</code> (MD041).</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-23]</span> Removed "Generate Scraping Command" feature (button, UI, and related JavaScript).</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-23]</span> Rearranged layout: Data Preview placed below buttons; Manual Scraping above Data Preview; API Usage moved to page bottom.</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-23]</span> Changed backend to return a rolling 7-day window starting from the selected date; frontend default date is today.</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-23]</span> Removed "Format" and "Cost" info cards from the header stats.</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-23]</span> Updated info card text to "Returned Data – Selected Date +6 days = 7 day return".</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
