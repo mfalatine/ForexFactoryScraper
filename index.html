@@ -608,9 +608,11 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
         async function runNow(ev) {
             const startDate = document.getElementById('startDate').value;
             if (!startDate) { alert('Please select a start date'); return; }
-            // Build ForexFactory week URL like aug19.2025
-            const d = new Date(startDate);
-            const month = d.toLocaleString('en-US', { month: 'short' }).toLowerCase();
+            // Build ForexFactory week URL like aug19.2025 (parse date as LOCAL to avoid UTC shift)
+            const [yy, mm, dd] = startDate.split('-').map(Number);
+            const d = new Date(yy, mm - 1, dd); // local midnight
+            const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+            const month = months[d.getMonth()];
             const weekParam = `${month}${d.getDate()}.${d.getFullYear()}`;
             const url = `https://www.forexfactory.com/calendar?week=${weekParam}`;
             window.open(url, '_blank', 'noopener');
