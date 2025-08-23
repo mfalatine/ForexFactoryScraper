@@ -481,46 +481,6 @@
             </div>
         </header>
         
-        
-        
-        <div class="api-section">
-            <h2>🔌 API Usage</h2>
-            <p>You can fetch this data directly in your applications using these URLs:</p>
-            
-            <div class="code-block">
-                <code id="jsonUrl">/.netlify/functions/scrape?week=aug19.2025</code>
-            </div>
-            
-            <div class="code-block">
-                <code id="csvUrl">/.netlify/functions/scrape?week=aug19.2025&format=csv</code>
-            </div>
-            
-            <h3>Example Usage (JavaScript):</h3>
-            <div class="code-block">
-                <code>
-fetch('<span id="fetchUrl">YOUR_URL_HERE</span>')<br>
-&nbsp;&nbsp;.then(response => response.json())<br>
-&nbsp;&nbsp;.then(data => {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;console.log('Forex events:', data);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;// Use the data in your application<br>
-&nbsp;&nbsp;});
-                </code>
-            </div>
-            
-            <h3>Example Usage (Python):</h3>
-            <div class="code-block">
-                <code>
-import requests<br>
-import pandas as pd<br><br>
-# Get JSON data<br>
-response = requests.get('<span id="pythonUrl">YOUR_URL_HERE</span>')<br>
-data = response.json()<br><br>
-# Or get CSV directly into pandas<br>
-df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
-                </code>
-            </div>
-        </div>
-        
         <footer>
             <p>
                 This is free, open-source data served live via Netlify Functions.<br>
@@ -552,14 +512,6 @@ df = pd.read_csv('<span id="pandasUrl">YOUR_URL_HERE</span>')
             const pad2 = (n) => String(n).padStart(2, '0');
             const todayString = `${today.getFullYear()}-${pad2(today.getMonth() + 1)}-${pad2(today.getDate())}`;
             document.getElementById('startDate').value = todayString;
-            
-            // Update URLs in code examples
-            // Update URLs in code examples 
-            document.getElementById('jsonUrl').textContent = '/.netlify/functions/scrape?start=YYYY-MM-DD';
-            document.getElementById('csvUrl').textContent = '/.netlify/functions/scrape?start=YYYY-MM-DD&format=csv';
-            document.getElementById('fetchUrl').textContent = '/.netlify/functions/scrape?start=YYYY-MM-DD';
-            document.getElementById('pythonUrl').textContent = '/.netlify/functions/scrape?start=YYYY-MM-DD';
-            document.getElementById('pandasUrl').textContent = '/.netlify/functions/scrape?start=YYYY-MM-DD&format=csv';
             
             // Load the data using week= (same logic as the FF button)
             try {
