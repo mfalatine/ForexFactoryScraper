@@ -434,13 +434,16 @@ exports.handler = async (event) => {
       baseline = new Date(y, m, 1);
     }
 
+    // Full parameter string for rich JSON data
+    const fullParams = 'permalink=true&impacts=3,2,1,0&event_types=1,2,3,4,5,7,8,9,10,11&currencies=1,2,3,4,5,6,7,8,9';
+
     if (dayParamRaw) {
-      url = `https://www.forexfactory.com/calendar?day=${encodeURIComponent(dayParamRaw)}`;
+      url = `https://www.forexfactory.com/calendar?day=${encodeURIComponent(dayParamRaw)}&${fullParams}`;
       html = await fetchText(url);
       rows = parseCalendarHtml(html, baseline, timezoneOffset);
     } else if (weekParamRaw) {
       if (weekParamRaw === 'last' || weekParamRaw === 'this' || weekParamRaw === 'next') {
-        url = `https://www.forexfactory.com/calendar?week=${encodeURIComponent(weekParamRaw)}`;
+        url = `https://www.forexfactory.com/calendar?week=${encodeURIComponent(weekParamRaw)}&${fullParams}`;
         html = await fetchText(url);
         rows = parseCalendarHtml(html, baseline, timezoneOffset);
       } else {
@@ -450,7 +453,7 @@ exports.handler = async (event) => {
           const d = new Date(baseline);
           d.setDate(baseline.getDate() + i);
           const dayParam = `${months[d.getMonth()]}${d.getDate()}.${d.getFullYear()}`;
-          dayUrls.push(`https://www.forexfactory.com/calendar?day=${dayParam}`);
+          dayUrls.push(`https://www.forexfactory.com/calendar?day=${dayParam}&${fullParams}`);
         }
         const htmls = await Promise.all(dayUrls.map((u) => fetchText(u)));
         const all = [];
@@ -465,14 +468,14 @@ exports.handler = async (event) => {
         const d = new Date(startDateObj);
         d.setDate(startDateObj.getDate() + i);
         const dayParam = `${months[d.getMonth()]}${d.getDate()}.${d.getFullYear()}`;
-        dayUrls.push(`https://www.forexfactory.com/calendar?day=${dayParam}`);
+        dayUrls.push(`https://www.forexfactory.com/calendar?day=${dayParam}&${fullParams}`);
       }
       const htmls = await Promise.all(dayUrls.map((u) => fetchText(u)));
       const all = [];
       for (const page of htmls) all.push(...parseCalendarHtml(page, new Date(start), timezoneOffset));
       rows = all;
     } else if (monthParamRaw) {
-      url = `https://www.forexfactory.com/calendar?month=${encodeURIComponent(monthParamRaw)}`;
+      url = `https://www.forexfactory.com/calendar?month=${encodeURIComponent(monthParamRaw)}&${fullParams}`;
       html = await fetchText(url);
       rows = parseCalendarHtml(html, baseline, timezoneOffset);
     }
