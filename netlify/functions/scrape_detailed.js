@@ -87,13 +87,13 @@ function extractCalendarStates(html) {
   
   if (match) {
     try {
-      let jsonStr = match[1];
+      let cleanJsonStr = match[1];
       // Remove trailing commas (valid in JS but not JSON)
-      jsonStr = jsonStr.replace(/,(\s*[}\]])/g, '$1');
+      cleanJsonStr = cleanJsonStr.replace(/,(\s*[}\]])/g, '$1');
       // Handle escaped forward slashes that are already properly escaped in the source
       // Don't double-escape them
       
-      const data = JSON.parse(jsonStr);
+      const data = JSON.parse(cleanJsonStr);
       console.log('Successfully extracted calendar states JSON with', data.days ? data.days.length : 0, 'days');
       return data;
     } catch (e) {
@@ -285,11 +285,11 @@ function parseCalendarHtml(html, baseline, timezoneOffset = 0) {
   const htmlLength = html.length;
   
   // Find the exact position and show context
-  const startIndex = html.indexOf('window.calendarComponentStates[1]');
+  const debugStartIndex = html.indexOf('window.calendarComponentStates[1]');
   let contextStr = '';
-  if (startIndex !== -1) {
-    const contextStart = Math.max(0, startIndex - 50);
-    const contextEnd = Math.min(html.length, startIndex + 500);
+  if (debugStartIndex !== -1) {
+    const contextStart = Math.max(0, debugStartIndex - 50);
+    const contextEnd = Math.min(html.length, debugStartIndex + 500);
     contextStr = html.substring(contextStart, contextEnd);
   }
   
@@ -298,11 +298,11 @@ function parseCalendarHtml(html, baseline, timezoneOffset = 0) {
   const hasStartMarker = html.includes(startMarker);
   
   // Let's get a much larger context to understand the JSON structure
-  const startIndex = html.indexOf('window.calendarComponentStates[1]');
+  const largeStartIndex = html.indexOf('window.calendarComponentStates[1]');
   let largeContext = '';
-  if (startIndex !== -1) {
-    const contextStart = Math.max(0, startIndex);
-    const contextEnd = Math.min(html.length, startIndex + 2000); // Much larger sample
+  if (largeStartIndex !== -1) {
+    const contextStart = Math.max(0, largeStartIndex);
+    const contextEnd = Math.min(html.length, largeStartIndex + 2000); // Much larger sample
     largeContext = html.substring(contextStart, contextEnd);
   }
   
