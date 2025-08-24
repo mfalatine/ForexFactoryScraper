@@ -52,8 +52,8 @@ function toCsv(rows) {
 function extractCalendarStates(html) {
   console.log('extractCalendarStates called with HTML length:', html.length);
   
-  // Simpler approach: find the start and look for the next occurrence of };\n or similar
-  const startPattern = /window\.calendarComponentStates\[1\]\s*=\s*(\{[\s\S]*?\});\s*(?:\n|window\.|$)/;
+  // Use a greedy match and look for the specific termination
+  const startPattern = /window\.calendarComponentStates\[1\]\s*=\s*(\{[\s\S]*\});\s*$/m;
   const match = startPattern.exec(html);
   
   if (!match) {
