@@ -63,16 +63,22 @@ function extractCalendarStates(html) {
   
   // Look for the ending pattern "};" at the end of a line after the start
   const jsonStart = startIndex + 'window.calendarComponentStates[1] = '.length;
+  
+  // Search only in the relevant portion of HTML to avoid infinite loops
+  const searchText = html.substring(jsonStart);
   const endPattern = /\};\s*$/gm;
-  endPattern.lastIndex = jsonStart; // Start searching from after the opening
   
   let endMatch;
   let lastValidEnd = -1;
+  let loopCount = 0;
   
   // Find all possible endings and take the last one (which should be the real end)
-  while ((endMatch = endPattern.exec(html)) !== null) {
-    lastValidEnd = endMatch.index;
+  while ((endMatch = endPattern.exec(searchText)) !== null && loopCount < 100) {
+    lastValidEnd = jsonStart + endMatch.index;
+    loopCount++;
   }
+  
+  console.log('End pattern search completed, loops:', loopCount, 'lastValidEnd:', lastValidEnd);
   
   if (lastValidEnd === -1) {
     console.log('Could not find end pattern - looking for }; at end of line');
