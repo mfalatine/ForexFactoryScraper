@@ -195,6 +195,14 @@
 
             <div class="data-preview">
                 <h2>📊 Detailed Data Preview (<span id="eventCount">Loading...</span>)</h2>
+                <div class="pagination-controls" id="paginationControls" style="display: none;">
+                    <button class="btn-pagination" onclick="changePage(-1)">← Previous</button>
+                    <span class="page-info">
+                        Page <span id="currentPage">1</span> of <span id="totalPages">1</span> 
+                        (showing <span id="rowsShown">0</span> of <span id="totalRows">0</span> events)
+                    </span>
+                    <button class="btn-pagination" onclick="changePage(1)">Next →</button>
+                </div>
                 <div id="tableContainer" class="loading">
                     Loading detailed data...
                 </div>

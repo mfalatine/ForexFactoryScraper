@@ -11,6 +11,8 @@ const githubUrl = `https://github.com/${GITHUB_USER}/${REPO_NAME}`;
 
 let calendarData = [];
 let currentQuery = ''; // Track the current query parameters
+let currentPage = 1;
+const ROWS_PER_PAGE = 400;
 
 // Helper function to prevent caching
 function fetchNoCache(url) {
@@ -40,6 +42,9 @@ async function init() {
         
         calendarData = await response.json();
         
+        // Reset pagination
+        currentPage = 1;
+        
         // Update stats
         document.getElementById('eventCount').textContent = `${calendarData.length} events`;
         
@@ -66,8 +71,19 @@ function displayTable(data) {
     if (!data || data.length === 0) {
         document.getElementById('tableContainer').innerHTML = 
             '<p>No data available</p>';
+        document.getElementById('paginationControls').style.display = 'none';
         return;
     }
+    
+    // Calculate pagination
+    const totalRows = data.length;
+    const totalPages = Math.ceil(totalRows / ROWS_PER_PAGE);
+    const startIndex = (currentPage - 1) * ROWS_PER_PAGE;
+    const endIndex = Math.min(startIndex + ROWS_PER_PAGE, totalRows);
+    const pageData = data.slice(startIndex, endIndex);
+    
+    // Update pagination controls
+    updatePaginationControls(totalRows, totalPages, pageData.length);
     
     // Enhanced table with additional fields
     let html = `
@@ -91,7 +107,7 @@ function displayTable(data) {
             <tbody>
     `;
     
-    data.forEach(item => {
+    pageData.forEach(item => {
         let impactClass = '';
         if (item.impact === 'High') impactClass = 'impact-high';
         else if (item.impact === 'Medium') impactClass = 'impact-medium';
@@ -126,9 +142,6 @@ function displayTable(data) {
     html += `
             </tbody>
         </table>
-        <p style="margin-top: 20px; color: #666; text-align: center;">
-            Showing all ${calendarData.length} events with enhanced data fields.
-        </p>
     `;
     
     document.getElementById('tableContainer').innerHTML = html;
@@ -184,6 +197,10 @@ async function fetchIntoPage(ev) {
         const res = await fetchNoCache(`${jsonUrlBase}?${currentQuery}`);
         if (!res.ok) throw new Error(await res.text());
         calendarData = await res.json();
+        
+        // Reset pagination
+        currentPage = 1;
+        
         document.getElementById('eventCount').textContent = `${calendarData.length} events`;
         if (calendarData.length > 0 && calendarData[0].scraped_at) {
             const date = new Date(calendarData[0].scraped_at);
@@ -212,6 +229,10 @@ async function fetchQuick(mode, value) {
         const res = await fetchNoCache(`${jsonUrlBase}?${currentQuery}`);
         if (!res.ok) throw new Error(await res.text());
         calendarData = await res.json();
+        
+        // Reset pagination
+        currentPage = 1;
+        
         document.getElementById('eventCount').textContent = `${calendarData.length} events`;
         
         // Update last update time
@@ -228,6 +249,39 @@ async function fetchQuick(mode, value) {
     }
 }
 
+
+// Pagination functionality
+function updatePaginationControls(totalRows, totalPages, rowsShown) {
+    document.getElementById('currentPage').textContent = currentPage;
+    document.getElementById('totalPages').textContent = totalPages;
+    document.getElementById('rowsShown').textContent = rowsShown;
+    document.getElementById('totalRows').textContent = totalRows;
+    
+    // Show/hide pagination controls
+    const paginationControls = document.getElementById('paginationControls');
+    if (totalPages > 1) {
+        paginationControls.style.display = 'flex';
+    } else {
+        paginationControls.style.display = 'none';
+    }
+    
+    // Update button states
+    const prevButton = paginationControls.querySelector('button:first-child');
+    const nextButton = paginationControls.querySelector('button:last-child');
+    
+    prevButton.disabled = currentPage === 1;
+    nextButton.disabled = currentPage === totalPages;
+}
+
+function changePage(direction) {
+    const totalPages = Math.ceil(calendarData.length / ROWS_PER_PAGE);
+    const newPage = currentPage + direction;
+    
+    if (newPage >= 1 && newPage <= totalPages) {
+        currentPage = newPage;
+        displayTable(calendarData);
+    }
+}
 
 // Filter toggle functionality
 function toggleAllFilters(category, checked) {
