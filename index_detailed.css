@@ -147,25 +147,27 @@ button:hover {
 }
 
 table {
-    width: 100%;
+    width: auto;
+    min-width: 100%;
     border-collapse: collapse;
+    table-layout: auto;
 }
 
 th {
     background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
     color: white;
-    padding: 12px;
+    padding: 8px 10px;
     text-align: center;
     position: sticky;
     top: 0;
-    font-size: 0.9em;
+    font-size: 0.85em;
     white-space: nowrap;
 }
 
 td {
-    padding: 10px 12px;
+    padding: 6px 8px;
     border-bottom: 1px solid #e0e0e0;
-    font-size: 0.9em;
+    font-size: 0.85em;
     white-space: nowrap;
 }
 
