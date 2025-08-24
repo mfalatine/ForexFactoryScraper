@@ -52,16 +52,38 @@ function toCsv(rows) {
 function extractCalendarStates(html) {
   console.log('extractCalendarStates called with HTML length:', html.length);
   
-  // Use a greedy match and look for the specific termination
-  const startPattern = /window\.calendarComponentStates\[1\]\s*=\s*(\{[\s\S]*\});\s*$/m;
-  const match = startPattern.exec(html);
+  // Find the exact boundaries using string search
+  const startMarker = 'window.calendarComponentStates[1] = {';
+  const startIndex = html.indexOf(startMarker);
   
-  if (!match) {
-    console.log('Could not match pattern');
+  if (startIndex === -1) {
+    console.log('Start marker not found');
     return null;
   }
   
-  console.log('Found pattern match, JSON length:', match[1].length);
+  // Look for the ending pattern "};" at the end of a line after the start
+  const jsonStart = startIndex + 'window.calendarComponentStates[1] = '.length;
+  const endPattern = /\};\s*$/gm;
+  endPattern.lastIndex = jsonStart; // Start searching from after the opening
+  
+  let endMatch;
+  let lastValidEnd = -1;
+  
+  // Find all possible endings and take the last one (which should be the real end)
+  while ((endMatch = endPattern.exec(html)) !== null) {
+    lastValidEnd = endMatch.index;
+  }
+  
+  if (lastValidEnd === -1) {
+    console.log('Could not find end pattern');
+    return null;
+  }
+  
+  // Extract the JSON string
+  const jsonStr = html.substring(jsonStart, lastValidEnd + 1);
+  console.log('Found JSON, length:', jsonStr.length);
+  
+  const match = [null, jsonStr];
   
   if (match) {
     try {
@@ -275,7 +297,16 @@ function parseCalendarHtml(html, baseline, timezoneOffset = 0) {
   const startMarker = 'window.calendarComponentStates[1] = ';
   const hasStartMarker = html.includes(startMarker);
   
-  throw new Error(`JSON extraction failed - HTML length: ${htmlLength}, contains 'window.calendarComponentStates': ${hasCalendarStates}, contains '[1]': ${hasCalendarStates1}, hasStartMarker: ${hasStartMarker}. Context: ${JSON.stringify(contextStr)}`);
+  // Let's get a much larger context to understand the JSON structure
+  const startIndex = html.indexOf('window.calendarComponentStates[1]');
+  let largeContext = '';
+  if (startIndex !== -1) {
+    const contextStart = Math.max(0, startIndex);
+    const contextEnd = Math.min(html.length, startIndex + 2000); // Much larger sample
+    largeContext = html.substring(contextStart, contextEnd);
+  }
+  
+  throw new Error(`JSON extraction failed. Large context: ${JSON.stringify(largeContext)}`);
   
   /* COMMENTED OUT HTML PARSING FALLBACK
   const $ = cheerio.load(html);
