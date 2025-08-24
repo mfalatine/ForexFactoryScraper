@@ -57,7 +57,7 @@ function extractCalendarStates(html) {
   
   if (startIndex === -1) {
     console.log('Start marker not found');
-    throw new Error('Start marker not found in HTML');
+    return null;
   }
   
   const jsonStart = startIndex + startMarker.length;
@@ -109,8 +109,8 @@ function extractCalendarStates(html) {
   }
   
   if (jsonEnd === -1) {
-    console.log('Could not find end of JSON object');
-    throw new Error(`Could not find end of JSON object - braceCount: ${braceCount}, checked ${html.length - jsonStart} characters`);
+    console.log('Could not find end of JSON object, braceCount:', braceCount);
+    return null;
   }
   
   const jsonStr = html.substring(jsonStart, jsonEnd + 1);
