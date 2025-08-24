@@ -81,7 +81,7 @@ function extractCalendarStates(html) {
   }
   
   const actualEndPosition = jsonStart + endIndex + 1; // +1 to include the }
-  const jsonStr = html.substring(jsonStart, actualEndPosition + 1);
+  const jsonStr = html.substring(jsonStart, actualEndPosition); // Don't include the semicolon
   
   console.log('Extracted JSON length:', jsonStr.length);
   console.log('JSON preview:', jsonStr.substring(0, 100) + '...');
