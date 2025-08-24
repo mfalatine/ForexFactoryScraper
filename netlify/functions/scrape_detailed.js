@@ -50,19 +50,73 @@ function toCsv(rows) {
 
 // NEW FUNCTION: Extract the rich JSON data from the page
 function extractCalendarStates(html) {
-  // Updated regex pattern to match the actual structure: window.calendarComponentStates[1] = {\ndays: ...};
-  // Make it more robust to handle various endings
-  const patterns = [
-    /window\.calendarComponentStates\[1\]\s*=\s*(\{[\s\S]*?\});\s*(?:window\.calendarComponentStates\[2\]|window\.\w+|<\/script>)/,
-    /window\.calendarComponentStates\[1\]\s*=\s*(\{[\s\S]*?\});\s*$/m,
-    /window\.calendarComponentStates\[1\]\s*=\s*(\{[\s\S]*?\});/
-  ];
+  // Find the start of the JSON object
+  const startMarker = 'window.calendarComponentStates[1] = ';
+  const startIndex = html.indexOf(startMarker);
   
-  let match = null;
-  for (const pattern of patterns) {
-    match = pattern.exec(html);
-    if (match) break;
+  if (startIndex === -1) {
+    console.log('Start marker not found');
+    return null;
   }
+  
+  const jsonStart = startIndex + startMarker.length;
+  
+  // Find the end by looking for the closing }; pattern
+  // We'll use a bracket counter to find the matching closing brace
+  let braceCount = 0;
+  let inString = false;
+  let escaped = false;
+  let jsonEnd = -1;
+  
+  for (let i = jsonStart; i < html.length; i++) {
+    const char = html[i];
+    
+    if (escaped) {
+      escaped = false;
+      continue;
+    }
+    
+    if (char === '\\') {
+      escaped = true;
+      continue;
+    }
+    
+    if (char === '"' && !escaped) {
+      inString = !inString;
+      continue;
+    }
+    
+    if (!inString) {
+      if (char === '{') {
+        braceCount++;
+      } else if (char === '}') {
+        braceCount--;
+        if (braceCount === 0) {
+          // Check if the next non-whitespace character is a semicolon
+          for (let j = i + 1; j < html.length; j++) {
+            if (html[j] === ';') {
+              jsonEnd = i;
+              break;
+            } else if (!/\s/.test(html[j])) {
+              break;
+            }
+          }
+          if (jsonEnd !== -1) break;
+        }
+      }
+    }
+  }
+  
+  if (jsonEnd === -1) {
+    console.log('Could not find end of JSON object');
+    return null;
+  }
+  
+  const jsonStr = html.substring(jsonStart, jsonEnd + 1);
+  console.log('Extracted JSON length:', jsonStr.length);
+  
+  // Now we have the raw JSON string, try to parse it
+  let match = [null, jsonStr];
   
   if (match) {
     try {
