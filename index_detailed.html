@@ -5,403 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forex Factory DETAILED Data Scraper X10</title>
     <meta name="description" content="Forex Factory DETAILED Data Scraper with rich JSON extraction">
-    
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            min-height: 100vh;
-            padding: 15px;
-        }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
-        header {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            text-align: center;
-        }
-        
-        h1 {
-            color: #1e3c72;
-            margin-bottom: 8px;
-            font-size: 2.2em;
-        }
-        
-        .subtitle {
-            color: #666;
-            font-size: 1.1em;
-            margin-bottom: 15px;
-        }
-        
-        .version-badge {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            display: inline-block;
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-weight: bold;
-            font-size: 0.85em;
-            margin-bottom: 10px;
-        }
-        
-        .last-update {
-            background: #e8f4f8;
-            display: inline-block;
-            padding: 8px 16px;
-            border-radius: 20px;
-            color: #1e3c72;
-            font-weight: 600;
-            margin-bottom: 15px;
-            font-size: 0.9em;
-        }
-        
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
-        }
-        
-        .info-card {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-        }
-        
-        .info-card h3 {
-            color: #1e3c72;
-            margin-bottom: 8px;
-            font-size: 1em;
-        }
-        
-        .info-card p {
-            color: #666;
-            font-size: 0.95em;
-        }
-        
-        .buttons {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin: 20px 0;
-        }
-        
-        button {
-            padding: 12px 24px;
-            font-size: 15px;
-            font-weight: 600;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        
-        .btn-secondary {
-            background: white;
-            color: #1e3c72;
-            border: 2px solid #1e3c72;
-        }
-        
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-        }
-        
-        .code-block {
-            background: #f4f4f4;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            padding: 15px;
-            margin: 12px 0;
-            font-family: 'Courier New', monospace;
-            overflow-x: auto;
-        }
-        
-        .code-block code {
-            color: #333;
-            font-size: 14px;
-        }
-        
-        .data-preview {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            overflow-x: auto;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        th {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
-            padding: 12px;
-            text-align: left;
-            position: sticky;
-            top: 0;
-            font-size: 0.9em;
-        }
-        
-        td {
-            padding: 10px 12px;
-            border-bottom: 1px solid #e0e0e0;
-            font-size: 0.9em;
-        }
-        
-        tr:hover {
-            background: #f8f9fa;
-        }
-        
-        .impact-high {
-            background: #ff4444;
-            color: white;
-            padding: 3px 10px;
-            border-radius: 3px;
-            font-weight: bold;
-        }
-        
-        .impact-medium {
-            background: #ff9800;
-            color: white;
-            padding: 3px 10px;
-            border-radius: 3px;
-        }
-        
-        .impact-low {
-            background: #4caf50;
-            color: white;
-            padding: 3px 10px;
-            border-radius: 3px;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 30px;
-            color: #666;
-        }
-        
-        .error {
-            background: #fee;
-            color: #c00;
-            padding: 15px;
-            border-radius: 6px;
-            margin: 15px 0;
-        }
-        
-        footer {
-            text-align: center;
-            padding: 20px;
-            color: white;
-        }
-        
-        footer a {
-            color: #fff;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        
-        .manual-scraping-section {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 20px;
-            border: 1px solid #e9ecef;
-        }
-        .manual-scrape-grid { display: grid; grid-template-columns: 1fr 250px; gap: 20px; align-items: start; }
-        .left-column { display: flex; flex-direction: column; align-items: center; }
-        .button-stack { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 300px; margin-top: 15px; }
-        .quick-links { background: #fff; border: 1px solid #e9ecef; border-radius: 8px; padding: 12px; }
-        .quick-links h4 { margin: 0 0 8px 0; color: #1e3c72; font-size: 0.95em; }
-        .quick-links a { display: block; margin: 4px 0; color: #1e3c72; text-decoration: none; font-size: 0.9em; }
-        .quick-links a:hover { text-decoration: underline; }
-        
-        .manual-scraping-section h3 {
-            color: #1e3c72;
-            margin-bottom: 8px;
-            font-size: 1.2em;
-        }
-        
-        .manual-scraping-section p {
-            color: #666;
-            margin-bottom: 15px;
-            font-size: 0.95em;
-        }
-        
-        .date-inputs {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin: 15px 0;
-            flex-wrap: wrap;
-        }
-        
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-        }
-        
-        .input-group label {
-            font-weight: 600;
-            color: #1e3c72;
-            font-size: 0.9em;
-        }
-        
-        .input-group input {
-            padding: 10px 12px;
-            border: 2px solid #ddd;
-            border-radius: 6px;
-            font-size: 14px;
-            text-align: center;
-            transition: border-color 0.3s;
-            background: white;
-        }
-        
-        .input-group input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-        
-        .btn-load {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            color: white;
-            font-weight: 600;
-            padding: 12px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            font-size: 14px;
-            width: 100%;
-        }
-        
-        .btn-open-ff {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            font-weight: 600;
-            padding: 12px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            font-size: 14px;
-            width: 100%;
-        }
-        
-        .btn-load:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
-        }
-        
-        .btn-open-ff:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-        }
-        
-        .extra-fields {
-            background: #e8f4f8;
-            padding: 10px;
-            border-radius: 6px;
-            margin-top: 10px;
-            font-size: 0.85em;
-            color: #1e3c72;
-        }
-        
-        .extra-fields strong {
-            color: #2a5298;
-        }
-        
-        @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-            
-            header {
-                padding: 20px;
-            }
-            
-            h1 {
-                font-size: 1.8em;
-            }
-            
-            .buttons {
-                flex-direction: column;
-                gap: 10px;
-            }
-            
-            button {
-                width: 100%;
-                justify-content: center;
-            }
-            
-            .manual-scrape-grid {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-            
-            .quick-links {
-                order: -1;
-            }
-            
-            .button-stack {
-                max-width: 100%;
-            }
-            
-            .date-inputs {
-                flex-direction: column;
-                gap: 10px;
-            }
-            
-            .input-group input {
-                width: 200px;
-            }
-            
-            .data-preview {
-                padding: 15px;
-            }
-            
-            th, td {
-                padding: 8px;
-                font-size: 0.8em;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="index_detailed.css">
 </head>
 <body>
     <div class="container">
@@ -468,6 +72,140 @@
                         <a href="#" onclick="fetchQuick('month','last');return false;">Last Month</a>
                         <a href="#" onclick="fetchQuick('month','this');return false;">This Month</a>
                         <a href="#" onclick="fetchQuick('month','next');return false;">Next Month</a>
+                    </div>
+                    
+                    <!-- Filter Panel -->
+                    <div class="filter-panel">
+                        <h4>🔍 Event Filters</h4>
+                        <div class="filter-columns">
+                            <!-- Expected Impact Column -->
+                            <div class="filter-section">
+                                <h5>Expected Impact <span>(all, none)</span></h5>
+                                <div class="filter-item">
+                                    <input type="checkbox" id="impact-high" checked>
+                                    <label for="impact-high">
+                                        <span class="impact-flag red"></span> High
+                                    </label>
+                                </div>
+                                <div class="filter-item">
+                                    <input type="checkbox" id="impact-medium" checked>
+                                    <label for="impact-medium">
+                                        <span class="impact-flag orange"></span> Medium
+                                    </label>
+                                </div>
+                                <div class="filter-item">
+                                    <input type="checkbox" id="impact-low" checked>
+                                    <label for="impact-low">
+                                        <span class="impact-flag yellow"></span> Low
+                                    </label>
+                                </div>
+                                <div class="filter-item">
+                                    <input type="checkbox" id="impact-none" checked>
+                                    <label for="impact-none">
+                                        <span class="impact-flag gray"></span> Non-Economic
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Event Types Column -->
+                            <div class="filter-section">
+                                <h5>Event Types <span>(all, none)</span></h5>
+                                <div class="filter-item">
+                                    <input type="checkbox" id="type-growth" checked>
+                                    <label for="type-growth">Growth</label>
+                                </div>
+                                <div class="filter-item">
+                                    <input type="checkbox" id="type-inflation" checked>
+                                    <label for="type-inflation">Inflation</label>
+                                </div>
+                                <div class="filter-item">
+                                    <input type="checkbox" id="type-employment" checked>
+                                    <label for="type-employment">Employment</label>
+                                </div>
+                                <div class="filter-item">
+                                    <input type="checkbox" id="type-central-bank" checked>
+                                    <label for="type-central-bank">Central Bank</label>
+                                </div>
+                                <div class="filter-item">
+                                    <input type="checkbox" id="type-bonds" checked>
+                                    <label for="type-bonds">Bonds</label>
+                                </div>
+                                <div class="filter-item">
+                                    <input type="checkbox" id="type-housing" checked>
+                                    <label for="type-housing">Housing</label>
+                                </div>
+                                <div class="filter-item">
+                                    <input type="checkbox" id="type-consumer" checked>
+                                    <label for="type-consumer">Consumer Surveys</label>
+                                </div>
+                                <div class="filter-item">
+                                    <input type="checkbox" id="type-business" checked>
+                                    <label for="type-business">Business Surveys</label>
+                                </div>
+                                <div class="filter-item">
+                                    <input type="checkbox" id="type-speeches" checked>
+                                    <label for="type-speeches">Speeches</label>
+                                </div>
+                                <div class="filter-item">
+                                    <input type="checkbox" id="type-misc" checked>
+                                    <label for="type-misc">Misc</label>
+                                </div>
+                            </div>
+                            
+                            <!-- Currencies Column -->
+                            <div class="filter-section">
+                                <h5>Currencies <span>(all, none)</span></h5>
+                                <div class="filter-item">
+                                    <input type="checkbox" id="curr-aud" checked>
+                                    <label for="curr-aud">AUD</label>
+                                </div>
+                                <div class="filter-item">
+                                    <input type="checkbox" id="curr-cad" checked>
+                                    <label for="curr-cad">CAD</label>
+                                </div>
+                                <div class="filter-item">
+                                    <input type="checkbox" id="curr-chf" checked>
+                                    <label for="curr-chf">CHF</label>
+                                </div>
+                                <div class="filter-item">
+                                    <input type="checkbox" id="curr-cny" checked>
+                                    <label for="curr-cny">CNY</label>
+                                </div>
+                                <div class="filter-item">
+                                    <input type="checkbox" id="curr-eur" checked>
+                                    <label for="curr-eur">EUR</label>
+                                </div>
+                                <div class="filter-item">
+                                    <input type="checkbox" id="curr-gbp" checked>
+                                    <label for="curr-gbp">GBP</label>
+                                </div>
+                                <div class="filter-item">
+                                    <input type="checkbox" id="curr-jpy" checked>
+                                    <label for="curr-jpy">JPY</label>
+                                </div>
+                                <div class="filter-item">
+                                    <input type="checkbox" id="curr-nzd" checked>
+                                    <label for="curr-nzd">NZD</label>
+                                </div>
+                                <div class="filter-item">
+                                    <input type="checkbox" id="curr-usd" checked>
+                                    <label for="curr-usd">USD</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Filter Controls -->
+                        <div class="filter-controls">
+                            <label style="color: #ecf0f1; font-size: 0.85em;">Default View:</label>
+                            <select id="defaultView">
+                                <option value="this-week">This Week</option>
+                                <option value="next-week">Next Week</option>
+                                <option value="this-month">This Month</option>
+                                <option value="next-month">Next Month</option>
+                            </select>
+                            <button class="btn-apply-filter" onclick="applyFilters()">Apply Filter</button>
+                            <button class="btn-cancel-filter" onclick="cancelFilters()">Cancel</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -715,6 +453,17 @@
                 console.error(e);
                 alert('Fetch failed. See console for details.');
             }
+        }
+        
+        // Placeholder functions for filter buttons (to be implemented)
+        function applyFilters() {
+            console.log('Apply filters clicked');
+            // TODO: Implement filter logic
+        }
+        
+        function cancelFilters() {
+            console.log('Cancel filters clicked');
+            // TODO: Reset filters to default state
         }
         
         // Initialize on load
