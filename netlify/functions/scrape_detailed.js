@@ -61,30 +61,27 @@ function extractCalendarStates(html) {
     return null;
   }
   
-  // Look for the ending pattern "};" at the end of a line after the start
+  // Much simpler approach: find the last occurrence of "};" after the start
   const jsonStart = startIndex + 'window.calendarComponentStates[1] = '.length;
+  console.log('JSON starts at position:', jsonStart);
   
-  // Search only in the relevant portion of HTML to avoid infinite loops
-  const searchText = html.substring(jsonStart);
-  const endPattern = /\};\s*$/gm;
-  
-  let endMatch;
+  // Look for "};" pattern - find the last one
+  const endMarker = '};';
   let lastValidEnd = -1;
-  let loopCount = 0;
+  let searchPos = jsonStart;
   
-  // Find all possible endings and take the last one (which should be the real end)
-  while ((endMatch = endPattern.exec(searchText)) !== null && loopCount < 100) {
-    lastValidEnd = jsonStart + endMatch.index;
-    loopCount++;
+  // Find all occurrences of "};" and take the last one
+  while (true) {
+    const found = html.indexOf(endMarker, searchPos);
+    if (found === -1) break;
+    lastValidEnd = found;
+    searchPos = found + 1;
   }
   
-  console.log('End pattern search completed, loops:', loopCount, 'lastValidEnd:', lastValidEnd);
+  console.log('Found end at position:', lastValidEnd);
   
   if (lastValidEnd === -1) {
-    console.log('Could not find end pattern - looking for }; at end of line');
-    // Let's see what end patterns we can find
-    const endPatterns = html.substring(jsonStart, jsonStart + 10000).match(/\}.*;/g);
-    console.log('Found these end patterns:', endPatterns ? endPatterns.slice(0, 5) : 'none');
+    console.log('Could not find end pattern };');
     return null;
   }
   
