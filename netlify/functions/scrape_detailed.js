@@ -72,16 +72,17 @@ function extractCalendarStates(html) {
   const searchArea = html.substring(jsonStart, jsonStart + maxSearchLength);
   
   // Look for the pattern that indicates end of this specific object
-  // From your sample: "};\n" or just "};" at the end
-  const endIndex = searchArea.lastIndexOf('};');
+  // The JSON ending shows "nction(){}" which means it's ending with function(){}
+  // We need to find the complete function pattern
+  const endIndex = searchArea.lastIndexOf('function(){}');
   
   if (endIndex === -1) {
     console.log('End pattern not found in search area');
     return null;
   }
   
-  const actualEndPosition = jsonStart + endIndex + 1; // +1 to include the } but not the semicolon
-  const jsonStr = html.substring(jsonStart, actualEndPosition); // This should end at the closing brace
+  const actualEndPosition = jsonStart + endIndex + 'function(){}'.length; // Include complete function
+  const jsonStr = html.substring(jsonStart, actualEndPosition); // This should end with function(){}
   
   console.log('Extracted JSON length:', jsonStr.length);
   console.log('JSON preview:', jsonStr.substring(0, 100) + '...');
