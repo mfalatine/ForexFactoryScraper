@@ -98,6 +98,7 @@ function extractCalendarStates(html) {
         braceCount--;
         if (braceCount === 0) {
           endIndex = i; // Don't include the closing brace yet
+          console.log('Found matching closing brace at position:', i, 'after', i - jsonStart, 'characters');
           break;
         }
       }
@@ -113,6 +114,7 @@ function extractCalendarStates(html) {
   console.log('Extracted string length:', jsonStr.length);
   console.log('JSON preview:', jsonStr.substring(0, 100) + '...');
   console.log('JSON ending:', jsonStr.substring(jsonStr.length - 20)); // Show last 20 characters
+  console.log('Character at position 2:', JSON.stringify(jsonStr.charAt(2))); // Debug the JSON parse error
   
   try {
     // Try JSON.parse first
