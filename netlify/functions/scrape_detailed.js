@@ -52,12 +52,8 @@ function toCsv(rows) {
 function extractCalendarStates(html) {
   console.log('extractCalendarStates called with HTML length:', html.length);
   
-  // Quick test - return early to see if this function is the issue
-  console.log('Early return test');
-  return null;
-  
-  // Find the exact boundaries using string search
-  const startMarker = 'window.calendarComponentStates[1] = {';
+  // Find start position
+  const startMarker = 'window.calendarComponentStates[1] = ';
   const startIndex = html.indexOf(startMarker);
   
   if (startIndex === -1) {
@@ -65,88 +61,43 @@ function extractCalendarStates(html) {
     return null;
   }
   
-  // Much simpler approach: find the last occurrence of "};" after the start
-  const jsonStart = startIndex + 'window.calendarComponentStates[1] = '.length;
-  console.log('JSON starts at position:', jsonStart);
+  console.log('Start marker found at position:', startIndex);
   
-  // Look for "};" pattern - find the last one
-  const endMarker = '};';
-  let lastValidEnd = -1;
-  let searchPos = jsonStart;
+  // Find end position - look for the specific end pattern from your sample
+  // Your sample ended with: };
+  const jsonStart = startIndex + startMarker.length;
   
-  // Find all occurrences of "};" and take the last one
-  while (true) {
-    const found = html.indexOf(endMarker, searchPos);
-    if (found === -1) break;
-    lastValidEnd = found;
-    searchPos = found + 1;
-  }
+  // Since the JSON is huge, let's limit our search area to avoid issues
+  const maxSearchLength = 200000; // 200KB should be enough for the JSON
+  const searchArea = html.substring(jsonStart, jsonStart + maxSearchLength);
   
-  console.log('Found end at position:', lastValidEnd);
+  // Look for the pattern that indicates end of this specific object
+  // From your sample: "};\n" or just "};" at the end
+  const endIndex = searchArea.lastIndexOf('};');
   
-  if (lastValidEnd === -1) {
-    console.log('Could not find end pattern };');
+  if (endIndex === -1) {
+    console.log('End pattern not found in search area');
     return null;
   }
   
-  // Extract the JSON string
-  const jsonStr = html.substring(jsonStart, lastValidEnd + 1);
-  console.log('Found JSON, length:', jsonStr.length);
+  const actualEndPosition = jsonStart + endIndex + 1; // +1 to include the }
+  const jsonStr = html.substring(jsonStart, actualEndPosition + 1);
   
-  const match = [null, jsonStr];
+  console.log('Extracted JSON length:', jsonStr.length);
+  console.log('JSON preview:', jsonStr.substring(0, 100) + '...');
   
-  if (match) {
-    try {
-      let cleanJsonStr = match[1];
-      // Remove trailing commas (valid in JS but not JSON)
-      cleanJsonStr = cleanJsonStr.replace(/,(\s*[}\]])/g, '$1');
-      // Handle escaped forward slashes that are already properly escaped in the source
-      // Don't double-escape them
-      
-      const data = JSON.parse(cleanJsonStr);
-      console.log('Successfully extracted calendar states JSON with', data.days ? data.days.length : 0, 'days');
-      return data;
-    } catch (e) {
-      console.error('Failed to parse calendarComponentStates:', e.message);
-      console.log('Raw JSON string preview:', match[1].substring(0, 500) + '...');
-      console.log('First few characters:', JSON.stringify(match[1].substring(0, 50)));
-    }
-  } else {
-    console.log('No calendar states JSON found in HTML - checking for alternative patterns');
-    console.log('HTML contains calendarComponentStates:', html.includes('window.calendarComponentStates'));
-    console.log('HTML length:', html.length);
-    
-    // Check what calendarComponentStates indices exist
-    const statesMatches = html.match(/window\.calendarComponentStates\[\d+\]/g);
-    console.log('Found calendarComponentStates indices:', statesMatches);
-    
-    // Try alternative patterns that might exist
-    const altPatterns = [
-      /window\.calendarComponentStates\[1\]\s*=\s*(\{[\s\S]*?\});\s*$/m,
-      /calendarComponentStates\[1\]\s*=\s*(\{[\s\S]*?\});/,
-      /window\.calendarComponentStates\[0\]\s*=\s*(\{[\s\S]*?\});/,
-      /window\.calendarComponentStates\[2\]\s*=\s*(\{[\s\S]*?\});/
-    ];
-    
-    for (let i = 0; i < altPatterns.length; i++) {
-      const altPattern = altPatterns[i];
-      const altMatch = altPattern.exec(html);
-      if (altMatch) {
-        console.log(`Found alternative pattern match ${i}`);
-        try {
-          let jsonStr = altMatch[1];
-          jsonStr = jsonStr.replace(/,(\s*[}\]])/g, '$1');
-          const data = JSON.parse(jsonStr);
-          console.log('Successfully extracted calendar states JSON with alternative pattern');
-          return data;
-        } catch (e) {
-          console.error(`Failed to parse alternative pattern ${i}:`, e.message);
-        }
-      }
-    }
+  // Now try to parse the JSON
+  try {
+    // Clean up the JSON string
+    let cleanJson = jsonStr.replace(/,(\s*[}\]])/g, '$1'); // Remove trailing commas
+    const data = JSON.parse(cleanJson);
+    console.log('Successfully parsed JSON with', data.days ? data.days.length : 0, 'days');
+    return data;
+  } catch (e) {
+    console.log('JSON parse error:', e.message);
+    console.log('First 200 chars:', jsonStr.substring(0, 200));
+    return null;
   }
-  console.log('No calendar states JSON found in HTML');
-  return null;
 }
 
 // MODIFIED: Parse function that uses JSON data when available
