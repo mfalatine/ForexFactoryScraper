@@ -51,8 +51,18 @@ function toCsv(rows) {
 // NEW FUNCTION: Extract the rich JSON data from the page
 function extractCalendarStates(html) {
   // Updated regex pattern to match the actual structure: window.calendarComponentStates[1] = {\ndays: ...};
-  const pattern = /window\.calendarComponentStates\[1\]\s*=\s*(\{[\s\S]*?\});/;
-  const match = pattern.exec(html);
+  // Make it more robust to handle various endings
+  const patterns = [
+    /window\.calendarComponentStates\[1\]\s*=\s*(\{[\s\S]*?\});\s*(?:window\.calendarComponentStates\[2\]|window\.\w+|<\/script>)/,
+    /window\.calendarComponentStates\[1\]\s*=\s*(\{[\s\S]*?\});\s*$/m,
+    /window\.calendarComponentStates\[1\]\s*=\s*(\{[\s\S]*?\});/
+  ];
+  
+  let match = null;
+  for (const pattern of patterns) {
+    match = pattern.exec(html);
+    if (match) break;
+  }
   
   if (match) {
     try {
