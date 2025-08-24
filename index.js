@@ -4,9 +4,9 @@ const GITHUB_USER = 'mfalatine';
 const REPO_NAME = 'ForexFactoryScraper';
 const BRANCH = 'main';
 
-// CHANGED: Point to the detailed scraper function
-const jsonUrlBase = '/.netlify/functions/scrape_detailed';
-const csvUrlBase = '/.netlify/functions/scrape_detailed?format=csv';
+// Point to the scraper function
+const jsonUrlBase = '/.netlify/functions/scrape';
+const csvUrlBase = '/.netlify/functions/scrape?format=csv';
 const githubUrl = `https://github.com/${GITHUB_USER}/${REPO_NAME}`;
 
 let calendarData = [];
@@ -150,9 +150,6 @@ function viewGitHub() {
     window.open(githubUrl, '_blank');
 }
 
-function switchToOriginal() {
-    window.location.href = 'index.html';
-}
 
 async function runNow(ev) {
     const startDate = document.getElementById('startDate').value;

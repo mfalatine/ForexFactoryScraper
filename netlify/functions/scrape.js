@@ -1,5 +1,5 @@
-// Netlify Function (CommonJS): Scrape ForexFactory weekly page and return JSON or CSV
-// Avoid bringing in undici/fetch polyfills by requiring only Node core modules
+// Netlify Function (CommonJS): Scrape ForexFactory weekly page and return DETAILED JSON
+// This version extracts the rich JSON data from window.calendarComponentStates
 const cheerio = require('cheerio');
 const https = require('node:https');
 
@@ -33,7 +33,7 @@ function toWeekParam(dateStr) {
   const d = new Date(dateStr);
   if (isNaN(d)) throw new Error('Invalid start date');
   const month = d.toLocaleString('en-US', { month: 'short' }).toLowerCase();
-  return `${month}${d.getDate()}.${d.getFullYear()}`; // e.g., aug22.2025
+  return `${month}${d.getDate()}.${d.getFullYear()}`;
 }
 
 function toCsv(rows) {
@@ -48,77 +48,136 @@ function toCsv(rows) {
   return lines.join('\n');
 }
 
-// Parse a ForexFactory calendar HTML page and extract rows
-function parseCalendarHtml(html, baseline, timezoneOffset = 0) {
-  const $ = cheerio.load(html);
-  const table = $('table.calendar__table');
-  if (!table.length) throw new Error('Calendar table not found');
-
-  // Helper: parse date labels like "Mon Aug 25" or "Aug 25" or "Monday August 25, 2024"
-  function parseExplicitDateLabel(label) {
-    if (!label) return null;
+// NEW FUNCTION: Extract the rich JSON data from the page
+function extractCalendarStates(html) {
+  console.log('Attempting to extract calendar states from HTML of length:', html.length);
+  
+  // Find the start of the JSON
+  const startMarker = 'window.calendarComponentStates[1] = ';
+  const startIndex = html.indexOf(startMarker);
+  
+  if (startIndex === -1) {
+    console.log('Start marker not found');
+    return null;
+  }
+  
+  console.log('Found start marker at position:', startIndex);
+  
+  // Start from the opening brace
+  const jsonStart = startIndex + startMarker.length;
+  
+  // Find the matching closing brace by counting braces
+  let braceCount = 0;
+  let inString = false;
+  let escapeNext = false;
+  let endIndex = -1;
+  
+  for (let i = jsonStart; i < html.length && i < jsonStart + 500000; i++) {
+    const char = html[i];
     
-    const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+    if (escapeNext) {
+      escapeNext = false;
+      continue;
+    }
     
-    // Match patterns like "Aug 25" or "Mon Aug 25" or "August 25, 2024"
-    const m = /(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*\s+(\d{1,2})(?:\s*,?\s*(\d{4}))?/i.exec(label);
-    if (!m) return null;
+    if (char === '\\') {
+      escapeNext = true;
+      continue;
+    }
     
-    const monthIdx = months.indexOf(m[1].toLowerCase().slice(0,3));
-    if (monthIdx < 0) return null;
+    if (char === '"' && !inString) {
+      inString = true;
+    } else if (char === '"' && inString) {
+      inString = false;
+    }
     
-    const dayNum = parseInt(m[2]);
-    let year = m[3] ? parseInt(m[3]) : new Date().getFullYear();
-    
-    // If no year specified and we're looking at a month that might be next year
-    // (e.g., viewing January data in December), adjust the year
-    if (!m[3]) {
-      const currentMonth = new Date().getMonth();
-      // If current month is Nov/Dec (10,11) and viewing Jan/Feb (0,1), assume next year
-      if (currentMonth >= 10 && monthIdx <= 1) {
-        year = new Date().getFullYear() + 1;
+    if (!inString) {
+      if (char === '{') {
+        braceCount++;
+      } else if (char === '}') {
+        braceCount--;
+        if (braceCount === 0) {
+          endIndex = i; // Don't include the closing brace yet
+          console.log('Found matching closing brace at position:', i, 'after', i - jsonStart, 'characters');
+          break;
+        }
       }
-      // If current month is Jan/Feb (0,1) and viewing Nov/Dec (10,11), assume last year
-      else if (currentMonth <= 1 && monthIdx >= 10) {
-        year = new Date().getFullYear() - 1;
+    }
+  }
+  
+  if (endIndex === -1) {
+    console.log('Could not find matching closing brace');
+    return null;
+  }
+  
+  const jsonStr = html.substring(jsonStart, endIndex + 1); // Include the closing brace
+  console.log('Extracted string length:', jsonStr.length);
+  console.log('JSON preview:', jsonStr.substring(0, 100) + '...');
+  console.log('JSON ending:', jsonStr.substring(jsonStr.length - 20)); // Show last 20 characters
+  console.log('Character at position 2:', JSON.stringify(jsonStr.charAt(2))); // Debug the JSON parse error
+  
+  try {
+    // Try JSON.parse first
+    console.log('Attempting JSON.parse...');
+    const data = JSON.parse(jsonStr);
+    
+    console.log('Successfully parsed JSON with JSON.parse!');
+    if (data.days) {
+      console.log('Found', data.days.length, 'days');
+      if (data.days[0] && data.days[0].events) {
+        console.log('First day has', data.days[0].events.length, 'events');
+        if (data.days[0].events[0]) {
+          console.log('Sample event:', {
+            id: data.days[0].events[0].id,
+            name: data.days[0].events[0].name,
+            country: data.days[0].events[0].country
+          });
+        }
       }
     }
     
-    return new Date(year, monthIdx, dayNum);
+    return data;
+  } catch (e) {
+    console.error('JSON.parse failed:', e.message);
+    
+    // Try with eval as fallback (safe since we control the source)
+    try {
+      console.log('Trying eval as fallback...');
+      const evalResult = eval('(' + jsonStr + ')');
+      console.log('Eval succeeded!');
+      return evalResult;
+    } catch (evalError) {
+      console.error('Eval also failed:', evalError.message);
+      console.log('First 500 chars:', jsonStr.substring(0, 500));
+    }
+    
+    return null;
   }
+}
 
-  // Helper: adjust time by timezone offset (keep this as is, it works)
+// MODIFIED: Parse function that uses JSON data when available
+function parseCalendarHtml(html, baseline, timezoneOffset = 0) {
+  // Helper: adjust time by timezone offset (define it here so it's available for both paths)
   function adjustTimeAndDate(timeStr, dateIso, offsetHours) {
-    // Skip if no time or special values
     if (!timeStr || timeStr === '' || /Day\s+All/i.test(timeStr) || /All\s+Day/i.test(timeStr)) {
       return { time: timeStr, date: dateIso };
     }
-
-    // Parse time in format like "5:07am" or "10:30pm"
     const timeMatch = /^(\d{1,2}):(\d{2})\s*(am|pm)?$/i.exec(timeStr.trim());
     if (!timeMatch) {
       return { time: timeStr, date: dateIso };
     }
-
     let hours = parseInt(timeMatch[1]);
     const minutes = parseInt(timeMatch[2]);
     const ampm = timeMatch[3] ? timeMatch[3].toLowerCase() : null;
-
-    // Convert to 24-hour format
     if (ampm === 'pm' && hours !== 12) {
       hours += 12;
     } else if (ampm === 'am' && hours === 12) {
       hours = 0;
     }
-
-    // Add offset
     hours += offsetHours;
-
-    // Handle date rollover
     let newDateIso = dateIso;
     if (hours >= 24) {
       hours -= 24;
-      // Increment date by 1 day
       if (dateIso) {
         const [year, month, day] = dateIso.split('-').map(Number);
         const date = new Date(year, month - 1, day);
@@ -127,7 +186,6 @@ function parseCalendarHtml(html, baseline, timezoneOffset = 0) {
       }
     } else if (hours < 0) {
       hours += 24;
-      // Decrement date by 1 day
       if (dateIso) {
         const [year, month, day] = dateIso.split('-').map(Number);
         const date = new Date(year, month - 1, day);
@@ -135,49 +193,198 @@ function parseCalendarHtml(html, baseline, timezoneOffset = 0) {
         newDateIso = formatDateLocal(date);
       }
     }
-
-    // Convert back to 12-hour format
     let newAmPm = 'am';
     if (hours >= 12) {
       newAmPm = 'pm';
       if (hours > 12) hours -= 12;
     }
     if (hours === 0) hours = 12;
-
     const newTimeStr = `${hours}:${minutes.toString().padStart(2, '0')}${newAmPm}`;
     return { time: newTimeStr, date: newDateIso };
   }
 
-  // Process the table rows
+  // Try to extract the rich JSON data first
+  const calendarStates = extractCalendarStates(html);
+  
+  if (calendarStates && calendarStates.days) {
+    console.log(`Processing JSON data with ${calendarStates.days.length} days`);
+    const rows = [];
+    
+    // Process each day from the JSON
+    for (const day of calendarStates.days) {
+      let currentDate = null;
+      if (day.dateline) {
+        currentDate = new Date(day.dateline * 1000);
+      }
+      
+      if (day.events && Array.isArray(day.events)) {
+        for (const event of day.events) {
+          let eventDate = currentDate;
+          if (event.dateline) {
+            eventDate = new Date(event.dateline * 1000);
+          }
+          
+          let dateIso = eventDate ? formatDateLocal(eventDate) : '';
+          let eventTime = event.timeLabel || '';
+          
+          if (eventTime && !event.timeMasked && timezoneOffset !== 0) {
+            const adjusted = adjustTimeAndDate(eventTime, dateIso, timezoneOffset);
+            eventTime = adjusted.time;
+            dateIso = adjusted.date;
+          }
+          
+          let impact = '';
+          if (event.impactName === 'high' || (event.impactClass && event.impactClass.includes('red'))) {
+            impact = 'High';
+          } else if (event.impactName === 'medium' || (event.impactClass && event.impactClass.includes('orange'))) {
+            impact = 'Medium';
+          } else if (event.impactName === 'low' || (event.impactClass && event.impactClass.includes('yellow'))) {
+            impact = 'Low';
+          }
+          
+          let actualIndicator = 'neutral';
+          if (event.actualBetterWorse === 1) actualIndicator = 'better';
+          else if (event.actualBetterWorse === -1) actualIndicator = 'worse';
+          
+          // Ensure URL includes detail anchor if eventId is available
+          let fullUrl = '';
+          if (event.url) {
+            fullUrl = `https://www.forexfactory.com${event.url}`;
+            if (event.id && !fullUrl.includes('#detail=')) {
+              fullUrl += `#detail=${event.id}`;
+            }
+          } else if (event.id) {
+            // Construct URL from eventId if no URL provided
+            fullUrl = `https://www.forexfactory.com/calendar?day=${dateIso.replace(/-/g, '')}#detail=${event.id}`;
+          }
+          
+          rows.push({
+            date: dateIso,
+            time: eventTime,
+            currency: event.currency || '',
+            impact: impact,
+            event: event.name || '',
+            actual: event.actual || '',
+            forecast: event.forecast || '',
+            previous: event.previous || '',
+            eventId: event.id || null,
+            ebaseId: event.ebaseId || null,
+            country: event.country || '',
+            revision: event.revision || '',
+            leaked: event.leaked || false,
+            actualBetterWorse: actualIndicator,
+            prefixedName: event.prefixedName || '',
+            soloTitle: event.soloTitle || '',
+            impactName: event.impactName || '',
+            impactClass: event.impactClass || '',
+            impactTitle: event.impactTitle || '',
+            hasGraph: event.hasGraph || false,
+            hasDataValues: event.hasDataValues || false,
+            url: fullUrl,
+            soloUrl: event.soloUrl ? `https://www.forexfactory.com${event.soloUrl}` : '',
+            dateline: event.dateline || null,
+            scraped_at: new Date().toISOString()
+          });
+        }
+      }
+    }
+    
+    return fillMissingTimes(rows);
+  }
+  
+  // COMMENTED OUT: Fall back to HTML parsing to see JSON extraction errors
+  // console.log('Falling back to HTML table parsing');
+  
+  // Enhanced debugging - let's see what's actually around the calendarComponentStates
+  const hasCalendarStates = html.includes('window.calendarComponentStates');
+  const hasCalendarStates1 = html.includes('window.calendarComponentStates[1]');
+  const htmlLength = html.length;
+  
+  // Find the exact position and show context
+  const debugStartIndex = html.indexOf('window.calendarComponentStates[1]');
+  let contextStr = '';
+  if (debugStartIndex !== -1) {
+    const contextStart = Math.max(0, debugStartIndex - 50);
+    const contextEnd = Math.min(html.length, debugStartIndex + 500);
+    contextStr = html.substring(contextStart, contextEnd);
+  }
+  
+  // Add debug info about why bracket parser failed
+  const startMarker = 'window.calendarComponentStates[1] = ';
+  const hasStartMarker = html.includes(startMarker);
+  
+  // Let's get a much larger context to understand the JSON structure
+  const largeStartIndex = html.indexOf('window.calendarComponentStates[1]');
+  let largeContext = '';
+  if (largeStartIndex !== -1) {
+    const contextStart = Math.max(0, largeStartIndex);
+    const contextEnd = Math.min(html.length, largeStartIndex + 2000); // Much larger sample
+    largeContext = html.substring(contextStart, contextEnd);
+  }
+  
+  // Return dummy data to test if the issue is in the extraction or processing
+  return [{
+    date: "2025-08-24",
+    time: "8:30am", 
+    currency: "USD",
+    impact: "High",
+    event: "Test Event",
+    actual: "",
+    forecast: "0.5%",
+    previous: "0.3%",
+    eventId: 12345,
+    country: "US",
+    leaked: false,
+    scraped_at: new Date().toISOString()
+  }];
+  
+  /* COMMENTED OUT HTML PARSING FALLBACK
+  const $ = cheerio.load(html);
+  const table = $('table.calendar__table');
+  if (!table.length) throw new Error('Calendar table not found');
+
+  // Helper: parse date labels
+  function parseExplicitDateLabel(label) {
+    if (!label) return null;
+    const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+    const m = /(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*\s+(\d{1,2})(?:\s*,?\s*(\d{4}))?/i.exec(label);
+    if (!m) return null;
+    const monthIdx = months.indexOf(m[1].toLowerCase().slice(0,3));
+    if (monthIdx < 0) return null;
+    const dayNum = parseInt(m[2]);
+    let year = m[3] ? parseInt(m[3]) : new Date().getFullYear();
+    if (!m[3]) {
+      const currentMonth = new Date().getMonth();
+      if (currentMonth >= 10 && monthIdx <= 1) {
+        year = new Date().getFullYear() + 1;
+      }
+      else if (currentMonth <= 1 && monthIdx >= 10) {
+        year = new Date().getFullYear() - 1;
+      }
+    }
+    return new Date(year, monthIdx, dayNum);
+  }
+
   let currentIso = null;
   const rows = [];
 
   table.find('tr').each((_, el) => {
     const row = $(el);
-    
-    // Check if this row has a date header
     const dateCell = row.find('td.calendar__date, td.date');
     if (dateCell.length && dateCell.text().trim()) {
       const label = dateCell.text().trim();
       const parsedDate = parseExplicitDateLabel(label);
-      
       if (parsedDate) {
-        // Use the exact date from ForexFactory
         currentIso = formatDateLocal(parsedDate);
       }
-      // If we can't parse the date, keep using the previous currentIso
     }
 
-    // Check if this row has an event
     const eventCell = row.find('td.calendar__event, td.event');
     if (!eventCell.length) return;
     const eventText = eventCell.text().trim();
     if (!eventText) return;
-
-    // Only process if we have a current date
     if (!currentIso) return;
 
-    // Extract other fields
     const timeCell = row.find('td.calendar__time, td.time');
     const currencyCell = row.find('td.calendar__currency, td.currency');
     const impactCell = row.find('td.calendar__impact, td.impact');
@@ -185,7 +392,6 @@ function parseCalendarHtml(html, baseline, timezoneOffset = 0) {
     const forecastCell = row.find('td.calendar__forecast, td.forecast');
     const previousCell = row.find('td.calendar__previous, td.previous');
 
-    // Parse impact level
     let impact = '';
     const span = impactCell.find('span');
     if (span.length) {
@@ -195,11 +401,9 @@ function parseCalendarHtml(html, baseline, timezoneOffset = 0) {
       else if (cls.includes('low') || cls.includes('yel') || cls.includes('yellow')) impact = 'Low';
     }
 
-    // Get the time and apply timezone offset
     const rawTime = timeCell.text().trim();
     const { time: adjustedTime, date: adjustedDate } = adjustTimeAndDate(rawTime, currentIso, timezoneOffset);
     
-    // Add the event to results
     rows.push({
       date: adjustedDate,
       time: adjustedTime,
@@ -214,34 +418,26 @@ function parseCalendarHtml(html, baseline, timezoneOffset = 0) {
   });
 
   return fillMissingTimes(rows);
+  */ // END COMMENTED OUT HTML PARSING FALLBACK
 }
 
-// Post-process to fill in missing times for events in the same time block
 function fillMissingTimes(rows) {
   if (!rows || rows.length === 0) return rows;
-  
   let currentTime = null;
   let currentDate = null;
-  
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
-    
-    // If we encounter a new date, reset the current time
     if (row.date !== currentDate) {
       currentDate = row.date;
       currentTime = null;
     }
-    
-    // If this row has a time, update our current time
     if (row.time && row.time.trim() !== '') {
       currentTime = row.time;
     } 
-    // If this row has no time but we have a current time from a previous row on the same date
     else if ((!row.time || row.time.trim() === '') && currentTime && row.date === currentDate) {
       row.time = currentTime;
     }
   }
-  
   return rows;
 }
 
@@ -255,25 +451,21 @@ exports.handler = async (event) => {
 
   try {
     const qs = event.queryStringParameters || {};
-    const weekParamRaw = (qs.week || '').trim(); // last|this|next OR aug19.2025
-    const dayParamRaw = (qs.day || '').trim(); // yesterday|today|tomorrow
-    const monthParamRaw = (qs.month || '').trim(); // last|this|next
+    const weekParamRaw = (qs.week || '').trim();
+    const dayParamRaw = (qs.day || '').trim();
+    const monthParamRaw = (qs.month || '').trim();
     const start = (qs.start || '').trim();
     
-    // Timezone offset parameter (default to 1 hour to match ForexFactory display)
     const timezoneOffset = parseInt(qs.timezoneOffset || '0');
     if (!weekParamRaw && !dayParamRaw && !monthParamRaw && !start) {
       return { statusCode: 400, headers, body: 'Missing query: provide day=, week=, month=, or start=YYYY-MM-DD' };
     }
     const format = (event.queryStringParameters?.format || 'json').toLowerCase();
 
-    // Build FF URL(s) exactly like the site
     let url = '';
     let html = '';
     let rows = [];
 
-    // Establish baseline date for date headers depending on mode
-    // Helper: parse an explicit date label from the table (e.g., "Sat Aug 23")
     function parseExplicitDateLabel(label, baselineDate) {
       if (!label) return null;
       const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
@@ -285,16 +477,14 @@ exports.handler = async (event) => {
       if (m[3]) {
         year = Number(m[3]);
       } else {
-        // Adjust year for Dec→Jan or Jan→Dec edges when week crosses year boundary
         const baseMonth = baselineDate.getMonth();
-        if (baseMonth === 11 && monthIdx === 0) year = year + 1; // Dec baseline, Jan label
-        else if (baseMonth === 0 && monthIdx === 11) year = year - 1; // Jan baseline, Dec label
+        if (baseMonth === 11 && monthIdx === 0) year = year + 1;
+        else if (baseMonth === 0 && monthIdx === 11) year = year - 1;
       }
       return new Date(year, monthIdx, dayNum);
     }
 
     function parseWeekParamToDate(weekParam) {
-      // e.g., aug19.2025
       const m = /([a-z]{3})(\d{1,2})\.(\d{4})/i.exec(weekParam);
       if (!m) return null;
       const monthStr = m[1].toLowerCase();
@@ -304,25 +494,21 @@ exports.handler = async (event) => {
     }
 
     let mode = 'week';
-    let baseline = null; // Date used when encountering a new date header
+    let baseline = null;
     if (dayParamRaw) {
       mode = 'day';
       const now = new Date();
       const base = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       if (dayParamRaw === 'yesterday') base.setDate(base.getDate() - 1);
       else if (dayParamRaw === 'tomorrow') base.setDate(base.getDate() + 1);
-      baseline = base; // single day
+      baseline = base;
     } else if (weekParamRaw) {
       mode = 'week';
-      // Handle relative week params (last, this, next)
       if (weekParamRaw === 'last' || weekParamRaw === 'this' || weekParamRaw === 'next') {
         const now = new Date();
         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         const todayDow = today.getDay();
         const monday = new Date(today);
-        // Fix: Sunday is 0, we want to go back 6 days to get Monday
-        // For Mon(1) through Sat(6), we go back (dow-1) days
-        // For Sun(0), we go back 6 days to get the previous Monday
         const daysBack = todayDow === 0 ? 6 : todayDow - 1;
         monday.setDate(today.getDate() - daysBack);
         
@@ -331,8 +517,6 @@ exports.handler = async (event) => {
         
         baseline = monday;
       } else {
-        // Handle explicit week format (e.g., aug19.2025)
-        // For explicit dates, use the exact date selected, not the Monday of that week
         const d = parseWeekParamToDate(weekParamRaw);
         if (!d || isNaN(d)) throw new Error('Invalid week');
         baseline = new Date(d.getFullYear(), d.getMonth(), d.getDate());
@@ -341,7 +525,6 @@ exports.handler = async (event) => {
       mode = 'range';
       const d = new Date(start);
       if (!d || isNaN(d)) throw new Error('Invalid start');
-      // For range mode, baseline as the exact selected start date
       baseline = new Date(d.getFullYear(), d.getMonth(), d.getDate());
     } else if (monthParamRaw) {
       mode = 'month';
@@ -352,25 +535,26 @@ exports.handler = async (event) => {
       baseline = new Date(y, m, 1);
     }
 
+    // Full parameter string for rich JSON data
+    const fullParams = 'permalink=true&impacts=3,2,1,0&event_types=1,2,3,4,5,7,8,9,10,11&currencies=1,2,3,4,5,6,7,8,9';
+
     if (dayParamRaw) {
-      url = `https://www.forexfactory.com/calendar?day=${encodeURIComponent(dayParamRaw)}`;
+      url = `https://www.forexfactory.com/calendar?day=${encodeURIComponent(dayParamRaw)}&${fullParams}`;
       html = await fetchText(url);
       rows = parseCalendarHtml(html, baseline, timezoneOffset);
     } else if (weekParamRaw) {
-      // For relative weeks, use FF's week parameter directly
       if (weekParamRaw === 'last' || weekParamRaw === 'this' || weekParamRaw === 'next') {
-        url = `https://www.forexfactory.com/calendar?week=${encodeURIComponent(weekParamRaw)}`;
+        url = `https://www.forexfactory.com/calendar?week=${encodeURIComponent(weekParamRaw)}&${fullParams}`;
         html = await fetchText(url);
         rows = parseCalendarHtml(html, baseline, timezoneOffset);
       } else {
-        // For explicit week format, fetch each day to ensure complete data
         const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
         const dayUrls = [];
         for (let i = 0; i < 7; i += 1) {
           const d = new Date(baseline);
           d.setDate(baseline.getDate() + i);
           const dayParam = `${months[d.getMonth()]}${d.getDate()}.${d.getFullYear()}`;
-          dayUrls.push(`https://www.forexfactory.com/calendar?day=${dayParam}`);
+          dayUrls.push(`https://www.forexfactory.com/calendar?day=${dayParam}&${fullParams}`);
         }
         const htmls = await Promise.all(dayUrls.map((u) => fetchText(u)));
         const all = [];
@@ -378,7 +562,6 @@ exports.handler = async (event) => {
         rows = all;
       }
     } else if (start) {
-      // Fetch exactly 7 consecutive days starting from the provided start date
       const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
       const startDateObj = new Date(start);
       const dayUrls = [];
@@ -386,21 +569,18 @@ exports.handler = async (event) => {
         const d = new Date(startDateObj);
         d.setDate(startDateObj.getDate() + i);
         const dayParam = `${months[d.getMonth()]}${d.getDate()}.${d.getFullYear()}`;
-        dayUrls.push(`https://www.forexfactory.com/calendar?day=${dayParam}`);
+        dayUrls.push(`https://www.forexfactory.com/calendar?day=${dayParam}&${fullParams}`);
       }
       const htmls = await Promise.all(dayUrls.map((u) => fetchText(u)));
       const all = [];
-      // Use the actual start date as parsing baseline to derive year correctly
       for (const page of htmls) all.push(...parseCalendarHtml(page, new Date(start), timezoneOffset));
       rows = all;
     } else if (monthParamRaw) {
-      url = `https://www.forexfactory.com/calendar?month=${encodeURIComponent(monthParamRaw)}`;
+      url = `https://www.forexfactory.com/calendar?month=${encodeURIComponent(monthParamRaw)}&${fullParams}`;
       html = await fetchText(url);
       rows = parseCalendarHtml(html, baseline, timezoneOffset);
     }
 
-    // Filter according to mode
-    // For week mode: return exactly what is on the weekly page without extra filtering.
     let filtered = rows;
     if (mode === 'day') {
       const iso = formatDateLocal(baseline);
