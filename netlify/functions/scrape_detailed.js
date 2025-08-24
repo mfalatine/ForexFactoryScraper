@@ -50,8 +50,8 @@ function toCsv(rows) {
 
 // NEW FUNCTION: Extract the rich JSON data from the page
 function extractCalendarStates(html) {
-  // Updated regex pattern to match window.calendarComponentStates[1] = {days: ...};
-  const pattern = /window\.calendarComponentStates\[1\]\s*=\s*(\{days:[\s\S]*?\});/;
+  // Updated regex pattern to match the actual structure: window.calendarComponentStates[1] = {\ndays: ...};
+  const pattern = /window\.calendarComponentStates\[1\]\s*=\s*(\{[\s\S]*?\});/;
   const match = pattern.exec(html);
   
   if (match) {
@@ -59,24 +59,23 @@ function extractCalendarStates(html) {
       let jsonStr = match[1];
       // Remove trailing commas (valid in JS but not JSON)
       jsonStr = jsonStr.replace(/,(\s*[}\]])/g, '$1');
-      // Handle escaped forward slashes
-      jsonStr = jsonStr.replace(/\\\//g, '/');
-      // Handle unescaped slashes that might break JSON parsing
-      jsonStr = jsonStr.replace(/([^\\])\/([^\/])/g, '$1\\/$2');
+      // Handle escaped forward slashes that are already properly escaped in the source
+      // Don't double-escape them
       
       const data = JSON.parse(jsonStr);
       console.log('Successfully extracted calendar states JSON with', data.days ? data.days.length : 0, 'days');
       return data;
     } catch (e) {
       console.error('Failed to parse calendarComponentStates:', e.message);
-      console.log('Raw JSON string preview:', match[1].substring(0, 200) + '...');
+      console.log('Raw JSON string preview:', match[1].substring(0, 500) + '...');
+      console.log('First few characters:', JSON.stringify(match[1].substring(0, 50)));
     }
   } else {
     console.log('No calendar states JSON found in HTML - checking for alternative patterns');
     // Try alternative patterns that might exist
     const altPatterns = [
-      /window\.calendarComponentStates\[1\]\s*=\s*(\{[\s\S]*?\});/,
-      /calendarComponentStates\[1\]\s*=\s*(\{days:[\s\S]*?\});/
+      /window\.calendarComponentStates\[1\]\s*=\s*(\{[\s\S]*?\});\s*$/m,
+      /calendarComponentStates\[1\]\s*=\s*(\{[\s\S]*?\});/
     ];
     
     for (const altPattern of altPatterns) {
@@ -86,7 +85,6 @@ function extractCalendarStates(html) {
         try {
           let jsonStr = altMatch[1];
           jsonStr = jsonStr.replace(/,(\s*[}\]])/g, '$1');
-          jsonStr = jsonStr.replace(/\\\//g, '/');
           const data = JSON.parse(jsonStr);
           console.log('Successfully extracted calendar states JSON with alternative pattern');
           return data;
