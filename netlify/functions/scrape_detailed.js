@@ -52,6 +52,10 @@ function toCsv(rows) {
 function extractCalendarStates(html) {
   console.log('extractCalendarStates called with HTML length:', html.length);
   
+  // Quick test - return early to see if this function is the issue
+  console.log('Early return test');
+  return null;
+  
   // Find the exact boundaries using string search
   const startMarker = 'window.calendarComponentStates[1] = {';
   const startIndex = html.indexOf(startMarker);
