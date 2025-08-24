@@ -51,73 +51,17 @@ function toCsv(rows) {
 // NEW FUNCTION: Extract the rich JSON data from the page
 function extractCalendarStates(html) {
   console.log('extractCalendarStates called with HTML length:', html.length);
-  // Find the start of the JSON object
-  const startMarker = 'window.calendarComponentStates[1] = ';
-  const startIndex = html.indexOf(startMarker);
   
-  if (startIndex === -1) {
-    console.log('Start marker not found');
+  // Simpler approach: find the start and look for the next occurrence of };\n or similar
+  const startPattern = /window\.calendarComponentStates\[1\]\s*=\s*(\{[\s\S]*?\});\s*(?:\n|window\.|$)/;
+  const match = startPattern.exec(html);
+  
+  if (!match) {
+    console.log('Could not match pattern');
     return null;
   }
   
-  const jsonStart = startIndex + startMarker.length;
-  
-  // Find the end by looking for the closing }; pattern
-  // We'll use a bracket counter to find the matching closing brace
-  let braceCount = 0;
-  let inString = false;
-  let escaped = false;
-  let jsonEnd = -1;
-  
-  for (let i = jsonStart; i < html.length; i++) {
-    const char = html[i];
-    
-    if (escaped) {
-      escaped = false;
-      continue;
-    }
-    
-    if (char === '\\') {
-      escaped = true;
-      continue;
-    }
-    
-    if (char === '"' && !escaped) {
-      inString = !inString;
-      continue;
-    }
-    
-    if (!inString) {
-      if (char === '{') {
-        braceCount++;
-      } else if (char === '}') {
-        braceCount--;
-        if (braceCount === 0) {
-          // Check if the next non-whitespace character is a semicolon
-          for (let j = i + 1; j < html.length; j++) {
-            if (html[j] === ';') {
-              jsonEnd = i;
-              break;
-            } else if (!/\s/.test(html[j])) {
-              break;
-            }
-          }
-          if (jsonEnd !== -1) break;
-        }
-      }
-    }
-  }
-  
-  if (jsonEnd === -1) {
-    console.log('Could not find end of JSON object, braceCount:', braceCount);
-    return null;
-  }
-  
-  const jsonStr = html.substring(jsonStart, jsonEnd + 1);
-  console.log('Extracted JSON length:', jsonStr.length);
-  
-  // Now we have the raw JSON string, try to parse it
-  let match = [null, jsonStr];
+  console.log('Found pattern match, JSON length:', match[1].length);
   
   if (match) {
     try {
