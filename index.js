@@ -12,7 +12,7 @@ const githubUrl = `https://github.com/${GITHUB_USER}/${REPO_NAME}`;
 let calendarData = [];
 let currentQuery = ''; // Track the current query parameters
 let currentPage = 1;
-const ROWS_PER_PAGE = 400;
+const ROWS_PER_PAGE = 200;
 
 // Helper function to prevent caching
 function fetchNoCache(url) {
