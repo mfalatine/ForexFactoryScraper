@@ -316,9 +316,21 @@ function parseCalendarHtml(html, baseline, timezoneOffset = 0) {
     largeContext = html.substring(contextStart, contextEnd);
   }
   
-  // Temporarily disable error to test extraction
-  console.log('JSON extraction failed but continuing to test the new parser');
-  return [];
+  // Return dummy data to test if the issue is in the extraction or processing
+  return [{
+    date: "2025-08-24",
+    time: "8:30am", 
+    currency: "USD",
+    impact: "High",
+    event: "Test Event",
+    actual: "",
+    forecast: "0.5%",
+    previous: "0.3%",
+    eventId: 12345,
+    country: "US",
+    leaked: false,
+    scraped_at: new Date().toISOString()
+  }];
   
   /* COMMENTED OUT HTML PARSING FALLBACK
   const $ = cheerio.load(html);
