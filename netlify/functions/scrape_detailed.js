@@ -56,7 +56,7 @@ function extractCalendarStates(html) {
   
   if (startIndex === -1) {
     console.log('Start marker not found');
-    return null;
+    throw new Error('Start marker not found in HTML');
   }
   
   const jsonStart = startIndex + startMarker.length;
@@ -109,7 +109,7 @@ function extractCalendarStates(html) {
   
   if (jsonEnd === -1) {
     console.log('Could not find end of JSON object');
-    return null;
+    throw new Error(`Could not find end of JSON object - braceCount: ${braceCount}, checked ${html.length - jsonStart} characters`);
   }
   
   const jsonStr = html.substring(jsonStart, jsonEnd + 1);
@@ -326,7 +326,11 @@ function parseCalendarHtml(html, baseline, timezoneOffset = 0) {
     contextStr = html.substring(contextStart, contextEnd);
   }
   
-  throw new Error(`JSON extraction failed - HTML length: ${htmlLength}, contains 'window.calendarComponentStates': ${hasCalendarStates}, contains '[1]': ${hasCalendarStates1}. Context: ${JSON.stringify(contextStr)}`);
+  // Add debug info about why bracket parser failed
+  const startMarker = 'window.calendarComponentStates[1] = ';
+  const hasStartMarker = html.includes(startMarker);
+  
+  throw new Error(`JSON extraction failed - HTML length: ${htmlLength}, contains 'window.calendarComponentStates': ${hasCalendarStates}, contains '[1]': ${hasCalendarStates1}, hasStartMarker: ${hasStartMarker}. Context: ${JSON.stringify(contextStr)}`);
   
   /* COMMENTED OUT HTML PARSING FALLBACK
   const $ = cheerio.load(html);
