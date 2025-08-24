@@ -72,16 +72,26 @@ function extractCalendarStates(html) {
     }
   } else {
     console.log('No calendar states JSON found in HTML - checking for alternative patterns');
+    console.log('HTML contains calendarComponentStates:', html.includes('window.calendarComponentStates'));
+    console.log('HTML length:', html.length);
+    
+    // Check what calendarComponentStates indices exist
+    const statesMatches = html.match(/window\.calendarComponentStates\[\d+\]/g);
+    console.log('Found calendarComponentStates indices:', statesMatches);
+    
     // Try alternative patterns that might exist
     const altPatterns = [
       /window\.calendarComponentStates\[1\]\s*=\s*(\{[\s\S]*?\});\s*$/m,
-      /calendarComponentStates\[1\]\s*=\s*(\{[\s\S]*?\});/
+      /calendarComponentStates\[1\]\s*=\s*(\{[\s\S]*?\});/,
+      /window\.calendarComponentStates\[0\]\s*=\s*(\{[\s\S]*?\});/,
+      /window\.calendarComponentStates\[2\]\s*=\s*(\{[\s\S]*?\});/
     ];
     
-    for (const altPattern of altPatterns) {
+    for (let i = 0; i < altPatterns.length; i++) {
+      const altPattern = altPatterns[i];
       const altMatch = altPattern.exec(html);
       if (altMatch) {
-        console.log('Found alternative pattern match');
+        console.log(`Found alternative pattern match ${i}`);
         try {
           let jsonStr = altMatch[1];
           jsonStr = jsonStr.replace(/,(\s*[}\]])/g, '$1');
@@ -89,7 +99,7 @@ function extractCalendarStates(html) {
           console.log('Successfully extracted calendar states JSON with alternative pattern');
           return data;
         } catch (e) {
-          console.error('Failed to parse alternative pattern:', e.message);
+          console.error(`Failed to parse alternative pattern ${i}:`, e.message);
         }
       }
     }
@@ -237,7 +247,13 @@ function parseCalendarHtml(html, baseline, timezoneOffset = 0) {
   
   // COMMENTED OUT: Fall back to HTML parsing to see JSON extraction errors
   // console.log('Falling back to HTML table parsing');
-  throw new Error('JSON extraction failed - no calendarComponentStates data found');
+  
+  // Enhanced debugging - let's see what's actually in the HTML
+  const hasCalendarStates = html.includes('window.calendarComponentStates');
+  const hasCalendarStates1 = html.includes('window.calendarComponentStates[1]');
+  const htmlLength = html.length;
+  
+  throw new Error(`JSON extraction failed - HTML length: ${htmlLength}, contains 'window.calendarComponentStates': ${hasCalendarStates}, contains '[1]': ${hasCalendarStates1}`);
   
   /* COMMENTED OUT HTML PARSING FALLBACK
   const $ = cheerio.load(html);
