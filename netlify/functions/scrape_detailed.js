@@ -90,16 +90,11 @@ function extractCalendarStates(html) {
   console.log('Starting JSON parse...');
   
   try {
-    // Clean up the JSON string - remove trailing commas and fix property names
-    let cleanJson = jsonStr.replace(/,(\s*[}\]])/g, '$1');
+    // Since this is JavaScript object notation, not JSON, use eval() instead of JSON.parse()
+    // This is safe because we're parsing data from a trusted source (Forex Factory)
+    console.log('Using eval to parse JavaScript object...');
     
-    // Fix unquoted property names - this is the key fix!
-    cleanJson = cleanJson.replace(/(\w+):\s*([{\[])/g, '"$1": $2');
-    cleanJson = cleanJson.replace(/(\w+):\s*([^{\[\s][^,}\]]*)/g, '"$1": $2');
-    
-    console.log('JSON cleaned and property names fixed, attempting parse...');
-    
-    const data = JSON.parse(cleanJson);
+    const data = eval('(' + jsonStr + ')');
     console.log('SUCCESS! Parsed JSON with', data.days ? data.days.length : 0, 'days');
     
     if (data.days && data.days[0] && data.days[0].events) {
