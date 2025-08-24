@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forex Factory Data Scraper X14</title>
+    <title>Forex Factory Data Scraper X15</title>
     <meta name="description" content="Forex Factory Data Scraper with rich JSON extraction">
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h2>📊 Forex Factory Data Scraper X14</h2>
+            <h2>📊 Forex Factory Data Scraper X15</h2>
             <p class="subtitle">Enhanced scraper with rich JSON data extraction</p>
             <div class="last-update" id="lastUpdate">Loading...</div>
 
@@ -76,7 +76,7 @@
                         <div class="filter-columns">
                             <!-- Expected Impact Column -->
                             <div class="filter-section">
-                                <h5>Expected Impact <span>(all, none)</span></h5>
+                                <h5>Expected Impact <span>(<a href="#" onclick="toggleAllFilters('impact', true); return false;">all</a>, <a href="#" onclick="toggleAllFilters('impact', false); return false;">none</a>)</span></h5>
                                 <div class="filter-item">
                                     <input type="checkbox" id="impact-high" checked>
                                     <label for="impact-high">
@@ -105,7 +105,7 @@
                             
                             <!-- Event Types Column -->
                             <div class="filter-section">
-                                <h5>Event Types <span>(all, none)</span></h5>
+                                <h5>Event Types <span>(<a href="#" onclick="toggleAllFilters('type', true); return false;">all</a>, <a href="#" onclick="toggleAllFilters('type', false); return false;">none</a>)</span></h5>
                                 <div class="filter-item">
                                     <input type="checkbox" id="type-growth" checked>
                                     <label for="type-growth">Growth</label>
@@ -150,7 +150,7 @@
                             
                             <!-- Currencies Column -->
                             <div class="filter-section">
-                                <h5>Currencies <span>(all, none)</span></h5>
+                                <h5>Currencies <span>(<a href="#" onclick="toggleAllFilters('curr', true); return false;">all</a>, <a href="#" onclick="toggleAllFilters('curr', false); return false;">none</a>)</span></h5>
                                 <div class="filter-item">
                                     <input type="checkbox" id="curr-aud" checked>
                                     <label for="curr-aud">AUD</label>

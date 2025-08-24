@@ -225,5 +225,14 @@ async function fetchQuick(mode, value) {
 }
 
 
+// Filter toggle functionality
+function toggleAllFilters(category, checked) {
+    // Find all checkboxes that start with the category prefix
+    const checkboxes = document.querySelectorAll(`input[type="checkbox"][id^="${category}-"]`);
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = checked;
+    });
+}
+
 // Initialize on load
 document.addEventListener('DOMContentLoaded', init);

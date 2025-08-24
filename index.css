@@ -323,6 +323,17 @@ footer a {
     font-weight: normal;
 }
 
+.filter-section h5 span a {
+    color: #3498db;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.filter-section h5 span a:hover {
+    color: #2980b9;
+    text-decoration: underline;
+}
+
 .filter-item {
     display: flex;
     align-items: center;
