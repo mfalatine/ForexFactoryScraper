@@ -50,9 +50,9 @@ function toCsv(rows) {
 
 // NEW FUNCTION: Extract the rich JSON data from the page
 function extractCalendarStates(html) {
-  console.log('extractCalendarStates called with HTML length:', html.length);
+  console.log('Attempting to extract calendar states from HTML of length:', html.length);
   
-  // Find start position
+  // Find the start of the JSON
   const startMarker = 'window.calendarComponentStates[1] = ';
   const startIndex = html.indexOf(startMarker);
   
@@ -61,53 +61,94 @@ function extractCalendarStates(html) {
     return null;
   }
   
-  console.log('Start marker found at position:', startIndex);
+  console.log('Found start marker at position:', startIndex);
   
-  // Find end position - look for the specific end pattern from your sample
-  // Your sample ended with: };
+  // Start from the opening brace
   const jsonStart = startIndex + startMarker.length;
   
-  // Since the JSON is huge, let's limit our search area to avoid issues
-  const maxSearchLength = 200000; // 200KB should be enough for the JSON
-  const searchArea = html.substring(jsonStart, jsonStart + maxSearchLength);
+  // Find the matching closing brace by counting braces
+  let braceCount = 0;
+  let inString = false;
+  let escapeNext = false;
+  let endIndex = -1;
   
-  // Look for the pattern that indicates end of this specific object
-  // The JSON ending shows "nction(){}" which means it's ending with function(){}
-  // We need to find the complete function pattern
-  const endIndex = searchArea.lastIndexOf('function(){}');
+  for (let i = jsonStart; i < html.length && i < jsonStart + 500000; i++) {
+    const char = html[i];
+    
+    if (escapeNext) {
+      escapeNext = false;
+      continue;
+    }
+    
+    if (char === '\\') {
+      escapeNext = true;
+      continue;
+    }
+    
+    if (char === '"' && !inString) {
+      inString = true;
+    } else if (char === '"' && inString) {
+      inString = false;
+    }
+    
+    if (!inString) {
+      if (char === '{') {
+        braceCount++;
+      } else if (char === '}') {
+        braceCount--;
+        if (braceCount === 0) {
+          endIndex = i; // Don't include the closing brace yet
+          break;
+        }
+      }
+    }
+  }
   
   if (endIndex === -1) {
-    console.log('End pattern not found in search area');
+    console.log('Could not find matching closing brace');
     return null;
   }
   
-  const actualEndPosition = jsonStart + endIndex + 'function(){}'.length; // Include complete function
-  const jsonStr = html.substring(jsonStart, actualEndPosition); // This should end with function(){}
-  
-  console.log('Extracted JSON length:', jsonStr.length);
+  const jsonStr = html.substring(jsonStart, endIndex + 1); // Include the closing brace
+  console.log('Extracted string length:', jsonStr.length);
   console.log('JSON preview:', jsonStr.substring(0, 100) + '...');
-  console.log('JSON ending:', jsonStr.substring(jsonStr.length - 10)); // Show last 10 characters
-  
-  // Now try to parse the JSON with timeout protection
-  console.log('Starting JSON parse...');
+  console.log('JSON ending:', jsonStr.substring(jsonStr.length - 20)); // Show last 20 characters
   
   try {
-    // Since this is JavaScript object notation, not JSON, use eval() instead of JSON.parse()
-    // This is safe because we're parsing data from a trusted source (Forex Factory)
-    console.log('Using eval to parse JavaScript object...');
+    // Try JSON.parse first
+    console.log('Attempting JSON.parse...');
+    const data = JSON.parse(jsonStr);
     
-    const data = eval('(' + jsonStr + ')');
-    console.log('SUCCESS! Parsed JSON with', data.days ? data.days.length : 0, 'days');
-    
-    if (data.days && data.days[0] && data.days[0].events) {
-      console.log('First day has', data.days[0].events.length, 'events');
+    console.log('Successfully parsed JSON with JSON.parse!');
+    if (data.days) {
+      console.log('Found', data.days.length, 'days');
+      if (data.days[0] && data.days[0].events) {
+        console.log('First day has', data.days[0].events.length, 'events');
+        if (data.days[0].events[0]) {
+          console.log('Sample event:', {
+            id: data.days[0].events[0].id,
+            name: data.days[0].events[0].name,
+            country: data.days[0].events[0].country
+          });
+        }
+      }
     }
     
     return data;
   } catch (e) {
-    console.log('JSON parse error:', e.message);
-    console.log('JSON length was:', jsonStr.length);
-    console.log('First 500 chars:', jsonStr.substring(0, 500));
+    console.error('JSON.parse failed:', e.message);
+    
+    // Try with eval as fallback (safe since we control the source)
+    try {
+      console.log('Trying eval as fallback...');
+      const evalResult = eval('(' + jsonStr + ')');
+      console.log('Eval succeeded!');
+      return evalResult;
+    } catch (evalError) {
+      console.error('Eval also failed:', evalError.message);
+      console.log('First 500 chars:', jsonStr.substring(0, 500));
+    }
+    
     return null;
   }
 }
