@@ -50,6 +50,8 @@ function toCsv(rows) {
 
 // NEW FUNCTION: Extract the rich JSON data from the page
 function extractCalendarStates(html) {
+  console.log('extractCalendarStates called with HTML length:', html.length);
+  throw new Error('DEBUG: extractCalendarStates function was called');
   // Find the start of the JSON object
   const startMarker = 'window.calendarComponentStates[1] = ';
   const startIndex = html.indexOf(startMarker);
