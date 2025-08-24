@@ -258,12 +258,21 @@ function parseCalendarHtml(html, baseline, timezoneOffset = 0) {
   // COMMENTED OUT: Fall back to HTML parsing to see JSON extraction errors
   // console.log('Falling back to HTML table parsing');
   
-  // Enhanced debugging - let's see what's actually in the HTML
+  // Enhanced debugging - let's see what's actually around the calendarComponentStates
   const hasCalendarStates = html.includes('window.calendarComponentStates');
   const hasCalendarStates1 = html.includes('window.calendarComponentStates[1]');
   const htmlLength = html.length;
   
-  throw new Error(`JSON extraction failed - HTML length: ${htmlLength}, contains 'window.calendarComponentStates': ${hasCalendarStates}, contains '[1]': ${hasCalendarStates1}`);
+  // Find the exact position and show context
+  const startIndex = html.indexOf('window.calendarComponentStates[1]');
+  let contextStr = '';
+  if (startIndex !== -1) {
+    const contextStart = Math.max(0, startIndex - 50);
+    const contextEnd = Math.min(html.length, startIndex + 500);
+    contextStr = html.substring(contextStart, contextEnd);
+  }
+  
+  throw new Error(`JSON extraction failed - HTML length: ${htmlLength}, contains 'window.calendarComponentStates': ${hasCalendarStates}, contains '[1]': ${hasCalendarStates1}. Context: ${JSON.stringify(contextStr)}`);
   
   /* COMMENTED OUT HTML PARSING FALLBACK
   const $ = cheerio.load(html);
