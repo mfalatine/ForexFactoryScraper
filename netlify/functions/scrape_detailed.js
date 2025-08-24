@@ -80,11 +80,12 @@ function extractCalendarStates(html) {
     return null;
   }
   
-  const actualEndPosition = jsonStart + endIndex + 1; // +1 to include the }
-  const jsonStr = html.substring(jsonStart, actualEndPosition); // Don't include the semicolon
+  const actualEndPosition = jsonStart + endIndex + 1; // +1 to include the } but not the semicolon
+  const jsonStr = html.substring(jsonStart, actualEndPosition); // This should end at the closing brace
   
   console.log('Extracted JSON length:', jsonStr.length);
   console.log('JSON preview:', jsonStr.substring(0, 100) + '...');
+  console.log('JSON ending:', jsonStr.substring(jsonStr.length - 10)); // Show last 10 characters
   
   // Now try to parse the JSON with timeout protection
   console.log('Starting JSON parse...');
