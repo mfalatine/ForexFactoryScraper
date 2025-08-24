@@ -351,46 +351,6 @@ footer a {
 .impact-flag.yellow { background: #f1c40f; }
 .impact-flag.gray { background: #95a5a6; }
 
-.filter-controls {
-    margin-top: 15px;
-    padding-top: 15px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-
-.filter-controls select {
-    padding: 6px 10px;
-    background: rgba(0, 0, 0, 0.3);
-    color: #ecf0f1;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 4px;
-    font-size: 0.85em;
-}
-
-.filter-controls button {
-    padding: 6px 15px;
-    font-size: 0.85em;
-    border-radius: 4px;
-    cursor: pointer;
-    border: none;
-    font-weight: 600;
-}
-
-.btn-apply-filter {
-    background: #27ae60;
-    color: white;
-}
-
-.btn-cancel-filter {
-    background: #7f8c8d;
-    color: white;
-}
-
-.filter-controls button:hover {
-    opacity: 0.9;
-}
 
 .manual-scraping-section h3 {
     color: #1e3c72;

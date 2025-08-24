@@ -227,16 +227,6 @@ async function fetchQuick(mode, value) {
     }
 }
 
-// Placeholder functions for filter buttons (to be implemented)
-function applyFilters() {
-    console.log('Apply filters clicked');
-    // TODO: Implement filter logic
-}
-
-function cancelFilters() {
-    console.log('Cancel filters clicked');
-    // TODO: Reset filters to default state
-}
 
 // Initialize on load
 document.addEventListener('DOMContentLoaded', init);
