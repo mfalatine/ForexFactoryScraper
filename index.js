@@ -150,6 +150,10 @@ function viewGitHub() {
     window.open(githubUrl, '_blank');
 }
 
+function viewChangeHistory() {
+    window.open('change-history.html', '_blank');
+}
+
 
 async function runNow(ev) {
     const startDate = document.getElementById('startDate').value;
