@@ -86,18 +86,9 @@ function extractCalendarStates(html) {
   console.log('Extracted JSON length:', jsonStr.length);
   console.log('JSON preview:', jsonStr.substring(0, 100) + '...');
   
-  // Now try to parse the JSON
-  try {
-    // Clean up the JSON string
-    let cleanJson = jsonStr.replace(/,(\s*[}\]])/g, '$1'); // Remove trailing commas
-    const data = JSON.parse(cleanJson);
-    console.log('Successfully parsed JSON with', data.days ? data.days.length : 0, 'days');
-    return data;
-  } catch (e) {
-    console.log('JSON parse error:', e.message);
-    console.log('First 200 chars:', jsonStr.substring(0, 200));
-    return null;
-  }
+  // Don't try to parse the massive JSON yet - just test extraction
+  console.log('Skipping JSON parse for now, returning null to test extraction');
+  return null;
 }
 
 // MODIFIED: Parse function that uses JSON data when available
