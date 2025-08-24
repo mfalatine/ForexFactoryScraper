@@ -75,7 +75,10 @@ function extractCalendarStates(html) {
   }
   
   if (lastValidEnd === -1) {
-    console.log('Could not find end pattern');
+    console.log('Could not find end pattern - looking for }; at end of line');
+    // Let's see what end patterns we can find
+    const endPatterns = html.substring(jsonStart, jsonStart + 10000).match(/\}.*;/g);
+    console.log('Found these end patterns:', endPatterns ? endPatterns.slice(0, 5) : 'none');
     return null;
   }
   
@@ -306,7 +309,9 @@ function parseCalendarHtml(html, baseline, timezoneOffset = 0) {
     largeContext = html.substring(contextStart, contextEnd);
   }
   
-  throw new Error(`JSON extraction failed. Large context: ${JSON.stringify(largeContext)}`);
+  // Temporarily disable error to test extraction
+  console.log('JSON extraction failed but continuing to test the new parser');
+  return [];
   
   /* COMMENTED OUT HTML PARSING FALLBACK
   const $ = cheerio.load(html);
