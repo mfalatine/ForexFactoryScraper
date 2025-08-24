@@ -50,7 +50,8 @@ function toCsv(rows) {
 
 // NEW FUNCTION: Extract the rich JSON data from the page
 function extractCalendarStates(html) {
-  const pattern = /window\.calendarComponentStates\[1\]\s*=\s*(\{[\s\S]*?\});(?:\s*window\.calendarComponentStates|\s*<\/script>)/;
+  // Updated regex pattern to match window.calendarComponentStates[1] = {days: ...};
+  const pattern = /window\.calendarComponentStates\[1\]\s*=\s*(\{days:[\s\S]*?\});/;
   const match = pattern.exec(html);
   
   if (match) {
@@ -60,12 +61,39 @@ function extractCalendarStates(html) {
       jsonStr = jsonStr.replace(/,(\s*[}\]])/g, '$1');
       // Handle escaped forward slashes
       jsonStr = jsonStr.replace(/\\\//g, '/');
+      // Handle unescaped slashes that might break JSON parsing
+      jsonStr = jsonStr.replace(/([^\\])\/([^\/])/g, '$1\\/$2');
       
       const data = JSON.parse(jsonStr);
       console.log('Successfully extracted calendar states JSON with', data.days ? data.days.length : 0, 'days');
       return data;
     } catch (e) {
       console.error('Failed to parse calendarComponentStates:', e.message);
+      console.log('Raw JSON string preview:', match[1].substring(0, 200) + '...');
+    }
+  } else {
+    console.log('No calendar states JSON found in HTML - checking for alternative patterns');
+    // Try alternative patterns that might exist
+    const altPatterns = [
+      /window\.calendarComponentStates\[1\]\s*=\s*(\{[\s\S]*?\});/,
+      /calendarComponentStates\[1\]\s*=\s*(\{days:[\s\S]*?\});/
+    ];
+    
+    for (const altPattern of altPatterns) {
+      const altMatch = altPattern.exec(html);
+      if (altMatch) {
+        console.log('Found alternative pattern match');
+        try {
+          let jsonStr = altMatch[1];
+          jsonStr = jsonStr.replace(/,(\s*[}\]])/g, '$1');
+          jsonStr = jsonStr.replace(/\\\//g, '/');
+          const data = JSON.parse(jsonStr);
+          console.log('Successfully extracted calendar states JSON with alternative pattern');
+          return data;
+        } catch (e) {
+          console.error('Failed to parse alternative pattern:', e.message);
+        }
+      }
     }
   }
   console.log('No calendar states JSON found in HTML');
@@ -159,9 +187,21 @@ function parseCalendarHtml(html, baseline, timezoneOffset = 0) {
             impact = 'Low';
           }
           
-          let actualIndicator = '';
+          let actualIndicator = 'neutral';
           if (event.actualBetterWorse === 1) actualIndicator = 'better';
           else if (event.actualBetterWorse === -1) actualIndicator = 'worse';
+          
+          // Ensure URL includes detail anchor if eventId is available
+          let fullUrl = '';
+          if (event.url) {
+            fullUrl = `https://www.forexfactory.com${event.url}`;
+            if (event.id && !fullUrl.includes('#detail=')) {
+              fullUrl += `#detail=${event.id}`;
+            }
+          } else if (event.id) {
+            // Construct URL from eventId if no URL provided
+            fullUrl = `https://www.forexfactory.com/calendar?day=${dateIso.replace(/-/g, '')}#detail=${event.id}`;
+          }
           
           rows.push({
             date: dateIso,
@@ -172,8 +212,8 @@ function parseCalendarHtml(html, baseline, timezoneOffset = 0) {
             actual: event.actual || '',
             forecast: event.forecast || '',
             previous: event.previous || '',
-            eventId: event.id,
-            ebaseId: event.ebaseId,
+            eventId: event.id || null,
+            ebaseId: event.ebaseId || null,
             country: event.country || '',
             revision: event.revision || '',
             leaked: event.leaked || false,
@@ -185,7 +225,7 @@ function parseCalendarHtml(html, baseline, timezoneOffset = 0) {
             impactTitle: event.impactTitle || '',
             hasGraph: event.hasGraph || false,
             hasDataValues: event.hasDataValues || false,
-            url: event.url ? `https://www.forexfactory.com${event.url}` : '',
+            url: fullUrl,
             soloUrl: event.soloUrl ? `https://www.forexfactory.com${event.soloUrl}` : '',
             dateline: event.dateline || null,
             scraped_at: new Date().toISOString()
