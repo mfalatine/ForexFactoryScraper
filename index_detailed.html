@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forex Factory Data Scaper</title>
-    <meta name="description" content="Forex Factory Data Scaper, updated weekly. Download as JSON or CSV.">
+    <title>Forex Factory DETAILED Data Scraper</title>
+    <meta name="description" content="Forex Factory DETAILED Data Scraper with rich JSON extraction">
     
     <style>
         * {
@@ -44,6 +44,17 @@
             color: #666;
             font-size: 1.1em;
             margin-bottom: 15px;
+        }
+        
+        .version-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 0.85em;
+            margin-bottom: 10px;
         }
         
         .last-update {
@@ -323,7 +334,18 @@
             box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
         }
         
+        .extra-fields {
+            background: #e8f4f8;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-size: 0.85em;
+            color: #1e3c72;
+        }
         
+        .extra-fields strong {
+            color: #2a5298;
+        }
         
         @media (max-width: 768px) {
             body {
@@ -384,7 +406,9 @@
 <body>
     <div class="container">
         <header>
-            <h2>📊 Forex Factory Data Scraper</h2>
+            <div class="version-badge">✨ DETAILED VERSION</div>
+            <h2>📊 Forex Factory DETAILED Data Scraper</h2>
+            <p class="subtitle">Enhanced scraper with rich JSON data extraction</p>
             <div class="last-update" id="lastUpdate">Loading...</div>
 
             <div class="buttons">
@@ -403,12 +427,13 @@
                     </svg>
                     View on GitHub
                 </button>
-                <button class="btn-secondary" onclick="viewChangeHistory()">
-                    📜 Change History
+                <button class="btn-secondary" onclick="switchToOriginal()">
+                    🔄 Switch to Original
                 </button>
-                <button class="btn-secondary" onclick="switchToDetailed()">
-                    ✨ Switch to Detailed
-                </button>
+            </div>
+            
+            <div class="extra-fields">
+                <strong>🎯 Extra Fields Available:</strong> eventId, country, revision, leaked, actualBetterWorse, prefixedName, impactDetails, hasGraph, URLs, and more!
             </div>
             
             <!-- Manual Scraping Section -->
@@ -423,7 +448,7 @@
                         </div>
                         <div class="button-stack">
                             <button class="btn-load" onclick="fetchIntoPage(event)">
-                                ⤵️ Load Into Page
+                                ⤵️ Load Into Page (Detailed)
                             </button>
                             <button class="btn-open-ff" onclick="runNow(event)">
                                 🔗 Open Week on ForexFactory
@@ -448,18 +473,18 @@
             </div>
 
             <div class="data-preview">
-                <h2>📊 Data Preview (<span id="eventCount">Loading...</span>)</h2>
+                <h2>📊 Detailed Data Preview (<span id="eventCount">Loading...</span>)</h2>
                 <div id="tableContainer" class="loading">
-                    Loading data...
+                    Loading detailed data...
                 </div>
             </div>
         </header>
         
         <footer>
             <p>
-                This is free, open-source data served live via Netlify Functions.<br>
+                DETAILED VERSION - Enhanced data extraction with rich JSON fields<br>
                 <a href="https://github.com/mfalatine/ForexFactoryScraper" target="_blank">Star ⭐ on GitHub</a> | 
-                <a href="https://github.com/mfalatine/ForexFactoryScraper/issues" target="_blank">Report Issues</a>
+                <a href="index.html">View Original Version</a>
             </p>
         </footer>
     </div>
@@ -469,9 +494,9 @@
         const REPO_NAME = 'ForexFactoryScraper';
         const BRANCH = 'main';
         
-        // Construct URLs now provided by Netlify Function
-        const jsonUrlBase = '/.netlify/functions/scrape';
-        const csvUrlBase = '/.netlify/functions/scrape?format=csv';
+        // CHANGED: Point to the detailed scraper function
+        const jsonUrlBase = '/.netlify/functions/scrape_detailed';
+        const csvUrlBase = '/.netlify/functions/scrape_detailed?format=csv';
         const githubUrl = `https://github.com/${GITHUB_USER}/${REPO_NAME}`;
         
         let calendarData = [];
@@ -515,7 +540,7 @@
                         `Last Updated: ${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
                 }
                 
-                // Display preview table
+                // Display preview table with enhanced fields
                 displayTable(calendarData);
                 
             } catch (error) {
@@ -534,6 +559,7 @@
                 return;
             }
             
+            // Enhanced table with additional fields
             let html = `
                 <table>
                     <thead>
@@ -541,11 +567,15 @@
                             <th>Date</th>
                             <th>Time</th>
                             <th>Currency</th>
+                            <th>Country</th>
                             <th>Impact</th>
                             <th>Event</th>
                             <th>Actual</th>
                             <th>Forecast</th>
                             <th>Previous</th>
+                            <th>Revision</th>
+                            <th>Better/Worse</th>
+                            <th>ID</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -557,16 +587,28 @@
                 else if (item.impact === 'Medium') impactClass = 'impact-medium';
                 else if (item.impact === 'Low') impactClass = 'impact-low';
                 
+                // Show better/worse indicator
+                let indicator = '';
+                if (item.actualBetterWorse === 'better') indicator = '✅';
+                else if (item.actualBetterWorse === 'worse') indicator = '❌';
+                
+                // Show leaked indicator
+                let leakedBadge = item.leaked ? ' 🔓' : '';
+                
                 html += `
                     <tr>
                         <td>${item.date || ''}</td>
                         <td>${item.time || ''}</td>
                         <td><strong>${item.currency || ''}</strong></td>
+                        <td>${item.country || ''}</td>
                         <td>${item.impact ? `<span class="${impactClass}">${item.impact}</span>` : ''}</td>
-                        <td>${item.event || ''}</td>
+                        <td>${item.event || ''}${leakedBadge}</td>
                         <td>${item.actual || ''}</td>
                         <td>${item.forecast || ''}</td>
                         <td>${item.previous || ''}</td>
+                        <td>${item.revision || ''}</td>
+                        <td>${indicator}</td>
+                        <td>${item.eventId || ''}</td>
                     </tr>
                 `;
             });
@@ -575,7 +617,7 @@
                     </tbody>
                 </table>
                 <p style="margin-top: 20px; color: #666; text-align: center;">
-                    Showing all ${calendarData.length} events.
+                    Showing all ${calendarData.length} events with enhanced data fields.
                 </p>
             `;
             
@@ -598,12 +640,8 @@
             window.open(githubUrl, '_blank');
         }
         
-        function viewChangeHistory() {
-            window.open('change-history.html', '_blank');
-        }
-        
-        function switchToDetailed() {
-            window.location.href = 'index_detailed.html';
+        function switchToOriginal() {
+            window.location.href = 'index.html';
         }
         
         async function runNow(ev) {
@@ -625,7 +663,7 @@
     
             const btn = ev.currentTarget;
             const original = btn.textContent;
-            btn.disabled = true; btn.textContent = '⏳ Fetching...';
+            btn.disabled = true; btn.textContent = '⏳ Fetching detailed data...';
             
             // Store the current query
             currentQuery = `start=${startDate}`;
@@ -642,7 +680,7 @@
                         `Last Updated: ${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
                 }
                 displayTable(calendarData);
-                btn.textContent = '✅ Fetched!';
+                btn.textContent = '✅ Fetched with Details!';
             } catch (e) {
                 console.error(e);
                 alert(`Fetch failed. ${e && e.message ? e.message : ''}`);
