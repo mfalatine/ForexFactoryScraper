@@ -235,8 +235,11 @@ function parseCalendarHtml(html, baseline, timezoneOffset = 0) {
     return fillMissingTimes(rows);
   }
   
-  // Fall back to HTML parsing if JSON extraction fails
-  console.log('Falling back to HTML table parsing');
+  // COMMENTED OUT: Fall back to HTML parsing to see JSON extraction errors
+  // console.log('Falling back to HTML table parsing');
+  throw new Error('JSON extraction failed - no calendarComponentStates data found');
+  
+  /* COMMENTED OUT HTML PARSING FALLBACK
   const $ = cheerio.load(html);
   const table = $('table.calendar__table');
   if (!table.length) throw new Error('Calendar table not found');
@@ -316,6 +319,7 @@ function parseCalendarHtml(html, baseline, timezoneOffset = 0) {
   });
 
   return fillMissingTimes(rows);
+  */ // END COMMENTED OUT HTML PARSING FALLBACK
 }
 
 function fillMissingTimes(rows) {
