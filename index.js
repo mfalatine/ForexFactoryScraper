@@ -537,7 +537,7 @@ async function init() {
         if (calendarData.length > 0 && calendarData[0].scraped_at) {
             const date = new Date(calendarData[0].scraped_at);
             document.getElementById('lastUpdate').textContent = 
-                `Last Updated: ${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+                `Last Run: ${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
         }
         
         // Display preview table with enhanced fields
@@ -973,7 +973,7 @@ async function fetchQuick(mode, value) {
         if (calendarData.length > 0 && calendarData[0].scraped_at) {
             const date = new Date(calendarData[0].scraped_at);
             document.getElementById('lastUpdate').textContent = 
-                `Last Updated: ${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+                `Last Run: ${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
         }
         
         displayTable(calendarData);
