@@ -11,13 +11,13 @@ A powerful serverless web scraper that fetches live economic calendar data from 
 
 ## 🌟 Key Features
 
-### Advanced Date Selection System (X23+)
+### Advanced Date Selection System
 - **Multi-Week/Month Selection**: Select multiple weeks AND months simultaneously for comprehensive date ranges
 - **Date Range**: Supports 2007-2035 with intelligent navigation
 - **Batch Loading**: Progress indicators for multiple date selections
 - **Auto-Deduplication**: Automatically removes duplicate events when combining date ranges
 
-### Enhanced Data Display (X44-X62)
+### Enhanced Data Display
 - **Rich Table View**: 12-column display with day of week, clickable event details, and color-coded impact levels
 - **Event Details**: Click event icons to open ForexFactory detail pages in popup windows
 - **Pagination**: Handles large datasets with 200-row pages and navigation controls
@@ -133,14 +133,14 @@ node eventcrawler.js
 
 **Usage**: Run this script periodically to update event type mappings or when you need comprehensive event classification data.
 
-## 🆕 Latest Updates (X62)
+## 🆕 Latest Updates
 
 ### Major Enhancements
-- **X62**: Fixed button height consistency across interface
-- **X61**: Critical deduplication fix for duplicate event handling
-- **X58**: Combined week+month selections for flexible date ranges
-- **X44-52**: Added clickable event details with ForexFactory links
-- **X23**: Complete UI redesign with advanced date selection system
+- Fixed button height consistency across interface
+- Critical deduplication fix for duplicate event handling
+- Combined week+month selections for flexible date ranges
+- Added clickable event details with ForexFactory links
+- Complete UI redesign with advanced date selection system
 
 ### Recent Improvements
 - Eliminated all timezone issues - times match ForexFactory exactly
