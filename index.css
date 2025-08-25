@@ -760,15 +760,18 @@ footer a {
 }
 
 .btn-open-ff {
-  padding: 2px 4px;
+  padding: 4px 6px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
   font-weight: 500;
-  font-size: 0.65em;
+  font-size: 0.75em;
   white-space: nowrap;
+  display: inline-block;
+  min-width: auto;
+  width: auto;
 }
 
 .btn-open-ff:hover {
