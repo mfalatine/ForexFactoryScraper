@@ -5,9 +5,14 @@
       "Bash(git push:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Read(/C:\\Users\\micha\\.claude/**)"
+      "Read(/C:\\Users\\micha\\.claude/**)",
+      "Read(/C:\\Users\\micha\\.claude/**)",
+      "Bash(npx html-validate:*)"
     ],
     "deny": [],
-    "ask": []
+    "ask": [],
+    "additionalDirectories": [
+      "C:\\c\\Users\\micha\\source\\repos"
+    ]
   }
 }
