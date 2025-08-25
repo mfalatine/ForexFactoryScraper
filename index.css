@@ -254,7 +254,7 @@ footer a {
 
 .secondary-options {
     display: grid;
-    grid-template-columns: 280px 1fr;
+    grid-template-columns: 360px 1fr;
     gap: 15px;
     margin-top: 12px;
 }
@@ -302,15 +302,23 @@ footer a {
 .quick-links-column a { 
     display: block; 
     margin: 2px 0; 
-    color: #1e3c72; 
+    color: white;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     text-decoration: none; 
     font-size: 0.75em; 
-    padding: 2px 4px;
-    border-radius: 3px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
 }
 
 .quick-links-column a:hover { 
-    background: #f0f4ff;
+    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
     text-decoration: none; 
 }
 

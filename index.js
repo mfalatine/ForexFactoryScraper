@@ -193,16 +193,19 @@ class DateRangeManager {
     }
     
     const monthParam = this.formatMonthParam(monthIndex, year);
+    console.log('Month selection - monthIndex:', monthIndex, 'year:', year, 'monthParam:', monthParam);
     const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
     
     if (this.selectedMonths.has(monthParam)) {
       this.selectedMonths.delete(monthParam);
+      console.log('Removed month:', monthParam);
     } else {
       this.selectedMonths.set(monthParam, { 
         month: months[monthIndex], 
         year: year,
         monthIndex: monthIndex
       });
+      console.log('Added month:', monthParam, this.selectedMonths.get(monthParam));
     }
     this.updateMonthDisplay();
   }
@@ -308,9 +311,11 @@ class DateRangeManager {
         `week=${weekParam}&${filterParams}`
       );
     } else if (mode === 'months') {
-      return Array.from(this.selectedMonths.keys()).map(monthParam => 
+      const urls = Array.from(this.selectedMonths.keys()).map(monthParam => 
         `month=${monthParam}&${filterParams}`
       );
+      console.log('Month URLs being fetched:', urls);
+      return urls;
     }
     return [];
   }
@@ -626,11 +631,24 @@ async function loadSelectedPeriods() {
       const batch = urls.slice(i, i + batchSize);
       const batchPromises = batch.map(params => 
         fetchNoCache(`${jsonUrlBase}?${params}`)
-          .then(res => res.json())
+          .then(res => {
+            console.log('Fetch response for params:', params, 'status:', res.status);
+            if (!res.ok) {
+              throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+            }
+            return res.json();
+          })
           .then(data => {
             completedRequests++;
             updateLoadingMessage(`Loading ${completedRequests} of ${totalRequests}...`);
+            console.log('Data received for params:', params, 'count:', data.length);
             return data;
+          })
+          .catch(error => {
+            console.error('Error fetching params:', params, 'error:', error);
+            completedRequests++;
+            updateLoadingMessage(`Loading ${completedRequests} of ${totalRequests}... (error)`);
+            return []; // Return empty array on error
           })
       );
       
