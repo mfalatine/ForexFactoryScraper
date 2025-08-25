@@ -818,10 +818,14 @@ async function loadSelectedPeriods() {
     const uniqueEvents = new Map();
     allData.forEach(event => {
       if (event && typeof event === 'object') {
-        if (event.eventId && !uniqueEvents.has(event.eventId)) {
-          uniqueEvents.set(event.eventId, event);
-        } else if (!event.eventId) {
-          // If no eventId, use combination of date, time, and event name as key
+        if (event.eventId) {
+          // Handle events WITH eventId - proper deduplication
+          if (!uniqueEvents.has(event.eventId)) {
+            uniqueEvents.set(event.eventId, event);
+          }
+          // If eventId already exists, skip (deduplication working correctly)
+        } else {
+          // Handle events WITHOUT eventId - use fallback deduplication
           const key = `${event.date}-${event.time}-${event.event}`;
           if (!uniqueEvents.has(key)) {
             uniqueEvents.set(key, event);
