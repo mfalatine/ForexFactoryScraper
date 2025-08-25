@@ -560,15 +560,75 @@ function displayTable(data) {
 }
 
 function downloadJSON() {
-    window.open(`${jsonUrlBase}?${currentQuery}&_t=${Date.now()}`, '_blank');
+    if (!calendarData || calendarData.length === 0) {
+        alert('No data to download. Please load some data first.');
+        return;
+    }
+    
+    const jsonStr = JSON.stringify(calendarData, null, 2);
+    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `forex-factory-data-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 }
 
 function downloadCSV() {
-    window.open(`${jsonUrlBase}?${currentQuery}&format=csv&_t=${Date.now()}`, '_blank');
+    if (!calendarData || calendarData.length === 0) {
+        alert('No data to download. Please load some data first.');
+        return;
+    }
+    
+    // Convert to CSV
+    const headers = ['Date', 'Time', 'Currency', 'Impact', 'Event', 'Actual', 'Forecast', 'Previous', 'Country'];
+    const csvContent = [
+        headers.join(','),
+        ...calendarData.map(row => [
+            row.date || '',
+            row.time || '',
+            row.currency || '',
+            row.impact || '',
+            `"${(row.event || '').replace(/"/g, '""')}"`,
+            row.actual || '',
+            row.forecast || '',
+            row.previous || '',
+            row.country || ''
+        ].join(','))
+    ].join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `forex-factory-data-${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 }
 
 function viewRawJSON() {
-    window.open(`${jsonUrlBase}?${currentQuery}&_t=${Date.now()}`, '_blank');
+    if (!calendarData || calendarData.length === 0) {
+        alert('No data to view. Please load some data first.');
+        return;
+    }
+    
+    const jsonStr = JSON.stringify(calendarData, null, 2);
+    const newWindow = window.open('', '_blank');
+    newWindow.document.write(`
+        <html>
+        <head><title>Raw JSON Data</title></head>
+        <body>
+            <h1>Forex Factory Raw JSON Data (${calendarData.length} events)</h1>
+            <pre style="white-space: pre-wrap; word-wrap: break-word;">${jsonStr}</pre>
+        </body>
+        </html>
+    `);
+    newWindow.document.close();
 }
 
 function viewGitHub() {
