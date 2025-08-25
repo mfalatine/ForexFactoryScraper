@@ -770,11 +770,7 @@ async function loadSelectedPeriods() {
     return;
   }
   
-  if (mode === 'conflict') {
-    if (!confirm('You have both weeks and months selected. Only weeks will be loaded. Continue?')) {
-      return;
-    }
-  }
+  // Combined mode is now supported - no conflict warning needed
   
   // Show loading overlay
   showLoadingOverlay();
