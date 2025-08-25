@@ -110,6 +110,31 @@ print(data)
 - **Cache Busting**: Prevents stale data issues with automatic cache-busting timestamps
 - **No Database Required**: Serverless architecture fetches data on-demand
 
+## 🔍 EventCrawler - Event Type Mapping Tool
+
+The EventCrawler is a specialized script that collects comprehensive event type mappings from ForexFactory to enable accurate event classification.
+
+### Running EventCrawler
+
+**Prerequisites**: Node.js installed on your system
+
+**Command**:
+```bash
+node eventcrawler.js
+```
+
+**What it does**:
+- Collects event type mappings for a full year (August 2024 - August 2025)
+- Processes all 10 event type filters individually (Growth, Inflation, Employment, Central Bank, Bonds, Housing, Consumer, Business, Speeches, Misc)
+- Extracts `event_name`, `ebase_id`, `event_type` from each event
+- Outputs comprehensive mapping data to `event_mappings.csv`
+- Takes approximately 4+ minutes to complete (120 API requests with 2-second delays)
+- Includes progress tracking, error handling, and retry logic
+
+**Output**: Creates `event_mappings.csv` with definitive ForexFactory event classifications that can be used to add accurate event type columns to the main application.
+
+**Usage**: Run this script periodically to update event type mappings or when you need comprehensive event classification data.
+
 ## 🆕 Recent Changes
 
 - **2025-08-23**: Added post-processing to fill missing times for events in the same time block
