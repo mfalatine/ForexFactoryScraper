@@ -177,6 +177,33 @@ td {
     white-space: nowrap;
 }
 
+.link-column {
+    width: 30px;
+    text-align: center;
+    padding: 4px !important;
+}
+
+.link-column a {
+    color: #1e3c72;
+    text-decoration: none;
+    font-size: 1.2em;
+    display: inline-block;
+    padding: 2px 4px;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+}
+
+.link-column a:hover {
+    background-color: rgba(30, 60, 114, 0.1);
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
+.link-column th {
+    width: 30px;
+    font-size: 1.2em;
+}
+
 tr:hover {
     background: #f8f9fa;
 }

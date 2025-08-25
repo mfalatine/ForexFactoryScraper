@@ -15,6 +15,24 @@ let currentPage = 1;
 const ROWS_PER_PAGE = 200;
 let eventTypeLookup = new Map(); // Event type lookup table
 
+// Function to open ForexFactory event detail in popup window
+function openEventDetail(url) {
+    if (!url) {
+        alert('Event detail URL not available');
+        return;
+    }
+    
+    // Open in popup window with specific dimensions
+    const popup = window.open(url, 'eventDetail', 'width=1200,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no,location=no');
+    
+    if (popup) {
+        popup.focus();
+    } else {
+        // If popup blocked, open in new tab
+        window.open(url, '_blank');
+    }
+}
+
 // Helper function to get day of week from date string
 function getDayOfWeek(dateString) {
     if (!dateString) return '';
@@ -554,6 +572,7 @@ function displayTable(data) {
         <table>
             <thead>
                 <tr>
+                    <th class="link-column">🔗</th>
                     <th>Day</th>
                     <th>Date</th>
                     <th>Time</th>
@@ -588,8 +607,15 @@ function displayTable(data) {
         
         const eventType = getEventType(item.event || '');
         
+        // Create clickable link for ForexFactory event detail
+        const eventUrl = item.url || '';
+        const linkCell = eventUrl ? 
+            `<td class="link-column"><a href="#" onclick="openEventDetail('${eventUrl.replace(/'/g, '\\\')}'); return false;" title="Open in ForexFactory">🔗</a></td>` :
+            `<td class="link-column">—</td>`;
+            
         html += `
             <tr>
+                ${linkCell}
                 <td>${getDayOfWeek(item.date)}</td>
                 <td>${item.date || ''}</td>
                 <td>${item.time || ''}</td>
