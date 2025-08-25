@@ -23,7 +23,7 @@ function openEventDetail(url) {
     }
     
     // Open in popup window with specific dimensions
-    const popup = window.open(url, 'eventDetail', 'width=1200,height=800,scrollbars=yes,resizable=yes,toolbar=no,menubar=no,location=no');
+    const popup = window.open(url, 'eventDetail', 'width=1440,height=900,scrollbars=yes,resizable=yes,toolbar=no,menubar=no,location=no');
     
     if (popup) {
         popup.focus();
