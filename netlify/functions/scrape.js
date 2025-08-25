@@ -620,11 +620,6 @@ exports.handler = async (event) => {
       end.setDate(startDate.getDate() + 6);
       const endIso = `${end.getFullYear()}-${String(end.getMonth()+1).padStart(2,'0')}-${String(end.getDate()).padStart(2,'0')}`;
       filtered = rows.filter((r) => r.date && r.date >= startIso && r.date <= endIso);
-    } else if (mode === 'month') {
-      const startIso = formatDateLocal(new Date(baseline.getFullYear(), baseline.getMonth(), 1));
-      const end = new Date(baseline.getFullYear(), baseline.getMonth() + 1, 0);
-      const endIso = formatDateLocal(end);
-      filtered = rows.filter((r) => r.date && r.date >= startIso && r.date <= endIso);
     }
 
     if (format === 'csv') {
