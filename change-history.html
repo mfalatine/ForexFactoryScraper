@@ -33,6 +33,18 @@
         </header>
         <div class="card">
             <div class="entry">
+                <div class="desc"><span class="date">[2025-08-25]</span> <strong>X38: EventCrawler & Enhanced Data Export</strong> - Created EventCrawler tool for comprehensive ForexFactory event type mapping collection. Added CSV export with all 24+ data fields including rich metadata, URLs, and timestamps. Fixed month data loading by removing search limits and unnecessary filtering. Implemented mutual exclusion between week/month selections. Enhanced quick links with button styling and improved Open in FF button sizing.</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-25]</span> <strong>X31: Month Data Loading Fix</strong> - Resolved critical issue where certain months (February, April, May) returned test data instead of real ForexFactory events. Fixed JSON extraction algorithm that was failing on large HTML responses due to 500K character search limit. All months now load correctly with full event data.</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-25]</span> <strong>X29: Backend Filtering Optimization</strong> - Removed unnecessary month filtering logic that was incorrectly removing events after ForexFactory had already filtered them. Download buttons now export actual table data instead of re-querying API, ensuring downloads match displayed results for multiple month/week selections.</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-25]</span> <strong>X26: Mutual Exclusion & UI Improvements</strong> - Implemented mutual exclusion between week and month selections to prevent data conflicts. Added week day range clarification (Sunday-Saturday) to interface. Enhanced quick links with proper button styling and improved spacing.</div>
+            </div>
+            <div class="entry">
                 <div class="desc"><span class="date">[2025-08-25]</span> <strong>X24: Compact Layout & UI Redesign</strong> - Completely redesigned interface for better space utilization. Removed expandable popups and made week/month selectors always visible in a side-by-side layout. Moved filters and quick links below date selectors in organized sections. Reduced font sizes by 2-3 points across entire site and tightened all spacing for more professional, compact appearance. Enhanced mobile responsiveness with optimized single-column layouts.</div>
             </div>
             <div class="entry">
