@@ -1,0 +1,411 @@
+﻿event_name,event_type
+Spanish 10-y Bond Auction,Bonds
+French 10-y Bond Auction,Bonds
+10-y Bond Auction,Bonds
+30-y Bond Auction,Bonds
+German 30-y Bond Auction,Bonds
+German 10-y Bond Auction,Bonds
+Italian 10-y Bond Auction,Bonds
+Spanish Manufacturing PMI,Business
+Italian Manufacturing PMI,Business
+French Final Manufacturing PMI,Business
+German Final Manufacturing PMI,Business
+Final Manufacturing PMI,Business
+Manufacturing PMI,Business
+ISM Manufacturing PMI,Business
+ISM Manufacturing Prices,Business
+RatingDog Services PMI,Business
+Spanish Services PMI,Business
+Italian Services PMI,Business
+French Final Services PMI,Business
+German Final Services PMI,Business
+Final Services PMI,Business
+ISM Services PMI,Business
+Construction PMI,Business
+Ivey PMI,Business
+Inflation Expectations q/q,Business
+Cleveland Fed Inflation Expectations,Business
+NAB Business Confidence,Business
+NFIB Small Business Index,Business
+Empire State Manufacturing Index,Business
+Philly Fed Manufacturing Index,Business
+NAHB Housing Market Index,Business
+BusinessNZ Manufacturing Index,Business
+BusinessNZ Services Index,Business
+Flash Manufacturing PMI,Business
+Flash Services PMI,Business
+French Flash Manufacturing PMI,Business
+French Flash Services PMI,Business
+German Flash Manufacturing PMI,Business
+German Flash Services PMI,Business
+CBI Industrial Order Expectations,Business
+German ifo Business Climate,Business
+Belgian NBB Business Climate,Business
+CBI Realized Sales,Business
+Richmond Manufacturing Index,Business
+ANZ Business Confidence,Business
+Chicago PMI,Business
+Non-Manufacturing PMI,Business
+RatingDog Manufacturing PMI,Business
+BSI Manufacturing Index,Business
+SECO Economic Forecasts,Business
+NZIER Business Confidence,Business
+Tankan Manufacturing Index,Business
+Tankan Non-Manufacturing Index,Business
+NAB Quarterly Business Confidence,Business
+ECB Economic Bulletin,Central Bank
+BOE Monetary Policy Report,Central Bank
+Monetary Policy Summary,Central Bank
+MPC Official Bank Rate Votes,Central Bank
+Official Bank Rate,Central Bank
+Monetary Base y/y,Central Bank
+French Gov Budget Balance,Central Bank
+Monetary Policy Meeting Minutes,Central Bank
+Loan Officer Survey,Central Bank
+Cash Rate,Central Bank
+RBA Monetary Policy Statement,Central Bank
+RBA Rate Statement,Central Bank
+RBA Press Conference,Central Bank
+Foreign Currency Reserves,Central Bank
+BOC Summary of Deliberations,Central Bank
+BOJ Summary of Opinions,Central Bank
+M2 Money Stock y/y,Central Bank
+Federal Budget Balance,Central Bank
+M2 Money Supply y/y,Central Bank
+Official Cash Rate,Central Bank
+RBNZ Monetary Policy Statement,Central Bank
+RBNZ Rate Statement,Central Bank
+RBNZ Press Conference,Central Bank
+1-y Loan Prime Rate,Central Bank
+5-y Loan Prime Rate,Central Bank
+German Buba Monthly Report,Central Bank
+FOMC Meeting Minutes,Central Bank
+ECB Monetary Policy Meeting Accounts,Central Bank
+Jackson Hole Symposium,Central Bank
+M3 Money Supply y/y,Central Bank
+M4 Money Supply m/m,Central Bank
+BOC Rate Statement,Central Bank
+Overnight Rate,Central Bank
+BOC Press Conference,Central Bank
+Beige Book,Central Bank
+Main Refinancing Rate,Central Bank
+Monetary Policy Statement,Central Bank
+ECB Press Conference,Central Bank
+Federal Funds Rate,Central Bank
+FOMC Economic Projections,Central Bank
+FOMC Statement,Central Bank
+FOMC Press Conference,Central Bank
+BOJ Policy Rate,Central Bank
+BOJ Press Conference,Central Bank
+RBA Financial Stability Review,Central Bank
+SNB Monetary Policy Assessment,Central Bank
+SNB Policy Rate,Central Bank
+SNB Press Conference,Central Bank
+FPC Meeting Minutes,Central Bank
+FPC Statement,Central Bank
+SNB Quarterly Bulletin,Central Bank
+BOE Credit Conditions Survey,Central Bank
+BOC Business Outlook Survey,Central Bank
+RBA Bulletin,Central Bank
+BOC Monetary Policy Report,Central Bank
+RBA Annual Report,Central Bank
+Autumn Forecast Statement,Central Bank
+BOJ Outlook Report,Central Bank
+RBNZ Financial Stability Report,Central Bank
+Treasury Currency Report,Central Bank
+EU Economic Forecasts,Central Bank
+Monetary Policy Report Hearings,Central Bank
+ECB Financial Stability Review,Central Bank
+FOMC Financial Stability Report,Central Bank
+BOE Financial Stability Report,Central Bank
+Mid-Year Economic and Fiscal Outlook,Central Bank
+Fed Monetary Policy Report,Central Bank
+Annual Budget Release,Central Bank
+BOC Financial System Review,Central Bank
+SNB Financial Stability Report,Central Bank
+BOE Inflation Letter,Central Bank
+Sentix Investor Confidence,Consumer
+RCM/TIPP Economic Optimism,Consumer
+Economy Watchers Sentiment,Consumer
+SECO Consumer Climate,Consumer
+Westpac Consumer Sentiment,Consumer
+German ZEW Economic Sentiment,Consumer
+ZEW Economic Sentiment,Consumer
+MI Inflation Expectations,Consumer
+Prelim UoM Consumer Sentiment,Consumer
+Prelim UoM Inflation Expectations,Consumer
+Consumer Confidence,Consumer
+GfK Consumer Confidence,Consumer
+German GfK Consumer Climate,Consumer
+CB Consumer Confidence,Consumer
+UBS Economic Expectations,Consumer
+Revised UoM Consumer Sentiment,Consumer
+Revised UoM Inflation Expectations,Consumer
+Consumer Inflation Expectations,Consumer
+Italian Monthly Unemployment Rate,Employment
+Unemployment Rate,Employment
+Challenger Job Cuts y/y,Employment
+Unemployment Claims,Employment
+Spanish Unemployment Change,Employment
+Non-Farm Employment Change,Employment
+ANZ Job Advertisements m/m,Employment
+French Prelim Private Payrolls q/q,Employment
+Employment Change q/q,Employment
+Employment Change,Employment
+Claimant Count Change,Employment
+Flash Employment Change q/q,Employment
+French Final Private Payrolls q/q,Employment
+German Unemployment Change,Employment
+JOLTS Job Openings,Employment
+ADP Non-Farm Employment Change,Employment
+Final Employment Change q/q,Employment
+Italian Quarterly Unemployment Rate,Employment
+Spanish Unemployment Rate,Employment
+Wards Total Vehicle Sales,Growth
+French Industrial Production m/m,Growth
+Italian Industrial Production m/m,Growth
+Italian Retail Sales m/m,Growth
+Factory Orders m/m,Growth
+BRC Retail Sales Monitor y/y,Growth
+Household Spending y/y,Growth
+German Factory Orders m/m,Growth
+Retail Sales y/y,Growth
+Retail Sales m/m,Growth
+Trade Balance,Growth
+USD-Denominated Trade Balance,Growth
+Leading Indicators,Growth
+German Industrial Production m/m,Growth
+German Trade Balance,Growth
+French Trade Balance,Growth
+Consumer Credit m/m,Growth
+Bank Lending y/y,Growth
+Current Account,Growth
+Final Wholesale Inventories m/m,Growth
+Italian Trade Balance,Growth
+Visitor Arrivals m/m,Growth
+Prelim Machine Tool Orders y/y,Growth
+New Loans,Growth
+Flash GDP q/q,Growth
+Industrial Production m/m,Growth
+Prelim GDP q/q,Growth
+Industrial Production y/y,Growth
+Fixed Asset Investment ytd/y,Growth
+Revised Industrial Production m/m,Growth
+GDP m/m,Growth
+Goods Trade Balance,Growth
+Index of Services 3m/3m,Growth
+Manufacturing Production m/m,Growth
+Prelim Business Investment q/q,Growth
+NIESR GDP Estimate,Growth
+Wholesale Sales m/m,Growth
+Core Retail Sales m/m,Growth
+Business Inventories m/m,Growth
+CB Leading Index m/m,Growth
+TIC Long-Term Purchases,Growth
+Tertiary Industry Activity m/m,Growth
+Foreign Direct Investment ytd/y,Growth
+Foreign Securities Purchases,Growth
+Manufacturing Sales m/m,Growth
+Core Machinery Orders m/m,Growth
+MI Leading Index m/m,Growth
+Credit Card Spending y/y,Growth
+Public Sector Net Borrowing,Growth
+Retail Sales q/q,Growth
+Core Retail Sales q/q,Growth
+Corporate Profits q/q,Growth
+Core Durable Goods Orders m/m,Growth
+Durable Goods Orders m/m,Growth
+German Final GDP q/q,Growth
+Private Loans y/y,Growth
+Private Capital Expenditure q/q,Growth
+Prelim Wholesale Inventories m/m,Growth
+Prelim Industrial Production m/m,Growth
+Private Sector Credit m/m,Growth
+French Consumer Spending m/m,Growth
+French Prelim GDP q/q,Growth
+KOF Economic Barometer,Growth
+Net Lending to Individuals m/m,Growth
+Personal Income m/m,Growth
+Personal Spending m/m,Growth
+Capital Spending q/y,Growth
+Company Operating Profits q/q,Growth
+GDP q/q,Growth
+Revised GDP q/q,Growth
+Final GDP q/q,Growth
+Manufacturing Sales q/q,Growth
+Revised Business Investment q/q,Growth
+German Retail Sales m/m,Growth
+GDP q/y,Growth
+French Flash GDP q/q,Growth
+Spanish Flash GDP q/q,Growth
+German Prelim GDP q/q,Growth
+Italian Prelim GDP q/q,Growth
+Prelim Flash GDP q/q,Growth
+Advance GDP q/q,Growth
+Nationwide HPI m/m,Housing
+Construction Spending m/m,Housing
+Halifax HPI m/m,Housing
+RICS House Price Balance,Housing
+Building Permits m/m,Housing
+HPI y/y,Housing
+New Home Prices m/m,Housing
+Construction Output m/m,Housing
+Mortgage Delinquencies,Housing
+Housing Starts,Housing
+Building Permits,Housing
+Rightmove HPI m/m,Housing
+NHPI m/m,Housing
+Existing Home Sales,Housing
+New Home Sales,Housing
+S&P/CS Composite-20 HPI y/y,Housing
+HPI m/m,Housing
+Construction Work Done q/q,Housing
+Pending Home Sales m/m,Housing
+Building Consents m/m,Housing
+Housing Starts y/y,Housing
+Mortgage Approvals,Housing
+Building Approvals m/m,Housing
+Housing Equity Withdrawal q/q,Housing
+Commodity Prices y/y,Inflation
+Prelim Nonfarm Productivity q/q,Inflation
+Prelim Unit Labor Costs q/q,Inflation
+PPI q/q,Inflation
+CPI m/m,Inflation
+Average Hourly Earnings m/m,Inflation
+MI Inflation Gauge m/m,Inflation
+ANZ Commodity Prices m/m,Inflation
+PPI m/m,Inflation
+Average Cash Earnings y/y,Inflation
+GDT Price Index,Inflation
+Labor Cost Index q/q,Inflation
+CPI y/y,Inflation
+PPI y/y,Inflation
+German Final CPI m/m,Inflation
+German WPI m/m,Inflation
+Wage Price Index q/q,Inflation
+Average Earnings Index 3m/y,Inflation
+Core PPI m/m,Inflation
+Core CPI y/y,Inflation
+PPI Input m/m,Inflation
+PPI Output m/m,Inflation
+RPI y/y,Inflation
+French Final CPI m/m,Inflation
+Core CPI m/m,Inflation
+FPI m/m,Inflation
+Prelim GDP Price Index y/y,Inflation
+Import Prices m/m,Inflation
+Capacity Utilization Rate,Inflation
+PPI Input q/q,Inflation
+PPI Output q/q,Inflation
+German PPI m/m,Inflation
+Final Core CPI y/y,Inflation
+Final CPI y/y,Inflation
+Median CPI y/y,Inflation
+Trimmed CPI y/y,Inflation
+Common CPI y/y,Inflation
+IPPI m/m,Inflation
+RMPI m/m,Inflation
+National Core CPI y/y,Inflation
+BRC Shop Price Index y/y,Inflation
+SPPI y/y,Inflation
+BOJ Core CPI y/y,Inflation
+German Prelim CPI m/m,Inflation
+Spanish Flash CPI y/y,Inflation
+Prelim GDP Price Index q/q,Inflation
+Tokyo Core CPI y/y,Inflation
+German Import Prices m/m,Inflation
+French Prelim CPI m/m,Inflation
+CPI Flash Estimate y/y,Inflation
+Core CPI Flash Estimate y/y,Inflation
+Italian Prelim CPI m/m,Inflation
+Core PCE Price Index m/m,Inflation
+Overseas Trade Index q/q,Inflation
+Labor Productivity q/q,Inflation
+Revised Nonfarm Productivity q/q,Inflation
+Revised Unit Labor Costs q/q,Inflation
+Final GDP Price Index y/y,Inflation
+Final GDP Price Index q/q,Inflation
+CPI q/q,Inflation
+Trimmed Mean CPI q/q,Inflation
+Advance GDP Price Index q/q,Inflation
+Import Prices q/q,Inflation
+Employment Cost Index q/q,Inflation
+Bank Holiday,Misc
+OPEC-JMMC Meetings,Misc
+Natural Gas Storage,Misc
+API Weekly Statistical Bulletin,Misc
+Crude Oil Inventories,Misc
+NBS Press Conference,Misc
+French Bank Holiday,Misc
+Italian Bank Holiday,Misc
+ECOFIN Meetings,Misc
+Eurogroup Meetings,Misc
+Daylight Saving Time Shift,Misc
+German Bank Holiday,Misc
+IMF Meetings,Misc
+BRICS Summit,Misc
+Lower House Elections,Misc
+Presidential Election,Misc
+Congressional Elections,Misc
+G20 Meetings,Misc
+Bank Stress Test Results,Misc
+OPEC Meetings,Misc
+G7 Meetings,Misc
+WEF Annual Meetings,Misc
+Greek Presidential Elections,Misc
+German Federal Elections,Misc
+Euro Summit,Misc
+Federal Election,Misc
+Parliamentary Elections,Misc
+Upper House Elections,Misc
+BOE Gov Bailey Speaks,Speeches
+MPC Member Pill Speaks,Speeches
+FOMC Member Goolsbee Speaks,Speeches
+FOMC Member Daly Speaks,Speeches
+RBA Assist Gov Hunter Speaks,Speeches
+RBA Gov Bullock Speaks,Speeches
+FOMC Member Barkin Speaks,Speeches
+RBA Deputy Gov Hauser Speaks,Speeches
+FOMC Member Bostic Speaks,Speeches
+RBNZ Gov Orr Speaks,Speeches
+FOMC Member Musalem Speaks,Speeches
+FOMC Member Harker Speaks,Speeches
+FOMC Member Waller Speaks,Speeches
+SNB Chairman Jordan Speaks,Speeches
+FOMC Member Barr Speaks,Speeches
+FOMC Member Collins Speaks,Speeches
+BOJ Gov Ueda Speaks,Speeches
+Fed Chair Powell Speaks,Speeches
+German Buba President Nagel Speaks,Speeches
+MPC Member Mann Speaks,Speeches
+FOMC Member Williams Speaks,Speeches
+MPC Member Breeden Speaks,Speeches
+BOC Gov Macklem Speaks,Speeches
+FOMC Member Bowman Speaks,Speeches
+FOMC Member Logan Speaks,Speeches
+Gov Council Member Rogers Speaks,Speeches
+Gov Council Member Vincent Speaks,Speeches
+ECB President Lagarde Speaks,Speeches
+FOMC Member Kashkari Speaks,Speeches
+MPC Member Greene Speaks,Speeches
+FOMC Member Kugler Speaks,Speeches
+FOMC Member Cook Speaks,Speeches
+Treasury Sec Yellen Speaks,Speeches
+SNB Chairman Schlegel Speaks,Speeches
+FOMC Member Hammack Speaks,Speeches
+FOMC Member Schmid Speaks,Speeches
+FOMC Member Jefferson Speaks,Speeches
+RBA Assist Gov Kent Speaks,Speeches
+Gov Board Member Martin Speaks,Speeches
+MPC Member Dhingra Speaks,Speeches
+Gov Council Member Kozicki Speaks,Speeches
+Gov Council Member Gravelle Speaks,Speeches
+MPC Member Ramsden Speaks,Speeches
+Gov Board Member Tschudin Speaks,Speeches
+MPC Member Lombardelli Speaks,Speeches
+Gov Council Member Mendes Speaks,Speeches
+President Biden Speaks,Speeches
+MPC Member Taylor Speaks,Speeches
+President Trump Speaks,Speeches
+Fed Chair Powell Testifies,Speeches
+RBNZ Gov Hawkesby Speaks,Speeches

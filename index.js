@@ -13,6 +13,7 @@ let calendarData = [];
 let currentQuery = ''; // Track the current query parameters
 let currentPage = 1;
 const ROWS_PER_PAGE = 200;
+let eventTypeLookup = new Map(); // Event type lookup table
 
 // Date Range Management System
 class DateRangeManager {
@@ -319,6 +320,33 @@ class DateRangeManager {
 // Initialize date manager
 const dateManager = new DateRangeManager();
 
+// Load event type lookup table
+async function loadEventTypeLookup() {
+  try {
+    const response = await fetch('EventTypes.csv');
+    const csvText = await response.text();
+    const lines = csvText.split('\n').slice(1); // Skip header
+    
+    lines.forEach(line => {
+      const match = line.match(/^"?([^,"]+)"?,(.+)$/);
+      if (match) {
+        const eventName = match[1].trim();
+        const eventType = match[2].trim().replace(/"/g, '');
+        eventTypeLookup.set(eventName, eventType);
+      }
+    });
+    
+    console.log(`Loaded ${eventTypeLookup.size} event type mappings`);
+  } catch (error) {
+    console.error('Failed to load event type lookup:', error);
+  }
+}
+
+// Get event type for an event
+function getEventType(eventName) {
+  return eventTypeLookup.get(eventName) || 'Unknown';
+}
+
 // Filter Management Functions
 function getActiveFilters() {
   const filters = {
@@ -434,6 +462,9 @@ function fetchNoCache(url) {
 
 // Initialize page
 async function init() {
+    // Load event type lookup table
+    await loadEventTypeLookup();
+    
     // Initialize date selectors
     dateManager.updateWeekDisplay();
     dateManager.updateMonthDisplay();
@@ -508,6 +539,7 @@ function displayTable(data) {
                     <th>Country</th>
                     <th>Impact</th>
                     <th>Event</th>
+                    <th>Event Type</th>
                     <th>Actual</th>
                     <th>Forecast</th>
                     <th>Previous</th>
@@ -533,6 +565,8 @@ function displayTable(data) {
         // Show leaked indicator
         let leakedBadge = item.leaked ? ' 🔓' : '';
         
+        const eventType = getEventType(item.event || '');
+        
         html += `
             <tr>
                 <td>${item.date || ''}</td>
@@ -541,6 +575,7 @@ function displayTable(data) {
                 <td>${item.country || ''}</td>
                 <td>${item.impact ? `<span class="${impactClass}">${item.impact}</span>` : ''}</td>
                 <td>${item.event || ''}${leakedBadge}</td>
+                <td><span class="event-type">${eventType}</span></td>
                 <td>${item.actual || ''}</td>
                 <td>${item.forecast || ''}</td>
                 <td>${item.previous || ''}</td>
@@ -585,7 +620,7 @@ function downloadCSV() {
     
     // Convert to CSV with all available fields
     const headers = [
-        'Date', 'Time', 'Currency', 'Impact', 'Event', 'Actual', 'Forecast', 'Previous', 'Country',
+        'Date', 'Time', 'Currency', 'Impact', 'Event', 'Event Type', 'Actual', 'Forecast', 'Previous', 'Country',
         'EventId', 'EbaseId', 'Revision', 'Leaked', 'ActualBetterWorse',
         'PrefixedName', 'SoloTitle', 'ImpactName', 'ImpactClass', 'ImpactTitle',
         'HasGraph', 'HasDataValues', 'URL', 'SoloURL', 'Dateline', 'ScrapedAt'
@@ -598,6 +633,7 @@ function downloadCSV() {
             row.currency || '',
             row.impact || '',
             `"${(row.event || '').replace(/"/g, '""')}"`,
+            getEventType(row.event || ''),
             row.actual || '',
             row.forecast || '',
             row.previous || '',
