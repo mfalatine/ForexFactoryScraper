@@ -50,14 +50,14 @@ A powerful serverless web scraper that fetches live economic calendar data from 
 ### Working API Examples
 
 ```bash
-# Example of a complete working URL with all parameters
+# Complete working URL with all parameters (direct browser access or curl)
 https://forexfactoryscrape.netlify.app/.netlify/functions/scrape?month=jan01.2025&permalink=true&impacts=3,2,1,0&event_types=1,2,3,4,5,7,8,9,10,11&currencies=1,2,3,4,5,6,7,8,9
 
-# Get a month of data (uses ForexFactory month format)
-curl "https://forexfactoryscrape.netlify.app/.netlify/functions/scrape?month=jan01.2025&permalink=true&impacts=3,2,1,0&event_types=1,2,3,4,5,7,8,9,10,11&currencies=1,2,3,4,5,6,7,8,9"
+# Download as JSON file
+curl -o "forex_data.json" "https://forexfactoryscrape.netlify.app/.netlify/functions/scrape?month=jan01.2025&permalink=true&impacts=3,2,1,0&event_types=1,2,3,4,5,7,8,9,10,11&currencies=1,2,3,4,5,6,7,8,9"
 
-# Get data in CSV format
-curl "https://forexfactoryscrape.netlify.app/.netlify/functions/scrape?month=jan01.2025&format=csv&permalink=true&impacts=3,2,1,0&event_types=1,2,3,4,5,7,8,9,10,11&currencies=1,2,3,4,5,6,7,8,9"
+# Download as CSV file  
+curl -o "forex_data.csv" "https://forexfactoryscrape.netlify.app/.netlify/functions/scrape?month=jan01.2025&format=csv&permalink=true&impacts=3,2,1,0&event_types=1,2,3,4,5,7,8,9,10,11&currencies=1,2,3,4,5,6,7,8,9"
 ```
 
 ## 📋 Data Fields
