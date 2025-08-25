@@ -208,13 +208,7 @@ class DateRangeManager {
 
   // Toggle week selection
   toggleWeek(weekParam, label, year, month) {
-    // Clear month selections when switching to week mode
-    if (this.selectedMonths.size > 0) {
-      this.selectedMonths.clear();
-      document.querySelectorAll('#monthGrid input[type="checkbox"]').forEach(cb => cb.checked = false);
-      this.updateMonthDisplay();
-    }
-    
+    // Allow week selections alongside month selections
     if (this.selectedWeeks.has(weekParam)) {
       this.selectedWeeks.delete(weekParam);
     } else {
@@ -225,13 +219,7 @@ class DateRangeManager {
 
   // Toggle month selection
   toggleMonth(monthIndex, year) {
-    // Clear week selections when switching to month mode
-    if (this.selectedWeeks.size > 0) {
-      this.selectedWeeks.clear();
-      document.querySelectorAll('#weekGrid input[type="checkbox"]').forEach(cb => cb.checked = false);
-      this.updateWeekDisplay();
-    }
-    
+    // Allow month selections alongside week selections
     const monthParam = this.formatMonthParam(monthIndex, year);
     const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
     
@@ -328,7 +316,7 @@ class DateRangeManager {
   // Get selection mode
   getSelectionMode() {
     if (this.selectedWeeks.size > 0 && this.selectedMonths.size > 0) {
-      return 'conflict';
+      return 'combined';
     } else if (this.selectedWeeks.size > 0) {
       return 'weeks';
     } else if (this.selectedMonths.size > 0) {
@@ -342,6 +330,7 @@ class DateRangeManager {
     const mode = this.getSelectionMode();
     const filters = getActiveFilters();
     const filterParams = buildFilterParams(filters);
+    const urls = [];
     
     if (mode === 'weeks') {
       return Array.from(this.selectedWeeks.keys()).map(weekParam => 
@@ -351,6 +340,15 @@ class DateRangeManager {
       return Array.from(this.selectedMonths.keys()).map(monthParam => 
         `month=${monthParam}&${filterParams}`
       );
+    } else if (mode === 'combined') {
+      // Combine both week and month URLs
+      const weekUrls = Array.from(this.selectedWeeks.keys()).map(weekParam => 
+        `week=${weekParam}&${filterParams}`
+      );
+      const monthUrls = Array.from(this.selectedMonths.keys()).map(monthParam => 
+        `month=${monthParam}&${filterParams}`
+      );
+      return [...weekUrls, ...monthUrls];
     }
     return [];
   }
@@ -491,6 +489,11 @@ function clearWeekSelection() {
 }
 
 function clearMonthSelection() {
+  dateManager.clearAllMonths();
+}
+
+function clearAllSelections() {
+  dateManager.clearAllWeeks();
   dateManager.clearAllMonths();
 }
 

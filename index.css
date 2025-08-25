@@ -255,6 +255,29 @@ tr:hover {
     background: #164263;
 }
 
+.btn-clear-all {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 0.9em;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.2s ease;
+    font-weight: 600;
+}
+
+.btn-clear-all:hover {
+    background: #c82333;
+    transform: translateY(-1px);
+}
+
+.btn-clear-all:active {
+    background: #a71e2a;
+    transform: translateY(0);
+}
+
 .impact-high {
     background: #ff4444;
     color: white;
