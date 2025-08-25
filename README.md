@@ -1,6 +1,6 @@
 # ForexFactory Calendar Scraper 📊
 
-A serverless web scraper that fetches live economic calendar data from ForexFactory using Netlify Functions. Get real-time forex calendar data via API or through the interactive web interface.
+A powerful serverless web scraper that fetches live economic calendar data from ForexFactory using Netlify Functions. Features an advanced date selection system, comprehensive filtering options, and real-time data export capabilities.
 
 ## 🚀 Quick Start
 
@@ -9,106 +9,162 @@ A serverless web scraper that fetches live economic calendar data from ForexFact
 - **Website**: [mfalatine.github.io/ForexFactoryScraper](https://mfalatine.github.io/ForexFactoryScraper/)
 - **Change History**: [Change History](https://mfalatine.github.io/ForexFactoryScraper/change-history.html)
 
-### Live API (Netlify Function)
+## 🌟 Key Features
 
-The API fetches fresh data from ForexFactory on each request. No scheduled updates needed - data is always current!
+### Advanced Date Selection System (X23+)
+- **Multi-Week/Month Selection**: Select multiple weeks AND months simultaneously for comprehensive date ranges
+- **Date Range**: Supports 2007-2035 with intelligent navigation
+- **Batch Loading**: Progress indicators for multiple date selections
+- **Auto-Deduplication**: Automatically removes duplicate events when combining date ranges
 
-#### Base Endpoint
-`/.netlify/functions/scrape`
+### Enhanced Data Display (X44-X62)
+- **Rich Table View**: 12-column display with day of week, clickable event details, and color-coded impact levels
+- **Event Details**: Click event icons to open ForexFactory detail pages in popup windows
+- **Pagination**: Handles large datasets with 200-row pages and navigation controls
+- **Smart Time Filling**: Events in same time blocks automatically inherit time values
 
-#### Query Parameters
+### Powerful Filtering System
+- **Impact Levels**: High, Medium, Low with color indicators
+- **Event Types**: 10 categories (Growth, Inflation, Employment, Central Bank, etc.)
+- **Currencies**: Filter by major currency pairs (USD, EUR, GBP, JPY, etc.)
+- **Quick Links**: One-click access to common date ranges
 
-##### Date Range Selection
-- `start=YYYY-MM-DD` - Returns 7 days starting from the specified date
-- `week=last|this|next` - Returns data for the specified week (Monday to Sunday)
-- `week=aug19.2025` - Returns 7 days starting from the specified date (ForexFactory format)
-- `day=yesterday|today|tomorrow` - Returns data for a single day
-- `month=last|this|next` - Returns data for the specified month
+## 📊 Live API Access
 
-##### Output Format
-- `format=json` (default) - Returns JSON format
-- `format=csv` - Returns CSV format
+### Base Endpoint
+`https://forexfactoryscraper.netlify.app/.netlify/functions/scrape`
 
-##### Optional Parameters
-- `timezoneOffset=0` (default) - Hours to offset from ForexFactory's timezone
+### Query Parameters
 
-#### Examples
+#### Date Ranges
+- `weeks[]` - Array of week IDs (e.g., `weeks[]=aug25.2025&weeks[]=sep1.2025`)
+- `months[]` - Array of month IDs (e.g., `months[]=aug.2025&months[]=sep.2025`)
+- `week=this|last|next` - Quick week selection
+- `month=this|last|next` - Quick month selection
+- `day=today|yesterday|tomorrow` - Single day selection
 
-```text
-# Get 7 days starting from a specific date
-/.netlify/functions/scrape?start=2025-08-13
+#### Filters (Numeric IDs from ForexFactory)
+- `impacts[]` - Impact levels (1=Low, 2=Medium, 3=High)
+- `eventTypes[]` - Event type IDs (see EventCrawler section)
+- `currencies[]` - Currency codes
 
-# Get this week's data
-/.netlify/functions/scrape?week=this
+#### Output
+- `format=json|csv` - Output format (default: json)
 
-# Get today's events
-/.netlify/functions/scrape?day=today
+### Example API Calls
 
-# Get next month's calendar in CSV
-/.netlify/functions/scrape?month=next&format=csv
+```bash
+# Get high-impact USD events for this week
+curl "https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?week=this&impacts[]=3&currencies[]=USD"
 
-# Get specific week using ForexFactory format
-/.netlify/functions/scrape?week=aug19.2025
+# Get multiple weeks of data with filtering
+curl "https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?weeks[]=aug25.2025&weeks[]=sep1.2025&impacts[]=2&impacts[]=3"
+
+# Get full month of employment data in CSV
+curl "https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?month=this&eventTypes[]=3&format=csv"
 ```
 
-## 📊 Data Structure
+## 📋 Data Fields
 
-Each event contains:
+### Display Table (12 columns)
+- **Day**: Day of week (Monday, Tuesday, etc.)
+- **Details**: Clickable icon linking to ForexFactory event page
+- **Date**: Event date (YYYY-MM-DD)
+- **Time**: Event time (ET timezone)
+- **Currency**: Affected currency
+- **Impact**: Visual impact level with color coding
+- **Event**: Event name/description
+- **Event Type**: Category (Growth, Inflation, etc.)
+- **Actual**: Released value
+- **Forecast**: Expected value
+- **Previous**: Prior period value
+- **Scraped At**: Data collection timestamp
 
-- `date`: Event date
-- `time`: Event time
-- `currency`: Currency affected (USD, EUR, GBP, etc.)
-- `impact`: Impact level (High, Medium, Low)
-- `event`: Event description
-- `actual`: Actual value (when released)
-- `forecast`: Forecasted value
-- `previous`: Previous value
-- `scraped_at`: Timestamp of when data was collected
+### CSV Export (24+ fields)
+Includes all display fields plus:
+- `eventId`: Unique ForexFactory event identifier
+- `eventUrl`: Direct link to event details
+- `impactLevel`: Numeric impact (1-3)
+- `eventTypeId`: Numeric event type ID
+- `detailHash`: Event detail page identifier
+- Additional metadata fields
+
+## 💡 Real-World Use Cases
+
+### 1. Trading Dashboard Integration
+```javascript
+// Fetch high-impact events for next week
+fetch('https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?week=next&impacts[]=3')
+  .then(res => res.json())
+  .then(events => {
+    // Filter for USD events
+    const usdEvents = events.filter(e => e.currency === 'USD');
+    // Display in your trading dashboard
+    displayUpcomingEvents(usdEvents);
+  });
+```
+
+### 2. Python Data Analysis
+```python
+import pandas as pd
+import requests
+
+# Get this month's employment data
+response = requests.get(
+    'https://forexfactoryscraper.netlify.app/.netlify/functions/scrape',
+    params={'month': 'this', 'eventTypes[]': '3', 'format': 'csv'}
+)
+
+# Load into DataFrame
+df = pd.read_csv(pd.io.common.StringIO(response.text))
+
+# Analyze employment indicators
+employment_events = df[df['Event Type'] == 'Employment']
+print(f"Found {len(employment_events)} employment events")
+print(employment_events[['Date', 'Event', 'Actual', 'Forecast']].head())
+```
+
+### 3. Automated Alert System
+```javascript
+// Check for today's high-impact events
+async function checkTodayEvents() {
+  const response = await fetch(
+    'https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?day=today&impacts[]=3'
+  );
+  const events = await response.json();
+  
+  // Send alerts for specific events
+  events.forEach(event => {
+    if (event.event.includes('NFP') || event.event.includes('Interest Rate')) {
+      sendTradingAlert({
+        time: event.time,
+        event: event.event,
+        forecast: event.forecast,
+        currency: event.currency
+      });
+    }
+  });
+}
+
+// Run every morning
+setInterval(checkTodayEvents, 24 * 60 * 60 * 1000);
+```
+
+### 4. Multi-Month Historical Analysis
+```bash
+# Download 3 months of data for backtesting
+curl -o "forex_data_aug_oct.csv" \
+  "https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?months[]=aug.2025&months[]=sep.2025&months[]=oct.2025&format=csv"
+```
 
 ## 🏗️ Technology Stack
 
 - **Runtime**: Node.js 18+ (Netlify Functions)
-- **Scraping**: Cheerio for HTML parsing
-- **Deployment**: Netlify serverless functions
-- **Frontend**: Vanilla JavaScript, HTML, CSS
+- **Scraping**: Cheerio for HTML parsing with JSON data extraction
+- **Deployment**: Netlify serverless functions (auto-scaling)
+- **Frontend**: Vanilla JavaScript with DateRangeManager class, HTML5, CSS3
+- **Data Processing**: Real-time deduplication and filtering
 
-## 💻 Usage Examples
-
-### JavaScript - Fetch Live Data
-
-```javascript
-// Get this week's data
-fetch('/.netlify/functions/scrape?week=this')
-  .then(response => response.json())
-  .then(data => console.log(data));
-
-// Get specific date range
-fetch('/.netlify/functions/scrape?start=2025-08-20')
-  .then(response => response.json())
-  .then(data => console.log(data));
-```
-
-### Python - Fetch Live Data
-
-```python
-import requests
-
-# Get today's events
-response = requests.get('/.netlify/functions/scrape?day=today')
-data = response.json()
-print(data)
-```
-
-## 🛠️ Features
-
-- **Live Data Fetching**: Fetches fresh data from ForexFactory on each API request
-- **Multiple Date Ranges**: Support for day, week, month, or custom 7-day windows
-- **Quick Links**: Fast access to common date ranges (Yesterday, Today, Tomorrow, Last/This/Next Week/Month)
-- **Auto Time-Filling**: Events in the same time block automatically inherit the time value
-- **Multiple Output Formats**: JSON and CSV support
-- **Interactive Web Interface**: User-friendly UI with data preview and download options
-- **Cache Busting**: Prevents stale data issues with automatic cache-busting timestamps
-- **No Database Required**: Serverless architecture fetches data on-demand
 
 ## 🔍 EventCrawler - Event Type Mapping Tool
 
@@ -135,18 +191,23 @@ node eventcrawler.js
 
 **Usage**: Run this script periodically to update event type mappings or when you need comprehensive event classification data.
 
-## 🆕 Recent Changes
+## 🆕 Latest Updates (X62)
 
-- **2025-08-23**: Added post-processing to fill missing times for events in the same time block
-- **2025-08-23**: Added cache-busting timestamps to prevent browser caching issues
-- **2025-08-23**: Fixed download buttons to use current query parameters
-- **2025-08-23**: Migrated to Netlify Functions (removed Python scraper and GitHub Actions)
-- **2025-08-23**: Fixed timezone offset issue (changed default from 1 to 0)
-- **2025-08-23**: Improved date parsing to use explicit dates from ForexFactory
-- **2025-08-23**: Added quick links for common date ranges
-- **2025-08-23**: Data preview now shows all events (removed 20-item cap)
+### Major Enhancements
+- **X62**: Fixed button height consistency across interface
+- **X61**: Critical deduplication fix for duplicate event handling
+- **X58**: Combined week+month selections for flexible date ranges
+- **X44-52**: Added clickable event details with ForexFactory links
+- **X23**: Complete UI redesign with advanced date selection system
 
-See the full [Change History](https://mfalatine.github.io/ForexFactoryScraper/change-history.html) for more details.
+### Recent Improvements
+- Eliminated all timezone issues - times match ForexFactory exactly
+- Added day of week column for better weekly planning
+- Integrated event type classification with 10 categories
+- Enhanced table with pagination and hover effects
+- Optimized for mobile with responsive design
+
+See the full [Change History](https://mfalatine.github.io/ForexFactoryScraper/change-history.html) for complete details.
 
 ## 📝 License
 
