@@ -572,7 +572,7 @@ function displayTable(data) {
         <table>
             <thead>
                 <tr>
-                    <th class="link-column"><img src="details_icon_small.png" alt="Link" width="16" height="16"></th>
+                    <th class="link-column"><img src="details_icon_small.png" alt="Link" width="20" height="25"></th>
                     <th>Day</th>
                     <th>Date</th>
                     <th>Time</th>
@@ -611,7 +611,7 @@ function displayTable(data) {
         const eventUrl = item.url || '';
         const escapedUrl = eventUrl.replace(/'/g, "\\'");
         const linkCell = eventUrl ? 
-            `<td class="link-column"><a href="#" onclick="openEventDetail('${escapedUrl}'); return false;" title="Open in ForexFactory"><img src="details_icon_small.png" alt="Open" width="16" height="16"></a></td>` :
+            `<td class="link-column"><a href="#" onclick="openEventDetail('${escapedUrl}'); return false;" title="Open in ForexFactory"><img src="details_icon_small.png" alt="Open" width="20" height="25"></a></td>` :
             `<td class="link-column">—</td>`;
             
         html += `
