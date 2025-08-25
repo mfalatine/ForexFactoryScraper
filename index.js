@@ -881,9 +881,17 @@ function openInForexFactory() {
     return;
   }
   
-  // Get first and last dates from current data
-  const firstDate = new Date(calendarData[0].date);
-  const lastDate = new Date(calendarData[calendarData.length - 1].date);
+  // Get first and last dates from current data - parse directly to avoid timezone issues
+  const firstDateStr = calendarData[0].date;
+  const lastDateStr = calendarData[calendarData.length - 1].date;
+  
+  // Parse first date components directly
+  const firstParts = firstDateStr.split('-');
+  const firstDate = new Date(parseInt(firstParts[0]), parseInt(firstParts[1]) - 1, parseInt(firstParts[2]));
+  
+  // Parse last date components directly  
+  const lastParts = lastDateStr.split('-');
+  const lastDate = new Date(parseInt(lastParts[0]), parseInt(lastParts[1]) - 1, parseInt(lastParts[2]));
   
   // Get active filters
   const filters = getActiveFilters();
