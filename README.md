@@ -32,7 +32,7 @@ A powerful serverless web scraper that fetches live economic calendar data from 
 ## 📊 Live API Access
 
 ### Base Endpoint
-`https://forexfactoryscraper.netlify.app/.netlify/functions/scrape`
+`https://forexfactoryscrape.netlify.app/.netlify/functions/scrape`
 
 ### Query Parameters
 
@@ -43,25 +43,21 @@ A powerful serverless web scraper that fetches live economic calendar data from 
 - `month=this|last|next` - Quick month selection
 - `day=today|yesterday|tomorrow` - Single day selection
 
-#### Filters (Numeric IDs from ForexFactory)
-- `impacts[]` - Impact levels (1=Low, 2=Medium, 3=High)
-- `eventTypes[]` - Event type IDs (see EventCrawler section)
-- `currencies[]` - Currency codes
 
 #### Output
 - `format=json|csv` - Output format (default: json)
 
-### Example API Calls
+### Working API Examples
 
 ```bash
-# Get high-impact USD events for this week
-curl "https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?week=this&impacts[]=3&currencies[]=USD"
+# Example of a complete working URL with all parameters
+https://forexfactoryscrape.netlify.app/.netlify/functions/scrape?month=jan01.2025&permalink=true&impacts=3,2,1,0&event_types=1,2,3,4,5,7,8,9,10,11&currencies=1,2,3,4,5,6,7,8,9
 
-# Get multiple weeks of data with filtering
-curl "https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?weeks[]=aug25.2025&weeks[]=sep1.2025&impacts[]=2&impacts[]=3"
+# Get a month of data (uses ForexFactory month format)
+curl "https://forexfactoryscrape.netlify.app/.netlify/functions/scrape?month=jan01.2025&permalink=true&impacts=3,2,1,0&event_types=1,2,3,4,5,7,8,9,10,11&currencies=1,2,3,4,5,6,7,8,9"
 
-# Get full month of employment data in CSV
-curl "https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?month=this&eventTypes[]=3&format=csv"
+# Get data in CSV format
+curl "https://forexfactoryscrape.netlify.app/.netlify/functions/scrape?month=jan01.2025&format=csv&permalink=true&impacts=3,2,1,0&event_types=1,2,3,4,5,7,8,9,10,11&currencies=1,2,3,4,5,6,7,8,9"
 ```
 
 ## 📋 Data Fields
@@ -94,30 +90,18 @@ Includes all display fields plus:
 ### Simple API Calls
 
 ```bash
-# Get this week's data
-https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?week=this
+# Get data for a specific month (note: month parameter uses ForexFactory format like jan01.2025)
+https://forexfactoryscrape.netlify.app/.netlify/functions/scrape?month=jan01.2025&permalink=true&impacts=3,2,1,0&event_types=1,2,3,4,5,7,8,9,10,11&currencies=1,2,3,4,5,6,7,8,9
 
-# Get today's events
-https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?day=today
-
-# Get next month as CSV
-https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?month=next&format=csv
-
-# Get specific weeks (use ForexFactory date format)
-https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?weeks[]=aug25.2025&weeks[]=sep1.2025
-
-# Filter by impact level (3=High, 2=Medium, 1=Low)
-https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?week=this&impacts[]=3
-
-# Filter by currency
-https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?week=this&currencies[]=USD&currencies[]=EUR
+# Same request but get CSV format
+https://forexfactoryscrape.netlify.app/.netlify/functions/scrape?month=jan01.2025&format=csv&permalink=true&impacts=3,2,1,0&event_types=1,2,3,4,5,7,8,9,10,11&currencies=1,2,3,4,5,6,7,8,9
 ```
 
 ### JavaScript Fetch Example
 
 ```javascript
-// Basic fetch - get this week's data
-fetch('https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?week=this')
+// Basic fetch - get a month's data
+fetch('https://forexfactoryscrape.netlify.app/.netlify/functions/scrape?month=jan01.2025&permalink=true&impacts=3,2,1,0&event_types=1,2,3,4,5,7,8,9,10,11&currencies=1,2,3,4,5,6,7,8,9')
   .then(response => response.json())
   .then(data => console.log(data));
 ```
@@ -125,9 +109,9 @@ fetch('https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?week=th
 ### Command Line with curl
 
 ```bash
-# Download this week's data as CSV
-curl -o "this_week.csv" \
-  "https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?week=this&format=csv"
+# Download a month's data as CSV
+curl -o "forex_data.csv" \
+  "https://forexfactoryscrape.netlify.app/.netlify/functions/scrape?month=jan01.2025&format=csv&permalink=true&impacts=3,2,1,0&event_types=1,2,3,4,5,7,8,9,10,11&currencies=1,2,3,4,5,6,7,8,9"
 ```
 
 ## 🏗️ Technology Stack
