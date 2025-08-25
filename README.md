@@ -6,8 +6,8 @@ A powerful serverless web scraper that fetches live economic calendar data from 
 
 ### Live Web Interface
 
-- **Website**: [mfalatine.github.io/ForexFactoryScraper](https://mfalatine.github.io/ForexFactoryScraper/)
-- **Change History**: [Change History](https://mfalatine.github.io/ForexFactoryScraper/change-history.html)
+- **Website**: [forexfactoryscrape.netlify.app](https://forexfactoryscrape.netlify.app/)
+- **Change History**: [Change History](https://forexfactoryscrape.netlify.app/change-history.html)
 
 ## 🌟 Key Features
 
@@ -149,7 +149,7 @@ node eventcrawler.js
 - Enhanced table with pagination and hover effects
 - Optimized for mobile with responsive design
 
-See the full [Change History](https://mfalatine.github.io/ForexFactoryScraper/change-history.html) for complete details.
+See the full [Change History](https://forexfactoryscrape.netlify.app/change-history.html) for complete details.
 
 ## 📝 License
 
