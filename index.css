@@ -752,19 +752,19 @@ footer a {
 }
 
 .btn-open-ff {
-  padding: 8px 16px;
-  background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+  padding: 4px 8px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
-  font-weight: 600;
-  font-size: 0.9em;
+  font-weight: 500;
+  font-size: 0.75em;
 }
 
 .btn-open-ff:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
 }
 
 /* Loading Overlay */
