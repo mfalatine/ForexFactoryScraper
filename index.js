@@ -887,11 +887,18 @@ function openInForexFactory() {
 
 async function fetchQuick(mode, value) {
     try {
-        // Build and store the current query
-        if (mode === 'day') currentQuery = `day=${encodeURIComponent(value)}`;
-        else if (mode === 'week') currentQuery = `week=${encodeURIComponent(value)}`;
-        else if (mode === 'month') currentQuery = `month=${encodeURIComponent(value)}`;
+        // Get active filters from UI
+        const filters = getActiveFilters();
+        const filterParams = buildFilterParams(filters);
+        
+        // Build and store the current query with filters
+        let baseQuery = '';
+        if (mode === 'day') baseQuery = `day=${encodeURIComponent(value)}`;
+        else if (mode === 'week') baseQuery = `week=${encodeURIComponent(value)}`;
+        else if (mode === 'month') baseQuery = `month=${encodeURIComponent(value)}`;
         else return;
+        
+        currentQuery = `${baseQuery}&${filterParams}`;
         
         const res = await fetchNoCache(`${jsonUrlBase}?${currentQuery}`);
         if (!res.ok) throw new Error(await res.text());
