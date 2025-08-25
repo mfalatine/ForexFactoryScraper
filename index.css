@@ -216,6 +216,45 @@ tr:hover {
     background: #ecf3f9;
 }
 
+.filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.filter-header h5 {
+    margin: 0;
+    flex-grow: 1;
+}
+
+.filter-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-left: 8px;
+}
+
+.filter-btn {
+    background: #1e3c72;
+    color: white;
+    border: none;
+    padding: 3px 8px;
+    font-size: 0.7em;
+    border-radius: 3px;
+    cursor: pointer;
+    min-width: 35px;
+    transition: background-color 0.2s ease;
+}
+
+.filter-btn:hover {
+    background: #2a5298;
+}
+
+.filter-btn:active {
+    background: #164263;
+}
+
 .impact-high {
     background: #ff4444;
     color: white;
