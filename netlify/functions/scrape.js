@@ -604,7 +604,7 @@ exports.handler = async (event) => {
       for (const page of htmls) all.push(...parseCalendarHtml(page, new Date(start), timezoneOffset));
       rows = all;
     } else if (monthParamRaw) {
-      url = `https://www.forexfactory.com/calendar?month=${encodeURIComponent(monthParamRaw)}&${filterParams}`;
+      url = `https://www.forexfactory.com/calendar/?month=${encodeURIComponent(monthParamRaw)}&${filterParams}`;
       html = await fetchText(url);
       rows = parseCalendarHtml(html, baseline, timezoneOffset);
     }
