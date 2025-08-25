@@ -605,8 +605,14 @@ exports.handler = async (event) => {
       rows = all;
     } else if (monthParamRaw) {
       url = `https://www.forexfactory.com/calendar/?month=${encodeURIComponent(monthParamRaw)}&${filterParams}`;
+      console.log('Month URL being fetched:', url);
       html = await fetchText(url);
+      console.log('HTML response length:', html.length);
       rows = parseCalendarHtml(html, baseline, timezoneOffset);
+      console.log('Parsed events count:', rows.length);
+      if (rows.length > 0) {
+        console.log('First parsed event:', rows[0]);
+      }
     }
 
     let filtered = rows;
@@ -622,11 +628,14 @@ exports.handler = async (event) => {
       filtered = rows.filter((r) => r.date && r.date >= startIso && r.date <= endIso);
     }
 
+    console.log('Final filtered events count:', filtered.length);
+    
     if (format === 'csv') {
       return { statusCode: 200, headers: { ...headers, 'Content-Type': 'text/csv' }, body: toCsv(filtered) };
     }
     return { statusCode: 200, headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify(filtered) };
   } catch (e) {
+    console.error('Backend error:', e);
     return { statusCode: 500, headers, body: JSON.stringify({ error: String(e) }) };
   }
 };
