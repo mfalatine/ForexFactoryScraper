@@ -168,6 +168,13 @@ class DateRangeManager {
 
   // Toggle week selection
   toggleWeek(weekParam, label, year, month) {
+    // Clear month selections when switching to week mode
+    if (this.selectedMonths.size > 0) {
+      this.selectedMonths.clear();
+      document.querySelectorAll('#monthGrid input[type="checkbox"]').forEach(cb => cb.checked = false);
+      this.updateMonthDisplay();
+    }
+    
     if (this.selectedWeeks.has(weekParam)) {
       this.selectedWeeks.delete(weekParam);
     } else {
@@ -178,6 +185,13 @@ class DateRangeManager {
 
   // Toggle month selection
   toggleMonth(monthIndex, year) {
+    // Clear week selections when switching to month mode
+    if (this.selectedWeeks.size > 0) {
+      this.selectedWeeks.clear();
+      document.querySelectorAll('#weekGrid input[type="checkbox"]').forEach(cb => cb.checked = false);
+      this.updateWeekDisplay();
+    }
+    
     const monthParam = this.formatMonthParam(monthIndex, year);
     const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
     
