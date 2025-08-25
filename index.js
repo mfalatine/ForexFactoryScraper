@@ -15,6 +15,18 @@ let currentPage = 1;
 const ROWS_PER_PAGE = 200;
 let eventTypeLookup = new Map(); // Event type lookup table
 
+// Helper function to get day of week from date string
+function getDayOfWeek(dateString) {
+    if (!dateString) return '';
+    try {
+        const date = new Date(dateString + 'T00:00:00'); // Add time to avoid timezone issues
+        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        return days[date.getDay()];
+    } catch (error) {
+        return '';
+    }
+}
+
 // Date Range Management System
 class DateRangeManager {
   constructor() {
@@ -533,6 +545,7 @@ function displayTable(data) {
         <table>
             <thead>
                 <tr>
+                    <th>Day</th>
                     <th>Date</th>
                     <th>Time</th>
                     <th>Currency</th>
@@ -568,6 +581,7 @@ function displayTable(data) {
         
         html += `
             <tr>
+                <td>${getDayOfWeek(item.date)}</td>
                 <td>${item.date || ''}</td>
                 <td>${item.time || ''}</td>
                 <td><strong>${item.currency || ''}</strong></td>
@@ -618,7 +632,7 @@ function downloadCSV() {
     
     // Convert to CSV with all available fields
     const headers = [
-        'Date', 'Time', 'Currency', 'Impact', 'Event', 'Event Type', 'Actual', 'Forecast', 'Previous', 'Country',
+        'Day', 'Date', 'Time', 'Currency', 'Impact', 'Event', 'Event Type', 'Actual', 'Forecast', 'Previous', 'Country',
         'EventId', 'EbaseId', 'Revision', 'Leaked', 'ActualBetterWorse',
         'PrefixedName', 'SoloTitle', 'ImpactName', 'ImpactClass', 'ImpactTitle',
         'HasGraph', 'HasDataValues', 'URL', 'SoloURL', 'Dateline', 'ScrapedAt'
@@ -626,6 +640,7 @@ function downloadCSV() {
     const csvContent = [
         headers.join(','),
         ...calendarData.map(row => [
+            getDayOfWeek(row.date),
             row.date || '',
             row.time || '',
             row.currency || '',
