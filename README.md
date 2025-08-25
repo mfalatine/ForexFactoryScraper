@@ -89,82 +89,89 @@ Includes all display fields plus:
 - `detailHash`: Event detail page identifier
 - Additional metadata fields
 
-## 💡 Real-World Use Cases
+## 💡 How to Use the API
 
-### 1. Trading Dashboard Integration
+### JavaScript Integration Examples
+
+#### Fetch High-Impact Events
 ```javascript
-// Fetch high-impact events for next week
+// Get next week's high-impact events
 fetch('https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?week=next&impacts[]=3')
   .then(res => res.json())
   .then(events => {
     // Filter for USD events
     const usdEvents = events.filter(e => e.currency === 'USD');
-    // Display in your trading dashboard
-    displayUpcomingEvents(usdEvents);
+    console.log(`Found ${usdEvents.length} high-impact USD events`);
+    // Display in your application
+    displayEvents(usdEvents);
   });
 ```
 
-### 2. Python Data Analysis
-```python
-import pandas as pd
-import requests
-from io import StringIO
-
-# Get this month's employment data
-response = requests.get(
-    'https://forexfactoryscraper.netlify.app/.netlify/functions/scrape',
-    params={'month': 'this', 'eventTypes[]': '3', 'format': 'csv'}
-)
-
-# Load into DataFrame
-df = pd.read_csv(StringIO(response.text))
-
-# Analyze employment indicators
-employment_events = df[df['Event Type'] == 'Employment']
-print(f"Found {len(employment_events)} employment events")
-print(employment_events[['Date', 'Event', 'Actual', 'Forecast']].head())
-```
-
-### 3. Automated Alert System
+#### Real-Time Event Monitoring
 ```javascript
-// Check for today's high-impact events
-async function checkTodayEvents() {
+// Check for today's events and set up alerts
+async function monitorTodayEvents() {
   const response = await fetch(
-    'https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?day=today&impacts[]=3'
+    'https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?day=today'
   );
   const events = await response.json();
   
-  // Send alerts for specific events
-  events.forEach(event => {
-    if (event.event.includes('NFP') || event.event.includes('Interest Rate')) {
-      sendTradingAlert({
-        time: event.time,
-        event: event.event,
-        forecast: event.forecast,
-        currency: event.currency
-      });
-    }
+  // Process high-impact events
+  events.filter(e => e.impactLevel === 3).forEach(event => {
+    console.log(`High impact event: ${event.event} at ${event.time}`);
+    // Set up your alert logic here
   });
 }
 
-// Run every morning
-setInterval(checkTodayEvents, 24 * 60 * 60 * 1000);
+// Check events periodically
+setInterval(monitorTodayEvents, 60 * 60 * 1000); // Every hour
 ```
 
-### 4. Multi-Month Historical Analysis
+### Command Line Usage
+
+#### Using curl
 ```bash
-# Download 3 months of data for backtesting
-curl -o "forex_data_aug_oct.csv" \
-  "https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?months[]=aug.2025&months[]=sep.2025&months[]=oct.2025&format=csv"
+# Get this week's data in JSON
+curl "https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?week=this"
+
+# Download month data as CSV
+curl -o "forex_data.csv" \
+  "https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?month=this&format=csv"
+
+# Get multiple weeks with filters
+curl "https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?weeks[]=aug25.2025&weeks[]=sep1.2025&impacts[]=3"
+```
+
+### Consuming the API from Other Languages
+
+#### Python Example
+```python
+# Example: How to call the ForexFactory API from Python
+import requests
+import json
+
+# Fetch this month's high-impact events
+response = requests.get(
+    'https://forexfactoryscraper.netlify.app/.netlify/functions/scrape',
+    params={'month': 'this', 'impacts[]': ['2', '3']}
+)
+
+if response.status_code == 200:
+    events = response.json()
+    print(f"Retrieved {len(events)} events")
+    # Process your data here
 ```
 
 ## 🏗️ Technology Stack
 
-- **Runtime**: Node.js 18+ (Netlify Functions)
-- **Scraping**: Cheerio for HTML parsing with JSON data extraction
-- **Deployment**: Netlify serverless functions (auto-scaling)
-- **Frontend**: Vanilla JavaScript with DateRangeManager class, HTML5, CSS3
-- **Data Processing**: Real-time deduplication and filtering
+This is a **JavaScript/Node.js** serverless application:
+
+- **Backend**: Node.js 18+ serverless function (Netlify Functions)
+- **Web Scraping**: Cheerio library for HTML parsing and JSON extraction
+- **Frontend**: Pure vanilla JavaScript, HTML5, CSS3
+- **Deployment**: Netlify (automatic scaling, no server management)
+- **Dependencies**: Minimal - only Cheerio for server-side parsing
+- **No Database**: Direct API calls to ForexFactory, no data storage
 
 
 ## 🔍 EventCrawler - Event Type Mapping Tool
