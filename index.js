@@ -609,8 +609,9 @@ function displayTable(data) {
         
         // Create clickable link for ForexFactory event detail
         const eventUrl = item.url || '';
+        const escapedUrl = eventUrl.replace(/'/g, "\\'");
         const linkCell = eventUrl ? 
-            `<td class="link-column"><a href="#" onclick="openEventDetail('${eventUrl.replace(/'/g, '\\\')}'); return false;" title="Open in ForexFactory"><img src="details_icon_small.png" alt="Open" width="16" height="16"></a></td>` :
+            `<td class="link-column"><a href="#" onclick="openEventDetail('${escapedUrl}'); return false;" title="Open in ForexFactory"><img src="details_icon_small.png" alt="Open" width="16" height="16"></a></td>` :
             `<td class="link-column">—</td>`;
             
         html += `
