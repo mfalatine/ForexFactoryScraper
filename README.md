@@ -89,77 +89,45 @@ Includes all display fields plus:
 - `detailHash`: Event detail page identifier
 - Additional metadata fields
 
-## 💡 How to Use the API
+## 💡 API Usage Examples
 
-### JavaScript Integration Examples
+### Simple API Calls
 
-#### Fetch High-Impact Events
-```javascript
-// Get next week's high-impact events
-fetch('https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?week=next&impacts[]=3')
-  .then(res => res.json())
-  .then(events => {
-    // Filter for USD events
-    const usdEvents = events.filter(e => e.currency === 'USD');
-    console.log(`Found ${usdEvents.length} high-impact USD events`);
-    // Display in your application
-    displayEvents(usdEvents);
-  });
-```
-
-#### Real-Time Event Monitoring
-```javascript
-// Check for today's events and set up alerts
-async function monitorTodayEvents() {
-  const response = await fetch(
-    'https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?day=today'
-  );
-  const events = await response.json();
-  
-  // Process high-impact events
-  events.filter(e => e.impactLevel === 3).forEach(event => {
-    console.log(`High impact event: ${event.event} at ${event.time}`);
-    // Set up your alert logic here
-  });
-}
-
-// Check events periodically
-setInterval(monitorTodayEvents, 60 * 60 * 1000); // Every hour
-```
-
-### Command Line Usage
-
-#### Using curl
 ```bash
-# Get this week's data in JSON
-curl "https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?week=this"
+# Get this week's data
+https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?week=this
 
-# Download month data as CSV
-curl -o "forex_data.csv" \
-  "https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?month=this&format=csv"
+# Get today's events
+https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?day=today
 
-# Get multiple weeks with filters
-curl "https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?weeks[]=aug25.2025&weeks[]=sep1.2025&impacts[]=3"
+# Get next month as CSV
+https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?month=next&format=csv
+
+# Get specific weeks (use ForexFactory date format)
+https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?weeks[]=aug25.2025&weeks[]=sep1.2025
+
+# Filter by impact level (3=High, 2=Medium, 1=Low)
+https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?week=this&impacts[]=3
+
+# Filter by currency
+https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?week=this&currencies[]=USD&currencies[]=EUR
 ```
 
-### Consuming the API from Other Languages
+### JavaScript Fetch Example
 
-#### Python Example
-```python
-# Example: How to call the ForexFactory API from Python
-import requests
-import json
+```javascript
+// Basic fetch - get this week's data
+fetch('https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?week=this')
+  .then(response => response.json())
+  .then(data => console.log(data));
+```
 
-# Fetch this month's high-impact events
-response = requests.get(
-    'https://forexfactoryscraper.netlify.app/.netlify/functions/scrape',
-    params={'month': 'this', 'impacts[]': ['2', '3']}
-)
+### Command Line with curl
 
-if response.status_code == 200:
-    events = response.json()
-    print(f"Retrieved {len(events)} events")
-    # Process your data here
+```bash
+# Download this week's data as CSV
+curl -o "this_week.csv" \
+  "https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?week=this&format=csv"
 ```
 
 ## 🏗️ Technology Stack
