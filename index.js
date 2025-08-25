@@ -572,7 +572,7 @@ function displayTable(data) {
         <table>
             <thead>
                 <tr>
-                    <th class="link-column">🔗</th>
+                    <th class="link-column"><img src="details_icon_small.png" alt="Link" style="width:16px;height:16px;"></th>
                     <th>Day</th>
                     <th>Date</th>
                     <th>Time</th>
@@ -610,7 +610,7 @@ function displayTable(data) {
         // Create clickable link for ForexFactory event detail
         const eventUrl = item.url || '';
         const linkCell = eventUrl ? 
-            `<td class="link-column"><a href="#" onclick="openEventDetail('${eventUrl.replace(/'/g, '\\\')}'); return false;" title="Open in ForexFactory">🔗</a></td>` :
+            `<td class="link-column"><a href="#" onclick="openEventDetail('${eventUrl.replace(/'/g, '\\\')}'); return false;" title="Open in ForexFactory"><img src="details_icon_small.png" alt="Open" style="width:16px;height:16px;"></a></td>` :
             `<td class="link-column">—</td>`;
             
         html += `
