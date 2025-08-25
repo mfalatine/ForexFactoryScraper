@@ -108,6 +108,7 @@ fetch('https://forexfactoryscraper.netlify.app/.netlify/functions/scrape?week=ne
 ```python
 import pandas as pd
 import requests
+from io import StringIO
 
 # Get this month's employment data
 response = requests.get(
@@ -116,7 +117,7 @@ response = requests.get(
 )
 
 # Load into DataFrame
-df = pd.read_csv(pd.io.common.StringIO(response.text))
+df = pd.read_csv(StringIO(response.text))
 
 # Analyze employment indicators
 employment_events = df[df['Event Type'] == 'Employment']
