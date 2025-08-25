@@ -545,7 +545,6 @@ function displayTable(data) {
                     <th>Previous</th>
                     <th>Revision</th>
                     <th>Better/Worse</th>
-                    <th>ID</th>
                 </tr>
             </thead>
             <tbody>
@@ -581,7 +580,6 @@ function displayTable(data) {
                 <td>${item.previous || ''}</td>
                 <td>${item.revision || ''}</td>
                 <td>${indicator}</td>
-                <td>${item.eventId || ''}</td>
             </tr>
         `;
     });
