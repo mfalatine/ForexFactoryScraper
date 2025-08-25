@@ -72,7 +72,7 @@ function extractCalendarStates(html) {
   let escapeNext = false;
   let endIndex = -1;
   
-  for (let i = jsonStart; i < html.length && i < jsonStart + 500000; i++) {
+  for (let i = jsonStart; i < html.length; i++) {
     const char = html[i];
     
     if (escapeNext) {
