@@ -156,7 +156,7 @@ function extractCalendarStates(html) {
 }
 
 // MODIFIED: Parse function that uses JSON data when available
-function parseCalendarHtml(html, baseline, timezoneOffset = 0) {
+function parseCalendarHtml(html, baseline) {
   // Helper: adjust time by timezone offset (define it here so it's available for both paths)
   function adjustTimeAndDate(timeStr, dateIso, offsetHours) {
     if (!timeStr || timeStr === '' || /Day\s+All/i.test(timeStr) || /All\s+Day/i.test(timeStr)) {
@@ -227,11 +227,7 @@ function parseCalendarHtml(html, baseline, timezoneOffset = 0) {
           let dateIso = eventDate ? formatDateLocal(eventDate) : '';
           let eventTime = event.timeLabel || '';
           
-          if (eventTime && !event.timeMasked && timezoneOffset !== 0) {
-            const adjusted = adjustTimeAndDate(eventTime, dateIso, timezoneOffset);
-            eventTime = adjusted.time;
-            dateIso = adjusted.date;
-          }
+          // Keep ForexFactory times exactly as provided - no timezone adjustment
           
           let impact = '';
           if (event.impactName === 'high' || (event.impactClass && event.impactClass.includes('red'))) {
@@ -402,11 +398,11 @@ function parseCalendarHtml(html, baseline, timezoneOffset = 0) {
     }
 
     const rawTime = timeCell.text().trim();
-    const { time: adjustedTime, date: adjustedDate } = adjustTimeAndDate(rawTime, currentIso, timezoneOffset);
+    // Keep ForexFactory times and dates exactly as provided - no timezone adjustment
     
     rows.push({
-      date: adjustedDate,
-      time: adjustedTime,
+      date: currentIso,
+      time: rawTime,
       currency: currencyCell.text().trim(),
       impact,
       event: eventText,
@@ -456,7 +452,7 @@ exports.handler = async (event) => {
     const monthParamRaw = (qs.month || '').trim();
     const start = (qs.start || '').trim();
     
-    const timezoneOffset = parseInt(qs.timezoneOffset || '0');
+    // Timezone offset removed - keep ForexFactory times exactly as provided
     
     // Parse filter parameters
     const filters = {
@@ -569,12 +565,12 @@ exports.handler = async (event) => {
     if (dayParamRaw) {
       url = `https://www.forexfactory.com/calendar?day=${encodeURIComponent(dayParamRaw)}&${filterParams}`;
       html = await fetchText(url);
-      rows = parseCalendarHtml(html, baseline, timezoneOffset);
+      rows = parseCalendarHtml(html, baseline);
     } else if (weekParamRaw) {
       if (weekParamRaw === 'last' || weekParamRaw === 'this' || weekParamRaw === 'next') {
         url = `https://www.forexfactory.com/calendar?week=${encodeURIComponent(weekParamRaw)}&${filterParams}`;
         html = await fetchText(url);
-        rows = parseCalendarHtml(html, baseline, timezoneOffset);
+        rows = parseCalendarHtml(html, baseline);
       } else {
         const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
         const dayUrls = [];
@@ -586,7 +582,7 @@ exports.handler = async (event) => {
         }
         const htmls = await Promise.all(dayUrls.map((u) => fetchText(u)));
         const all = [];
-        for (const page of htmls) all.push(...parseCalendarHtml(page, baseline, timezoneOffset));
+        for (const page of htmls) all.push(...parseCalendarHtml(page, baseline));
         rows = all;
       }
     } else if (start) {
@@ -601,14 +597,14 @@ exports.handler = async (event) => {
       }
       const htmls = await Promise.all(dayUrls.map((u) => fetchText(u)));
       const all = [];
-      for (const page of htmls) all.push(...parseCalendarHtml(page, new Date(start), timezoneOffset));
+      for (const page of htmls) all.push(...parseCalendarHtml(page, new Date(start)));
       rows = all;
     } else if (monthParamRaw) {
       url = `https://www.forexfactory.com/calendar/?month=${encodeURIComponent(monthParamRaw)}&${filterParams}`;
       console.log('Month URL being fetched:', url);
       html = await fetchText(url);
       console.log('HTML response length:', html.length);
-      rows = parseCalendarHtml(html, baseline, timezoneOffset);
+      rows = parseCalendarHtml(html, baseline);
       console.log('Parsed events count:', rows.length);
       if (rows.length > 0) {
         console.log('First parsed event:', rows[0]);

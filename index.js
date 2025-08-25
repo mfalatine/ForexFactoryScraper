@@ -19,7 +19,16 @@ let eventTypeLookup = new Map(); // Event type lookup table
 function getDayOfWeek(dateString) {
     if (!dateString) return '';
     try {
-        const date = new Date(dateString + 'T00:00:00'); // Add time to avoid timezone issues
+        // Parse date components directly to avoid timezone issues
+        const parts = dateString.split('-');
+        if (parts.length !== 3) return '';
+        
+        const year = parseInt(parts[0]);
+        const month = parseInt(parts[1]) - 1; // JS months are 0-based
+        const day = parseInt(parts[2]);
+        
+        // Use Zeller's congruence or simple Date with explicit components
+        const date = new Date(year, month, day);
         const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         return days[date.getDay()];
     } catch (error) {
