@@ -34,30 +34,32 @@ A powerful serverless web scraper that fetches live economic calendar data from 
 ### Base Endpoint
 `https://forexfactoryscrape.netlify.app/.netlify/functions/scrape`
 
-### Query Parameters
+### Required Parameters
 
-#### Date Ranges
-- `weeks[]` - Array of week IDs (e.g., `weeks[]=aug25.2025&weeks[]=sep1.2025`)
-- `months[]` - Array of month IDs (e.g., `months[]=aug.2025&months[]=sep.2025`)
-- `week=this|last|next` - Quick week selection
-- `month=this|last|next` - Quick month selection
-- `day=today|yesterday|tomorrow` - Single day selection
-
-
-#### Output
-- `format=json|csv` - Output format (default: json)
+All API calls need these parameters to work:
+- `month` - Month in ForexFactory format (e.g., `jan01.2025`, `feb01.2025`, `mar15.2025`)
+- `permalink=true` - Required for the API to work
+- `impacts=3,2,1,0` - Impact levels (3=High, 2=Medium, 1=Low, 0=Holiday)
+- `event_types=1,2,3,4,5,7,8,9,10,11` - Event type IDs
+- `currencies=1,2,3,4,5,6,7,8,9` - Currency IDs
+- `format=json|csv` - Optional output format (default: json)
 
 ### Working API Examples
 
 ```bash
-# Complete working URL with all parameters (direct browser access or curl)
+# January 2025 - Complete working URL (all events, all currencies, all impacts)
 https://forexfactoryscrape.netlify.app/.netlify/functions/scrape?month=jan01.2025&permalink=true&impacts=3,2,1,0&event_types=1,2,3,4,5,7,8,9,10,11&currencies=1,2,3,4,5,6,7,8,9
 
-# Download as JSON file
-curl -o "forex_data.json" "https://forexfactoryscrape.netlify.app/.netlify/functions/scrape?month=jan01.2025&permalink=true&impacts=3,2,1,0&event_types=1,2,3,4,5,7,8,9,10,11&currencies=1,2,3,4,5,6,7,8,9"
+# February 2025 - Get as JSON
+https://forexfactoryscrape.netlify.app/.netlify/functions/scrape?month=feb01.2025&permalink=true&impacts=3,2,1,0&event_types=1,2,3,4,5,7,8,9,10,11&currencies=1,2,3,4,5,6,7,8,9
 
-# Download as CSV file  
-curl -o "forex_data.csv" "https://forexfactoryscrape.netlify.app/.netlify/functions/scrape?month=jan01.2025&format=csv&permalink=true&impacts=3,2,1,0&event_types=1,2,3,4,5,7,8,9,10,11&currencies=1,2,3,4,5,6,7,8,9"
+# March 2025 - Get as CSV  
+https://forexfactoryscrape.netlify.app/.netlify/functions/scrape?month=mar01.2025&format=csv&permalink=true&impacts=3,2,1,0&event_types=1,2,3,4,5,7,8,9,10,11&currencies=1,2,3,4,5,6,7,8,9
+
+# Download with curl
+curl -o "jan_2025.json" "https://forexfactoryscrape.netlify.app/.netlify/functions/scrape?month=jan01.2025&permalink=true&impacts=3,2,1,0&event_types=1,2,3,4,5,7,8,9,10,11&currencies=1,2,3,4,5,6,7,8,9"
+
+curl -o "feb_2025.csv" "https://forexfactoryscrape.netlify.app/.netlify/functions/scrape?month=feb01.2025&format=csv&permalink=true&impacts=3,2,1,0&event_types=1,2,3,4,5,7,8,9,10,11&currencies=1,2,3,4,5,6,7,8,9"
 ```
 
 ## 📋 Data Fields
@@ -85,33 +87,13 @@ Includes all display fields plus:
 - `detailHash`: Event detail page identifier
 - Additional metadata fields
 
-## 💡 API Usage Examples
-
-### Simple API Calls
-
-```bash
-# Get data for a specific month (note: month parameter uses ForexFactory format like jan01.2025)
-https://forexfactoryscrape.netlify.app/.netlify/functions/scrape?month=jan01.2025&permalink=true&impacts=3,2,1,0&event_types=1,2,3,4,5,7,8,9,10,11&currencies=1,2,3,4,5,6,7,8,9
-
-# Same request but get CSV format
-https://forexfactoryscrape.netlify.app/.netlify/functions/scrape?month=jan01.2025&format=csv&permalink=true&impacts=3,2,1,0&event_types=1,2,3,4,5,7,8,9,10,11&currencies=1,2,3,4,5,6,7,8,9
-```
-
-### JavaScript Fetch Example
+## 💡 Using the API from JavaScript
 
 ```javascript
-// Basic fetch - get a month's data
+// Fetch data from your web application
 fetch('https://forexfactoryscrape.netlify.app/.netlify/functions/scrape?month=jan01.2025&permalink=true&impacts=3,2,1,0&event_types=1,2,3,4,5,7,8,9,10,11&currencies=1,2,3,4,5,6,7,8,9')
   .then(response => response.json())
   .then(data => console.log(data));
-```
-
-### Command Line with curl
-
-```bash
-# Download a month's data as CSV
-curl -o "forex_data.csv" \
-  "https://forexfactoryscrape.netlify.app/.netlify/functions/scrape?month=jan01.2025&format=csv&permalink=true&impacts=3,2,1,0&event_types=1,2,3,4,5,7,8,9,10,11&currencies=1,2,3,4,5,6,7,8,9"
 ```
 
 ## 🏗️ Technology Stack
