@@ -559,6 +559,21 @@ exports.handler = async (event) => {
       let y = now.getFullYear(); let m = now.getMonth();
       if (monthParamRaw === 'last') { m -= 1; if (m < 0) { m = 11; y -= 1; } }
       else if (monthParamRaw === 'next') { m += 1; if (m > 11) { m = 0; y += 1; } }
+      else if (monthParamRaw === 'this') { /* use current month/year */ }
+      else {
+        // Handle explicit month format like "sep01.2025"
+        const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+        const match = /^([a-z]{3})\d{2}\.(\d{4})$/.exec(monthParamRaw);
+        if (match) {
+          const monthStr = match[1];
+          const year = parseInt(match[2]);
+          const monthIndex = months.indexOf(monthStr);
+          if (monthIndex >= 0) {
+            y = year;
+            m = monthIndex;
+          }
+        }
+      }
       baseline = new Date(y, m, 1);
     }
 
@@ -622,6 +637,13 @@ exports.handler = async (event) => {
       end.setDate(startDate.getDate() + 6);
       const endIso = `${end.getFullYear()}-${String(end.getMonth()+1).padStart(2,'0')}-${String(end.getDate()).padStart(2,'0')}`;
       filtered = rows.filter((r) => r.date && r.date >= startIso && r.date <= endIso);
+    } else if (mode === 'month') {
+      // Filter to only include dates within the selected month boundaries
+      const monthStart = `${baseline.getFullYear()}-${String(baseline.getMonth()+1).padStart(2,'0')}-01`;
+      const lastDay = new Date(baseline.getFullYear(), baseline.getMonth() + 1, 0).getDate();
+      const monthEnd = `${baseline.getFullYear()}-${String(baseline.getMonth()+1).padStart(2,'0')}-${String(lastDay).padStart(2,'0')}`;
+      filtered = rows.filter((r) => r.date && r.date >= monthStart && r.date <= monthEnd);
+      console.log(`Month filtering: ${monthStart} to ${monthEnd}, filtered from ${rows.length} to ${filtered.length} events`);
     }
 
     console.log('Final filtered events count:', filtered.length);
