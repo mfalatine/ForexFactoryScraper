@@ -583,8 +583,13 @@ function downloadCSV() {
         return;
     }
     
-    // Convert to CSV
-    const headers = ['Date', 'Time', 'Currency', 'Impact', 'Event', 'Actual', 'Forecast', 'Previous', 'Country'];
+    // Convert to CSV with all available fields
+    const headers = [
+        'Date', 'Time', 'Currency', 'Impact', 'Event', 'Actual', 'Forecast', 'Previous', 'Country',
+        'EventId', 'EbaseId', 'Revision', 'Leaked', 'ActualBetterWorse',
+        'PrefixedName', 'SoloTitle', 'ImpactName', 'ImpactClass', 'ImpactTitle',
+        'HasGraph', 'HasDataValues', 'URL', 'SoloURL', 'Dateline', 'ScrapedAt'
+    ];
     const csvContent = [
         headers.join(','),
         ...calendarData.map(row => [
@@ -596,7 +601,23 @@ function downloadCSV() {
             row.actual || '',
             row.forecast || '',
             row.previous || '',
-            row.country || ''
+            row.country || '',
+            row.eventId || '',
+            row.ebaseId || '',
+            row.revision || '',
+            row.leaked || '',
+            row.actualBetterWorse || '',
+            `"${(row.prefixedName || '').replace(/"/g, '""')}"`,
+            `"${(row.soloTitle || '').replace(/"/g, '""')}"`,
+            row.impactName || '',
+            row.impactClass || '',
+            row.impactTitle || '',
+            row.hasGraph || '',
+            row.hasDataValues || '',
+            `"${(row.url || '').replace(/"/g, '""')}"`,
+            `"${(row.soloUrl || '').replace(/"/g, '""')}"`,
+            row.dateline || '',
+            row.scraped_at || ''
         ].join(','))
     ].join('\n');
     
