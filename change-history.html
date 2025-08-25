@@ -33,6 +33,18 @@
         </header>
         <div class="card">
             <div class="entry">
+                <div class="desc"><span class="date">[2025-08-25]</span> <strong>X46: Complete Timezone Fix - Open in FF Button</strong> - Fixed final timezone issue where Open in FF button generated URLs with dates one day off from displayed table. Updated openInForexFactory function to parse date components directly instead of using Date constructor, eliminating timezone interpretation issues. ForexFactory website now shows exact same date range as scraper table.</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-25]</span> <strong>X45: Eliminate All Timezone Issues</strong> - Completely removed timezone processing from backend scrape.js and fixed getDayOfWeek function to parse date components directly. Eliminated day-off and hour-off problems that were recurring issues. ForexFactory times and dates now kept exactly as provided without any timezone adjustments. Times between website and displayed table now match perfectly.</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-25]</span> <strong>X44: Day of Week Column Enhancement</strong> - Added new Day of Week column as first column in both displayed table and CSV exports, showing Monday, Tuesday, etc. for better weekly planning. Implemented getDayOfWeek helper function with timezone-safe date parsing. All existing columns shifted right to accommodate new Day column.</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-25]</span> <strong>X43: Clean Interface - Remove Event ID Column</strong> - Removed Event ID column from displayed table for cleaner interface while maintaining full data availability in CSV exports. Reduced table from 13 to 12 columns for better visual organization.</div>
+            </div>
+            <div class="entry">
                 <div class="desc"><span class="date">[2025-08-25]</span> <strong>X41: Event Type Classification & Filter Consistency</strong> - Integrated EventTypes.csv lookup table to add accurate Event Type columns to both display table and CSV exports. Created EventCrawler tool for comprehensive ForexFactory event type mapping collection across full year of data. Fixed quick links to apply UI filter settings consistently with manual date selectors. Added week day range clarification and enhanced quick links with button styling.</div>
             </div>
             <div class="entry">
