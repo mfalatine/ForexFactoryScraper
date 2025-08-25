@@ -259,13 +259,15 @@ tr:hover {
     background: #dc3545;
     color: white;
     border: none;
-    padding: 10px 20px;
-    font-size: 0.9em;
-    border-radius: 8px;
+    padding: 8px 30px;
+    font-size: 0.8em;
+    border-radius: 6px;
     cursor: pointer;
     margin-top: 8px;
     transition: all 0.2s ease;
     font-weight: 600;
+    white-space: nowrap;
+    min-width: 120px;
 }
 
 .btn-clear-all:hover {
@@ -561,8 +563,8 @@ footer a {
     background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
     color: white;
     font-weight: 600;
-    padding: 12px 20px;
-    border-radius: 8px;
+    padding: 8px 20px;
+    border-radius: 6px;
     cursor: pointer;
     transition: all 0.3s;
     border: none;
@@ -570,7 +572,7 @@ footer a {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    font-size: 14px;
+    font-size: 0.8em;
     width: 100%;
 }
 
