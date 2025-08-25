@@ -390,30 +390,6 @@ function buildFilterParams(filters) {
   return params.join('&');
 }
 
-// UI Toggle Functions
-function toggleWeekSelector() {
-  const selector = document.getElementById('weekSelector');
-  const isVisible = selector.style.display !== 'none';
-  
-  if (!isVisible) {
-    selector.style.display = 'block';
-    dateManager.renderWeekGrid();
-  } else {
-    selector.style.display = 'none';
-  }
-}
-
-function toggleMonthSelector() {
-  const selector = document.getElementById('monthSelector');
-  const isVisible = selector.style.display !== 'none';
-  
-  if (!isVisible) {
-    selector.style.display = 'block';
-    dateManager.renderMonthGrid();
-  } else {
-    selector.style.display = 'none';
-  }
-}
 
 // Navigation Functions
 function navigateWeekMonth(direction) {
@@ -447,6 +423,8 @@ async function init() {
     // Initialize date selectors
     dateManager.updateWeekDisplay();
     dateManager.updateMonthDisplay();
+    dateManager.renderWeekGrid();
+    dateManager.renderMonthGrid();
     
     // Load the data using week= (same logic as the FF button) for initial display
     try {

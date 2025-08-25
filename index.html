@@ -10,7 +10,7 @@
 <body>
     <div class="container">
         <header>
-            <h2>📊 Forex Factory Data Scraper X23</h2>
+            <h2>📊 Forex Factory Data Scraper X24</h2>
             <p class="subtitle">Enhanced scraper with rich JSON data extraction</p>
             <div class="last-update" id="lastUpdate">Loading...</div>
 
@@ -37,88 +37,96 @@
             
             <!-- Manual Scraping Section -->
             <div class="manual-scraping-section">
-                <div class="manual-scrape-grid">
-                    <div class="left-column">
-<!-- Week Selector Section -->
-<div class="selector-section week-selector">
-  <div class="selector-header">
-    <h4>📅 Week Selection</h4>
-    <button class="btn-toggle" onclick="toggleWeekSelector()">Select Weeks</button>
-  </div>
-  
-  <div id="weekSelector" class="selector-popup" style="display: none;">
-    <div class="selector-navigation">
-      <button onclick="navigateWeekYear(-1)">◄◄</button>
-      <button onclick="navigateWeekMonth(-1)">◄</button>
-      <span id="weekMonthYear">January 2025</span>
-      <button onclick="navigateWeekMonth(1)">►</button>
-      <button onclick="navigateWeekYear(1)">►►</button>
-    </div>
-    
-    <div id="weekGrid" class="week-grid">
-      <!-- Dynamically generated -->
-    </div>
-    
-    <div class="selector-actions">
-      <span>Selected: <strong id="weekCount">0</strong> weeks</span>
-      <button onclick="clearWeekSelection()">Clear All</button>
-    </div>
-  </div>
-  
-  <div id="selectedWeeksDisplay" class="selected-display">
-    <!-- Dynamically generated badges -->
-  </div>
-</div>
+                <!-- Date Selection Section -->
+                <div class="date-selection-container">
+                    <!-- Date Selection Grid -->
+                    <div class="date-selection-grid">
+                      <!-- Week Selector Section -->
+                      <div class="selector-section week-selector">
+                        <div class="selector-header">
+                          <h4>📅 Week Selection</h4>
+                          <div class="selector-actions">
+                            <span>Selected: <strong id="weekCount">0</strong></span>
+                            <button onclick="clearWeekSelection()">Clear</button>
+                          </div>
+                        </div>
+                        
+                        <div class="selector-navigation">
+                          <button onclick="navigateWeekYear(-1)">◄◄</button>
+                          <button onclick="navigateWeekMonth(-1)">◄</button>
+                          <span id="weekMonthYear">January 2025</span>
+                          <button onclick="navigateWeekMonth(1)">►</button>
+                          <button onclick="navigateWeekYear(1)">►►</button>
+                        </div>
+                        
+                        <div id="weekGrid" class="week-grid">
+                          <!-- Dynamically generated -->
+                        </div>
+                        
+                        <div id="selectedWeeksDisplay" class="selected-display">
+                          <!-- Dynamically generated badges -->
+                        </div>
+                      </div>
 
-<!-- Month Selector Section -->
-<div class="selector-section month-selector">
-  <div class="selector-header">
-    <h4>📆 Month Selection</h4>
-    <button class="btn-toggle" onclick="toggleMonthSelector()">Select Months</button>
-  </div>
-  
-  <div id="monthSelector" class="selector-popup" style="display: none;">
-    <div class="selector-navigation">
-      <button onclick="navigateMonthYear(-1)">◄</button>
-      <span id="monthYear">2025</span>
-      <button onclick="navigateMonthYear(1)">►</button>
-    </div>
-    
-    <div id="monthGrid" class="month-grid">
-      <!-- Dynamically generated -->
-    </div>
-    
-    <div class="selector-actions">
-      <span>Selected: <strong id="monthCount">0</strong> months</span>
-      <button onclick="clearMonthSelection()">Clear All</button>
-    </div>
-  </div>
-  
-  <div id="selectedMonthsDisplay" class="selected-display">
-    <!-- Dynamically generated badges -->
-  </div>
-</div>
-
-<!-- Load Button -->
-<div class="button-stack">
-  <button class="btn-load" onclick="loadSelectedPeriods()">
-    ⤵️ Load Selected Periods
-  </button>
-</div>
+                      <!-- Month Selector Section -->
+                      <div class="selector-section month-selector">
+                        <div class="selector-header">
+                          <h4>📆 Month Selection</h4>
+                          <div class="selector-actions">
+                            <span>Selected: <strong id="monthCount">0</strong></span>
+                            <button onclick="clearMonthSelection()">Clear</button>
+                          </div>
+                        </div>
+                        
+                        <div class="selector-navigation">
+                          <button onclick="navigateMonthYear(-1)">◄</button>
+                          <span id="monthYear">2025</span>
+                          <button onclick="navigateMonthYear(1)">►</button>
+                        </div>
+                        
+                        <div id="monthGrid" class="month-grid">
+                          <!-- Dynamically generated -->
+                        </div>
+                        
+                        <div id="selectedMonthsDisplay" class="selected-display">
+                          <!-- Dynamically generated badges -->
+                        </div>
+                      </div>
                     </div>
+
+                    <!-- Load Button -->
+                    <div class="button-stack">
+                      <button class="btn-load" onclick="loadSelectedPeriods()">
+                        ⤵️ Load Selected Periods
+                      </button>
+                    </div>
+                </div>
+
+                <!-- Secondary Options Section -->
+                <div class="secondary-options">
+                    <!-- Quick Links -->
                     <div class="quick-links">
-                        <strong>Quick Links</strong>
-                        <a href="#" onclick="fetchQuick('day','yesterday');return false;">Yesterday</a>
-                        <a href="#" onclick="fetchQuick('day','today');return false;">Today</a>
-                        <a href="#" onclick="fetchQuick('day','tomorrow');return false;">Tomorrow</a>
-                        <hr style="border:none;border-top:1px solid #e9ecef;margin:10px 0;">
-                        <a href="#" onclick="fetchQuick('week','last');return false;">Last Week</a>
-                        <a href="#" onclick="fetchQuick('week','this');return false;">This Week</a>
-                        <a href="#" onclick="fetchQuick('week','next');return false;">Next Week</a>
-                        <hr style="border:none;border-top:1px solid #e9ecef;margin:10px 0;">
-                        <a href="#" onclick="fetchQuick('month','last');return false;">Last Month</a>
-                        <a href="#" onclick="fetchQuick('month','this');return false;">This Month</a>
-                        <a href="#" onclick="fetchQuick('month','next');return false;">Next Month</a>
+                        <h4>⚡ Quick Links</h4>
+                        <div class="quick-links-grid">
+                            <div class="quick-links-column">
+                                <strong>Days</strong>
+                                <a href="#" onclick="fetchQuick('day','yesterday');return false;">Yesterday</a>
+                                <a href="#" onclick="fetchQuick('day','today');return false;">Today</a>
+                                <a href="#" onclick="fetchQuick('day','tomorrow');return false;">Tomorrow</a>
+                            </div>
+                            <div class="quick-links-column">
+                                <strong>Weeks</strong>
+                                <a href="#" onclick="fetchQuick('week','last');return false;">Last Week</a>
+                                <a href="#" onclick="fetchQuick('week','this');return false;">This Week</a>
+                                <a href="#" onclick="fetchQuick('week','next');return false;">Next Week</a>
+                            </div>
+                            <div class="quick-links-column">
+                                <strong>Months</strong>
+                                <a href="#" onclick="fetchQuick('month','last');return false;">Last Month</a>
+                                <a href="#" onclick="fetchQuick('month','this');return false;">This Month</a>
+                                <a href="#" onclick="fetchQuick('month','next');return false;">Next Month</a>
+                            </div>
+                        </div>
                     </div>
                     
                     <!-- Filter Panel -->
@@ -240,7 +248,6 @@
                                 </div>
                             </div>
                         </div>
-                        
                     </div>
                 </div>
             </div>
