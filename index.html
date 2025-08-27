@@ -10,7 +10,7 @@
 <body>
     <div class="container">
         <header>
-            <h2>📊 Forex Factory Data Scraper X83</h2>
+            <h2>📊 Forex Factory Data Scraper X84</h2>
             <p class="subtitle">Enhanced scraper with rich JSON data extraction</p>
             <div class="last-update" id="lastUpdate">Loading...</div>
 
@@ -280,6 +280,20 @@
       🔗 Open FIRST week/month in Forex Factory
     </button>
   </div>
+                <!-- Event Filter Bar -->
+                <div class="event-filter-bar">
+                    <div class="event-filter-container">
+                        <label for="eventFilter">Filter Events:</label>
+                        <input type="text" 
+                               id="eventFilter" 
+                               class="event-filter-input" 
+                               placeholder="Type event name..." 
+                               autocomplete="off">
+                        <button id="searchEventFilter" class="search-filter-btn" title="Search">🔍</button>
+                        <button id="clearEventFilter" class="clear-filter-btn" title="Clear filter">✕</button>
+                        <div id="eventSuggestions" class="event-suggestions-dropdown"></div>
+                    </div>
+                </div>
                 <div class="pagination-controls" id="paginationControls" style="display: none;">
                     <button class="btn-pagination" onclick="changePage(-1)">← Previous</button>
                     <span class="page-info">

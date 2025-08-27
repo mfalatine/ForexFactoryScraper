@@ -499,46 +499,49 @@ footer a {
     gap: 4px;
 }
 
-/* Event Filter Styling */
-.filter-row th {
-    padding: 0;
-    border: none;
-    background: transparent;
-}
-
-.event-filter-cell {
-    padding: 8px !important;
-    position: relative;
-    overflow: visible;
+/* Event Filter Bar */
+.event-filter-bar {
+    background: #f8f9fa;
+    padding: 12px 15px;
+    border-bottom: 1px solid #dee2e6;
+    margin-bottom: 10px;
+    border-radius: 4px;
 }
 
 .event-filter-container {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 8px;
     position: relative;
 }
 
+.event-filter-container label {
+    font-weight: 600;
+    color: #495057;
+    margin-right: 8px;
+}
+
 .event-filter-input {
-    width: 100%;
+    width: 300px;
+    max-width: 100%;
     padding: 6px 60px 6px 8px;
     font-size: 0.85em;
-    background: #2c3e50;
-    color: #ecf0f1;
-    border: 1px solid #34495e;
+    background: white;
+    color: #333;
+    border: 1px solid #ced4da;
     border-radius: 4px;
     transition: all 0.3s ease;
 }
 
 .event-filter-input:focus {
     outline: none;
-    background: #34495e;
-    border-color: #3498db;
-    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+    background: white;
+    border-color: #667eea;
+    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
 }
 
 .event-filter-input::placeholder {
-    color: #7f8c8d;
+    color: #999;
 }
 
 .search-filter-btn {

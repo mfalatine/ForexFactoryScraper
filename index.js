@@ -510,6 +510,9 @@ async function init() {
     // Load event type lookup table
     await loadEventTypeLookup();
     
+    // Set up event filter listeners once
+    setupEventFilterListeners();
+    
     // Initialize date selectors
     dateManager.updateWeekDisplay();
     dateManager.updateMonthDisplay();
@@ -653,44 +656,11 @@ function displayTable(data) {
     renderTable(filteredData);
 }
 
-function renderTable(data) {
-    if (!data || data.length === 0) {
-        document.getElementById('tableContainer').innerHTML = 
-            '<p>No events match your filter criteria</p>';
-        document.getElementById('paginationControls').style.display = 'none';
-        return;
-    }
-    
-    // Calculate pagination
-    const totalRows = data.length;
-    const totalPages = Math.ceil(totalRows / ROWS_PER_PAGE);
-    const startIndex = (currentPage - 1) * ROWS_PER_PAGE;
-    const endIndex = Math.min(startIndex + ROWS_PER_PAGE, totalRows);
-    const pageData = data.slice(startIndex, endIndex);
-    
-    // Update pagination controls
-    updatePaginationControls(totalRows, totalPages, pageData.length);
-    
-    // Enhanced table with additional fields
-    let html = `
-        <table>
+function initializeTable() {
+    // Create the table structure once
+    const html = `
+        <table id="dataTable">
             <thead>
-                <tr class="filter-row">
-                    <th colspan="7"></th>
-                    <th class="event-filter-cell">
-                        <div class="event-filter-container">
-                            <input type="text" 
-                                   id="eventFilter" 
-                                   class="event-filter-input" 
-                                   placeholder="Filter events..." 
-                                   autocomplete="off">
-                            <button id="searchEventFilter" class="search-filter-btn" title="Search">🔍</button>
-                            <button id="clearEventFilter" class="clear-filter-btn" title="Clear filter">✕</button>
-                            <div id="eventSuggestions" class="event-suggestions-dropdown"></div>
-                        </div>
-                    </th>
-                    <th colspan="6"></th>
-                </tr>
                 <tr>
                     <th class="link-column"><img src="details_icon_small.png" alt="Link" width="20" height="25"></th>
                     <th>Day</th>
@@ -708,8 +678,47 @@ function renderTable(data) {
                     <th>Better/Worse</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="tableBody">
+            </tbody>
+        </table>
     `;
+    document.getElementById('tableContainer').innerHTML = html;
+}
+
+function renderTable(data) {
+    // Save scroll position
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const activeElement = document.activeElement;
+    const activeElementId = activeElement ? activeElement.id : null;
+    
+    if (!data || data.length === 0) {
+        const tbody = document.getElementById('tableBody');
+        if (tbody) {
+            tbody.innerHTML = '<tr><td colspan="14" style="text-align: center;">No events match your filter criteria</td></tr>';
+        } else {
+            document.getElementById('tableContainer').innerHTML = '<p>No events match your filter criteria</p>';
+        }
+        document.getElementById('paginationControls').style.display = 'none';
+        return;
+    }
+    
+    // Initialize table if it doesn't exist
+    if (!document.getElementById('dataTable')) {
+        initializeTable();
+    }
+    
+    // Calculate pagination
+    const totalRows = data.length;
+    const totalPages = Math.ceil(totalRows / ROWS_PER_PAGE);
+    const startIndex = (currentPage - 1) * ROWS_PER_PAGE;
+    const endIndex = Math.min(startIndex + ROWS_PER_PAGE, totalRows);
+    const pageData = data.slice(startIndex, endIndex);
+    
+    // Update pagination controls
+    updatePaginationControls(totalRows, totalPages, pageData.length);
+    
+    // Build tbody content only
+    let tbodyHtml = '';
     
     pageData.forEach(item => {
         let impactClass = '';
@@ -734,7 +743,7 @@ function renderTable(data) {
             `<td class="link-column"><a href="#" onclick="openEventDetail('${escapedUrl}'); return false;" title="Open in ForexFactory"><img src="details_icon_small.png" alt="Open" width="20" height="25"></a></td>` :
             `<td class="link-column">—</td>`;
             
-        html += `
+        tbodyHtml += `
             <tr>
                 ${linkCell}
                 <td>${getDayOfWeek(item.date)}</td>
@@ -754,15 +763,17 @@ function renderTable(data) {
         `;
     });
     
-    html += `
-            </tbody>
-        </table>
-    `;
+    // Update only tbody content
+    const tbody = document.getElementById('tableBody');
+    if (tbody) {
+        tbody.innerHTML = tbodyHtml;
+    }
     
-    document.getElementById('tableContainer').innerHTML = html;
-    
-    // Add event listeners for filter after rendering
-    setupEventFilterListeners();
+    // Restore scroll position and focus
+    window.scrollTo(0, scrollTop);
+    if (activeElementId && document.getElementById(activeElementId)) {
+        document.getElementById(activeElementId).focus();
+    }
 }
 
 // Global handler for suggestion clicks
@@ -778,7 +789,6 @@ function handleSuggestionClick(e) {
         const eventName = suggestionItem.getAttribute('data-event');
         const input = document.getElementById('eventFilter');
         if (input && eventName) {
-            console.log('Clicked suggestion:', eventName); // Debug log
             input.value = eventName;
             eventFilter = eventName;
             hideEventSuggestions();
@@ -792,56 +802,55 @@ function setupEventFilterListeners() {
     const filterInput = document.getElementById('eventFilter');
     const searchButton = document.getElementById('searchEventFilter');
     const clearButton = document.getElementById('clearEventFilter');
-    const suggestionsDiv = document.getElementById('eventSuggestions');
     
-    if (filterInput) {
-        // Restore filter value if it exists
-        filterInput.value = eventFilter;
-        
-        // Remove existing listeners to prevent duplicates
-        const newFilterInput = filterInput.cloneNode(true);
-        filterInput.parentNode.replaceChild(newFilterInput, filterInput);
-        
-        // Show suggestions as user types
-        newFilterInput.addEventListener('input', (e) => {
-            showEventSuggestions(e.target.value);
-        });
-        
-        // Handle Enter key - this triggers the filter
-        newFilterInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                eventFilter = e.target.value;
-                hideEventSuggestions();
-                applyEventFilter();
-            }
-        });
-        
-        // Hide suggestions when clicking outside
-        newFilterInput.addEventListener('blur', () => {
-            // Delay to allow clicking on suggestions
-            setTimeout(hideEventSuggestions, 200);
-        });
-        
-        // Focus shows suggestions if there's text
-        newFilterInput.addEventListener('focus', (e) => {
-            if (e.target.value.length >= 2) {
-                showEventSuggestions(e.target.value);
-            }
-        });
+    if (!filterInput || filterInput.hasAttribute('data-listeners-added')) {
+        return; // Already set up or element doesn't exist
     }
     
-    // Handle clicking on suggestions - use event delegation on body
-    // Remove any existing listener first
-    document.body.removeEventListener('click', handleSuggestionClick);
-    document.body.addEventListener('click', handleSuggestionClick);
+    // Mark that we've added listeners
+    filterInput.setAttribute('data-listeners-added', 'true');
     
-    if (searchButton) {
-        // Remove existing listeners to prevent duplicates
-        const newSearchButton = searchButton.cloneNode(true);
-        searchButton.parentNode.replaceChild(newSearchButton, searchButton);
-        
-        newSearchButton.addEventListener('click', () => {
+    // Restore filter value if it exists
+    filterInput.value = eventFilter;
+    
+    // Show suggestions as user types
+    filterInput.addEventListener('input', (e) => {
+        showEventSuggestions(e.target.value);
+    });
+    
+    // Handle Enter key - this triggers the filter
+    filterInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            eventFilter = e.target.value;
+            hideEventSuggestions();
+            applyEventFilter();
+        }
+    });
+    
+    // Hide suggestions when clicking outside
+    filterInput.addEventListener('blur', () => {
+        // Delay to allow clicking on suggestions
+        setTimeout(hideEventSuggestions, 200);
+    });
+    
+    // Focus shows suggestions if there's text
+    filterInput.addEventListener('focus', (e) => {
+        if (e.target.value.length >= 2) {
+            showEventSuggestions(e.target.value);
+        }
+    });
+    
+    // Handle clicking on suggestions - use event delegation on body
+    // Only add once
+    if (!document.body.hasAttribute('data-suggestion-listener')) {
+        document.body.setAttribute('data-suggestion-listener', 'true');
+        document.body.addEventListener('click', handleSuggestionClick);
+    }
+    
+    if (searchButton && !searchButton.hasAttribute('data-listener-added')) {
+        searchButton.setAttribute('data-listener-added', 'true');
+        searchButton.addEventListener('click', () => {
             const input = document.getElementById('eventFilter');
             if (input) {
                 eventFilter = input.value;
@@ -851,12 +860,9 @@ function setupEventFilterListeners() {
         });
     }
     
-    if (clearButton) {
-        // Remove existing listeners to prevent duplicates
-        const newClearButton = clearButton.cloneNode(true);
-        clearButton.parentNode.replaceChild(newClearButton, clearButton);
-        
-        newClearButton.addEventListener('click', () => {
+    if (clearButton && !clearButton.hasAttribute('data-listener-added')) {
+        clearButton.setAttribute('data-listener-added', 'true');
+        clearButton.addEventListener('click', () => {
             eventFilter = '';
             const input = document.getElementById('eventFilter');
             if (input) input.value = '';
