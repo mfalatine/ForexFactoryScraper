@@ -582,7 +582,8 @@ function updateEventSuggestions() {
 
 function showEventSuggestions(searchText) {
     const suggestionsDiv = document.getElementById('eventSuggestions');
-    if (!suggestionsDiv) return;
+    const filterInput = document.getElementById('eventFilter');
+    if (!suggestionsDiv || !filterInput) return;
     
     if (!searchText || searchText.length < 2) {
         suggestionsDiv.style.display = 'none';
@@ -607,6 +608,12 @@ function showEventSuggestions(searchText) {
         const highlighted = event.replace(regex, '<strong>$1</strong>');
         return `<div class="suggestion-item" data-event="${event}">${highlighted}</div>`;
     }).join('');
+    
+    // Position the dropdown below the input using fixed positioning
+    const rect = filterInput.getBoundingClientRect();
+    suggestionsDiv.style.top = (rect.bottom + 2) + 'px';
+    suggestionsDiv.style.left = rect.left + 'px';
+    suggestionsDiv.style.width = rect.width + 'px';
     
     suggestionsDiv.style.display = 'block';
 }
