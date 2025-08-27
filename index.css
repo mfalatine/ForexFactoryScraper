@@ -517,7 +517,7 @@ footer a {
 
 .event-filter-input {
     width: 100%;
-    padding: 6px 28px 6px 8px;
+    padding: 6px 60px 6px 8px;
     font-size: 0.85em;
     background: #2c3e50;
     color: #ecf0f1;
@@ -535,6 +535,23 @@ footer a {
 
 .event-filter-input::placeholder {
     color: #7f8c8d;
+}
+
+.search-filter-btn {
+    position: absolute;
+    right: 32px;
+    background: transparent;
+    border: none;
+    color: #3498db;
+    cursor: pointer;
+    padding: 4px 6px;
+    font-size: 1em;
+    transition: all 0.2s ease;
+}
+
+.search-filter-btn:hover {
+    color: #2980b9;
+    transform: scale(1.1);
 }
 
 .clear-filter-btn {

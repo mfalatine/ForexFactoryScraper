@@ -654,6 +654,7 @@ function renderTable(data) {
                                    placeholder="Filter events..." 
                                    list="eventSuggestions"
                                    autocomplete="off">
+                            <button id="searchEventFilter" class="search-filter-btn" title="Search">🔍</button>
                             <button id="clearEventFilter" class="clear-filter-btn" title="Clear filter">✕</button>
                             <datalist id="eventSuggestions"></datalist>
                         </div>
@@ -736,23 +737,27 @@ function renderTable(data) {
 
 function setupEventFilterListeners() {
     const filterInput = document.getElementById('eventFilter');
+    const searchButton = document.getElementById('searchEventFilter');
     const clearButton = document.getElementById('clearEventFilter');
     
     if (filterInput) {
         // Restore filter value if it exists
         filterInput.value = eventFilter;
         
-        // Live filtering on input
-        filterInput.addEventListener('input', (e) => {
-            eventFilter = e.target.value;
-            applyEventFilter();
-        });
-        
-        // Handle Enter key
+        // Handle Enter key - this triggers the filter
         filterInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 eventFilter = e.target.value;
+                applyEventFilter();
+            }
+        });
+    }
+    
+    if (searchButton) {
+        searchButton.addEventListener('click', () => {
+            if (filterInput) {
+                eventFilter = filterInput.value;
                 applyEventFilter();
             }
         });
