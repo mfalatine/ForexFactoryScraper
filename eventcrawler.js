@@ -190,7 +190,6 @@ process.on('SIGINT', () => {
 // Run the crawler
 if (require.main === module) {
   crawlEvents().catch(error => {
-    console.error('\n❌ EventCrawler failed:', error);
     process.exit(1);
   });
 }

@@ -120,14 +120,12 @@ function extractCalendarStates(html) {
     
     return data;
   } catch (e) {
-    console.error('JSON.parse failed:', e.message);
     
     // Try with eval as fallback (safe since we control the source)
     try {
       const evalResult = eval('(' + jsonStr + ')');
       return evalResult;
     } catch (evalError) {
-      console.error('Eval also failed:', evalError.message);
     }
     
     return null;
@@ -269,32 +267,6 @@ function parseCalendarHtml(html, baseline) {
   // COMMENTED OUT: Fall back to HTML parsing to see JSON extraction errors
   
   // Enhanced debugging - let's see what's actually around the calendarComponentStates
-  const hasCalendarStates = html.includes('window.calendarComponentStates');
-  const hasCalendarStates1 = html.includes('window.calendarComponentStates[1]');
-  const htmlLength = html.length;
-  
-  // Find the exact position and show context
-  const debugStartIndex = html.indexOf('window.calendarComponentStates[1]');
-  let contextStr = '';
-  if (debugStartIndex !== -1) {
-    const contextStart = Math.max(0, debugStartIndex - 50);
-    const contextEnd = Math.min(html.length, debugStartIndex + 500);
-    contextStr = html.substring(contextStart, contextEnd);
-  }
-  
-  // Add debug info about why bracket parser failed
-  const startMarker = 'window.calendarComponentStates[1] = ';
-  const hasStartMarker = html.includes(startMarker);
-  
-  // Let's get a much larger context to understand the JSON structure
-  const largeStartIndex = html.indexOf('window.calendarComponentStates[1]');
-  let largeContext = '';
-  if (largeStartIndex !== -1) {
-    const contextStart = Math.max(0, largeStartIndex);
-    const contextEnd = Math.min(html.length, largeStartIndex + 2000); // Much larger sample
-    largeContext = html.substring(contextStart, contextEnd);
-  }
-  
   // If we reach here, JSON extraction failed - throw error to warn user
   throw new Error('Unable to extract calendar data from ForexFactory. The website structure may have changed. Please try again later or contact support.');
 }
@@ -529,7 +501,6 @@ exports.handler = async (event) => {
     }
     return { statusCode: 200, headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify(filtered) };
   } catch (e) {
-    console.error('Backend error:', e);
     return { statusCode: 500, headers, body: JSON.stringify({ error: String(e) }) };
   }
 };

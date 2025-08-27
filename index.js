@@ -396,7 +396,6 @@ async function loadEventTypeLookup() {
     
     console.log(`Loaded ${eventTypeLookup.size} event type mappings`);
   } catch (error) {
-    console.error('Failed to load event type lookup:', error);
   }
 }
 
@@ -573,8 +572,7 @@ async function init() {
         displayTable(calendarData);
         
     } catch (error) {
-        console.error('Error loading data:', error);
-        document.getElementById('tableContainer').innerHTML = 
+            document.getElementById('tableContainer').innerHTML = 
             '<div class="error">Error loading data. Please try again later.</div>';
         document.getElementById('lastUpdate').textContent = 'Error loading data';
         document.getElementById('eventCount').textContent = 'N/A';
@@ -1084,7 +1082,6 @@ async function loadSelectedPeriods() {
             return data;
           })
           .catch(error => {
-            console.error('Error fetching data:', error);
             completedRequests++;
             updateLoadingMessage(`Loading ${completedRequests} of ${totalRequests}... (error)`);
             return []; // Return empty array on error
@@ -1136,7 +1133,6 @@ async function loadSelectedPeriods() {
     hideLoadingOverlay();
     
   } catch (error) {
-    console.error('Error loading data:', error);
     hideLoadingOverlay();
     alert('Error loading data. Please try again.');
   }
@@ -1256,7 +1252,6 @@ async function fetchQuick(mode, value) {
         
         displayTable(calendarData);
     } catch (e) {
-        console.error(e);
         alert('Fetch failed. See console for details.');
     }
 }
