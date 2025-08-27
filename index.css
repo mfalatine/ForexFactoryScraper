@@ -851,8 +851,7 @@ footer a {
   margin: 8px 0;
 }
 
-.btn-check-all,
-.btn-uncheck-all {
+.btn-check-all {
   padding: 4px 12px;
   font-size: 0.75em;
   border: 1px solid #ddd;
@@ -867,12 +866,6 @@ footer a {
   background: #667eea;
   color: white;
   border-color: #667eea;
-}
-
-.btn-uncheck-all:hover {
-  background: #e53e3e;
-  color: white;
-  border-color: #e53e3e;
 }
 
 .selector-navigation button {
