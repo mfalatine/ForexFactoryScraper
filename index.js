@@ -926,7 +926,7 @@ function downloadJSON() {
     
     const now = new Date();
     const date = now.toISOString().split('T')[0];
-    const time = now.toTimeString().split(' ')[0].replace(/:/g, '.');  // HH.mm.ss format
+    const time = now.toTimeString().split(' ')[0].replace(/:/g, '');  // HHmmss format
     
     const jsonStr = JSON.stringify(calendarData, null, 2);
     const blob = new Blob([jsonStr], { type: 'application/json' });
@@ -988,7 +988,7 @@ function downloadCSV() {
     
     const now = new Date();
     const date = now.toISOString().split('T')[0];
-    const time = now.toTimeString().split(' ')[0].replace(/:/g, '.');  // HH.mm.ss format
+    const time = now.toTimeString().split(' ')[0].replace(/:/g, '');  // HHmmss format
     
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
