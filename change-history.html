@@ -33,6 +33,45 @@
         </header>
         <div class="card">
             <div class="entry">
+                <div class="desc"><span class="date">[2025-08-27]</span> <strong>X89: Timestamp Format Cleanup</strong> - Changed download filename timestamps from HH.mm.ss to HHmmss format for cleaner, more standard filenames (e.g., forex-factory-data-2025-08-27-143522.json).</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-27]</span> <strong>X88: Unique Download Filenames</strong> - Added timestamp to JSON and CSV download filenames to prevent overwriting. Each download now includes date and time (YYYY-MM-DD-HHmmss).</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-27]</span> <strong>X87: Simplified Bulk Selection</strong> - Removed redundant "Uncheck All" button since "Clear" already exists. Kept "Check Visible" for selecting all items in current view while "Clear" removes all selections across all dates.</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-27]</span> <strong>X86: Check All Button for Date Selectors</strong> - Added "Check Visible" button to both week and month selectors for quickly selecting all visible items in the current month/year view.</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-27]</span> <strong>X85: Filter UI Improvements</strong> - Moved search and clear buttons next to input box with inline-flex layout. Styled buttons with colors (Search: purple, Clear: red with disabled state). Improved visual design and layout flow.</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-27]</span> <strong>X84: Smooth Filtering Without Screen Movement</strong> - Major UX improvement: moved filter UI outside table to fixed bar, table structure persists with only tbody updates, preserves scroll position and input focus during filtering. No more screen jumping or flickering.</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-27]</span> <strong>X83: First Suggestion Click Fix</strong> - Fixed issue where first item in autocomplete suggestions wasn't clickable. Used closest() for better click detection and added pointer-events handling.</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-27]</span> <strong>X82-X81: Suggestion Dropdown Refinements</strong> - Fixed dropdown positioning with fixed positioning immune to overflow clipping. Force left-aligned text in suggestions with proper CSS overrides.</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-27]</span> <strong>X80-X79: Dropdown Display Fixes</strong> - Fixed horizontal scrollbar in suggestions with overflow-x: hidden. Improved dropdown visibility with higher z-index and proper positioning calculations.</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-27]</span> <strong>X78-X77: Event Filter Autocomplete</strong> - Added smart autocomplete suggestions dropdown showing up to 10 matching event names with highlighting. Click suggestion to autofill and apply filter instantly. Fixed dropdown visibility issues.</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-27]</span> <strong>X76-X75: Event Filter Functionality</strong> - Removed problematic live filtering that caused focus loss. Added search button (🔍) for manual filtering. Filter applies on Enter key or Search button click only.</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-27]</span> <strong>X74-X73: Event Table Filter Feature</strong> - Added event filter input directly above Event column with live filtering, autocomplete suggestions, and clear button. Shows "X of Y events" when filtered with seamless pagination support.</div>
+            </div>
+            <div class="entry">
+                <div class="desc"><span class="date">[2025-08-25]</span> <strong>X72-X63: Repository and Documentation Updates</strong> - Fixed website and change history URLs in README. Improved button font consistency and Clear All button width. Removed internal version references and made API examples consistent and functional.</div>
+            </div>
+            <div class="entry">
                 <div class="desc"><span class="date">[2025-08-25]</span> <strong>X62: Button Height Consistency</strong> - Adjusted "Open FIRST week/month in Forex Factory" button height to match Quick Links buttons by updating padding from 4px 6px to 6px 8px for consistent visual alignment across interface.</div>
             </div>
             <div class="entry">
