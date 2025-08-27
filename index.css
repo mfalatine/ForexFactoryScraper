@@ -593,6 +593,7 @@ footer a {
     display: none;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     margin-top: 2px;
+    text-align: left;
 }
 
 .suggestion-item {
@@ -602,10 +603,11 @@ footer a {
     font-size: 0.85em;
     transition: background 0.2s ease;
     border-bottom: 1px solid #34495e;
-    text-align: left;
+    text-align: left !important;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    display: block;
 }
 
 .suggestion-item:last-child {
@@ -619,6 +621,7 @@ footer a {
 .suggestion-item strong {
     color: #3498db;
     font-weight: bold;
+    text-align: left;
 }
 
 .impact-flag {
