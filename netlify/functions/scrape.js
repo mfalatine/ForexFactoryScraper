@@ -50,18 +50,15 @@ function toCsv(rows) {
 
 // NEW FUNCTION: Extract the rich JSON data from the page
 function extractCalendarStates(html) {
-  console.log('Attempting to extract calendar states from HTML of length:', html.length);
   
   // Find the start of the JSON
   const startMarker = 'window.calendarComponentStates[1] = ';
   const startIndex = html.indexOf(startMarker);
   
   if (startIndex === -1) {
-    console.log('Start marker not found');
     return null;
   }
   
-  console.log('Found start marker at position:', startIndex);
   
   // Start from the opening brace
   const jsonStart = startIndex + startMarker.length;
@@ -98,7 +95,6 @@ function extractCalendarStates(html) {
         braceCount--;
         if (braceCount === 0) {
           endIndex = i; // Don't include the closing brace yet
-          console.log('Found matching closing brace at position:', i, 'after', i - jsonStart, 'characters');
           break;
         }
       }
@@ -106,32 +102,18 @@ function extractCalendarStates(html) {
   }
   
   if (endIndex === -1) {
-    console.log('Could not find matching closing brace');
     return null;
   }
   
   const jsonStr = html.substring(jsonStart, endIndex + 1); // Include the closing brace
-  console.log('Extracted string length:', jsonStr.length);
-  console.log('JSON preview:', jsonStr.substring(0, 100) + '...');
-  console.log('JSON ending:', jsonStr.substring(jsonStr.length - 20)); // Show last 20 characters
-  console.log('Character at position 2:', JSON.stringify(jsonStr.charAt(2))); // Debug the JSON parse error
   
   try {
     // Try JSON.parse first
-    console.log('Attempting JSON.parse...');
     const data = JSON.parse(jsonStr);
     
-    console.log('Successfully parsed JSON with JSON.parse!');
     if (data.days) {
-      console.log('Found', data.days.length, 'days');
       if (data.days[0] && data.days[0].events) {
-        console.log('First day has', data.days[0].events.length, 'events');
         if (data.days[0].events[0]) {
-          console.log('Sample event:', {
-            id: data.days[0].events[0].id,
-            name: data.days[0].events[0].name,
-            country: data.days[0].events[0].country
-          });
         }
       }
     }
@@ -142,13 +124,10 @@ function extractCalendarStates(html) {
     
     // Try with eval as fallback (safe since we control the source)
     try {
-      console.log('Trying eval as fallback...');
       const evalResult = eval('(' + jsonStr + ')');
-      console.log('Eval succeeded!');
       return evalResult;
     } catch (evalError) {
       console.error('Eval also failed:', evalError.message);
-      console.log('First 500 chars:', jsonStr.substring(0, 500));
     }
     
     return null;
@@ -207,7 +186,6 @@ function parseCalendarHtml(html, baseline) {
   const calendarStates = extractCalendarStates(html);
   
   if (calendarStates && calendarStates.days) {
-    console.log(`Processing JSON data with ${calendarStates.days.length} days`);
     const rows = [];
     
     // Process each day from the JSON
@@ -289,7 +267,6 @@ function parseCalendarHtml(html, baseline) {
   }
   
   // COMMENTED OUT: Fall back to HTML parsing to see JSON extraction errors
-  // console.log('Falling back to HTML table parsing');
   
   // Enhanced debugging - let's see what's actually around the calendarComponentStates
   const hasCalendarStates = html.includes('window.calendarComponentStates');
@@ -318,103 +295,8 @@ function parseCalendarHtml(html, baseline) {
     largeContext = html.substring(contextStart, contextEnd);
   }
   
-  // Return dummy data to test if the issue is in the extraction or processing
-  return [{
-    date: "2025-08-24",
-    time: "8:30am", 
-    currency: "USD",
-    impact: "High",
-    event: "Test Event",
-    actual: "",
-    forecast: "0.5%",
-    previous: "0.3%",
-    eventId: 12345,
-    country: "US",
-    leaked: false,
-    scraped_at: new Date().toISOString()
-  }];
-  
-  /* COMMENTED OUT HTML PARSING FALLBACK
-  const $ = cheerio.load(html);
-  const table = $('table.calendar__table');
-  if (!table.length) throw new Error('Calendar table not found');
-
-  // Helper: parse date labels
-  function parseExplicitDateLabel(label) {
-    if (!label) return null;
-    const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
-    const m = /(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*\s+(\d{1,2})(?:\s*,?\s*(\d{4}))?/i.exec(label);
-    if (!m) return null;
-    const monthIdx = months.indexOf(m[1].toLowerCase().slice(0,3));
-    if (monthIdx < 0) return null;
-    const dayNum = parseInt(m[2]);
-    let year = m[3] ? parseInt(m[3]) : new Date().getFullYear();
-    if (!m[3]) {
-      const currentMonth = new Date().getMonth();
-      if (currentMonth >= 10 && monthIdx <= 1) {
-        year = new Date().getFullYear() + 1;
-      }
-      else if (currentMonth <= 1 && monthIdx >= 10) {
-        year = new Date().getFullYear() - 1;
-      }
-    }
-    return new Date(year, monthIdx, dayNum);
-  }
-
-  let currentIso = null;
-  const rows = [];
-
-  table.find('tr').each((_, el) => {
-    const row = $(el);
-    const dateCell = row.find('td.calendar__date, td.date');
-    if (dateCell.length && dateCell.text().trim()) {
-      const label = dateCell.text().trim();
-      const parsedDate = parseExplicitDateLabel(label);
-      if (parsedDate) {
-        currentIso = formatDateLocal(parsedDate);
-      }
-    }
-
-    const eventCell = row.find('td.calendar__event, td.event');
-    if (!eventCell.length) return;
-    const eventText = eventCell.text().trim();
-    if (!eventText) return;
-    if (!currentIso) return;
-
-    const timeCell = row.find('td.calendar__time, td.time');
-    const currencyCell = row.find('td.calendar__currency, td.currency');
-    const impactCell = row.find('td.calendar__impact, td.impact');
-    const actualCell = row.find('td.calendar__actual, td.actual');
-    const forecastCell = row.find('td.calendar__forecast, td.forecast');
-    const previousCell = row.find('td.calendar__previous, td.previous');
-
-    let impact = '';
-    const span = impactCell.find('span');
-    if (span.length) {
-      const cls = (span.attr('class') || '').toLowerCase();
-      if (cls.includes('high') || cls.includes('red')) impact = 'High';
-      else if (cls.includes('medium') || cls.includes('ora') || cls.includes('orange')) impact = 'Medium';
-      else if (cls.includes('low') || cls.includes('yel') || cls.includes('yellow')) impact = 'Low';
-    }
-
-    const rawTime = timeCell.text().trim();
-    // Keep ForexFactory times and dates exactly as provided - no timezone adjustment
-    
-    rows.push({
-      date: currentIso,
-      time: rawTime,
-      currency: currencyCell.text().trim(),
-      impact,
-      event: eventText,
-      actual: actualCell.text().trim(),
-      forecast: forecastCell.text().trim(),
-      previous: previousCell.text().trim(),
-      scraped_at: new Date().toISOString()
-    });
-  });
-
-  return fillMissingTimes(rows);
-  */ // END COMMENTED OUT HTML PARSING FALLBACK
+  // If we reach here, JSON extraction failed - throw error to warn user
+  throw new Error('Unable to extract calendar data from ForexFactory. The website structure may have changed. Please try again later or contact support.');
 }
 
 function fillMissingTimes(rows) {
@@ -616,13 +498,9 @@ exports.handler = async (event) => {
       rows = all;
     } else if (monthParamRaw) {
       url = `https://www.forexfactory.com/calendar/?month=${encodeURIComponent(monthParamRaw)}&${filterParams}`;
-      console.log('Month URL being fetched:', url);
       html = await fetchText(url);
-      console.log('HTML response length:', html.length);
       rows = parseCalendarHtml(html, baseline);
-      console.log('Parsed events count:', rows.length);
       if (rows.length > 0) {
-        console.log('First parsed event:', rows[0]);
       }
     }
 
@@ -643,10 +521,8 @@ exports.handler = async (event) => {
       const lastDay = new Date(baseline.getFullYear(), baseline.getMonth() + 1, 0).getDate();
       const monthEnd = `${baseline.getFullYear()}-${String(baseline.getMonth()+1).padStart(2,'0')}-${String(lastDay).padStart(2,'0')}`;
       filtered = rows.filter((r) => r.date && r.date >= monthStart && r.date <= monthEnd);
-      console.log(`Month filtering: ${monthStart} to ${monthEnd}, filtered from ${rows.length} to ${filtered.length} events`);
     }
 
-    console.log('Final filtered events count:', filtered.length);
     
     if (format === 'csv') {
       return { statusCode: 200, headers: { ...headers, 'Content-Type': 'text/csv' }, body: toCsv(filtered) };
