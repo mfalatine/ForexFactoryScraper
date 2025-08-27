@@ -11,6 +11,12 @@ A powerful serverless web scraper that fetches live economic calendar data from 
 
 ## 🌟 Key Features
 
+### Real-Time Event Filtering
+- **Smart Search**: Autocomplete event search with instant filtering
+- **Live Updates**: Filter events without page refresh or scroll position loss
+- **Event Counter**: Shows filtered results count (e.g., "Showing 45 of 200 events")
+- **Bulk Actions**: "Check Visible" buttons for quick multi-selection
+
 ### Advanced Date Selection System
 - **Multi-Week/Month Selection**: Select multiple weeks AND months simultaneously for comprehensive date ranges
 - **Date Range**: Supports 2007-2035 with intelligent navigation
@@ -101,11 +107,11 @@ fetch('https://forexfactoryscrape.netlify.app/.netlify/functions/scrape?month=ja
 This is a **JavaScript/Node.js** serverless application:
 
 - **Backend**: Node.js 18+ serverless function (Netlify Functions)
-- **Web Scraping**: Cheerio library for HTML parsing and JSON extraction
 - **Frontend**: Pure vanilla JavaScript, HTML5, CSS3
 - **Deployment**: Netlify (automatic scaling, no server management)
-- **Dependencies**: Minimal - only Cheerio for server-side parsing
+- **Dependencies**: None (all parsing done with native JavaScript)
 - **No Database**: Direct API calls to ForexFactory, no data storage
+- **Performance**: Optimized with minimal dependencies for fast loading
 
 
 ## 🔍 EventCrawler - Event Type Mapping Tool
@@ -135,25 +141,25 @@ node eventcrawler.js
 
 ## 🆕 Latest Updates
 
-### Major Enhancements
-- Fixed button height consistency across interface
-- Critical deduplication fix for duplicate event handling
-- Combined week+month selections for flexible date ranges
-- Added clickable event details with ForexFactory links
-- Complete UI redesign with advanced date selection system
+### Latest Release (X90+)
+- **Production Ready**: Removed all debug code and console statements
+- **Clean Codebase**: Eliminated dead code and unused dependencies
+- **Event Filtering**: Added autocomplete search with smart suggestions
+- **UI Polish**: Consistent button sizing and improved navigation flow
+- **File Management**: Unique timestamps prevent download overwrites
 
-### Recent Improvements
-- Eliminated all timezone issues - times match ForexFactory exactly
-- Added day of week column for better weekly planning
-- Integrated event type classification with 10 categories
-- Enhanced table with pagination and hover effects
-- Optimized for mobile with responsive design
+### Major Features
+- **Timezone Perfect**: Times match ForexFactory exactly
+- **Combined Selections**: Mix weeks and months for flexible ranges
+- **Event Classification**: 10 categories with visual indicators
+- **Responsive Design**: Optimized for all screen sizes
+- **Bulk Operations**: Quick selection tools for efficiency
 
 See the full [Change History](https://forexfactoryscrape.netlify.app/change-history.html) for complete details.
 
 ## 📝 License
 
-This project is open source and available under the [MIT License](LICENSE).
+This project is open source and available under the [GNU General Public License v3.0](LICENSE).
 
 ## 🤝 Contributing
 
