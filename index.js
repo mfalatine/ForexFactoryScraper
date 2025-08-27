@@ -611,7 +611,7 @@ function showEventSuggestions(searchText) {
     
     // Position the dropdown below the input using fixed positioning
     const rect = filterInput.getBoundingClientRect();
-    suggestionsDiv.style.top = (rect.bottom + 4) + 'px';  // Increased gap slightly
+    suggestionsDiv.style.top = (rect.bottom + 8) + 'px';  // More gap to avoid overlap
     suggestionsDiv.style.left = rect.left + 'px';
     suggestionsDiv.style.width = rect.width + 'px';
     
@@ -767,12 +767,18 @@ function renderTable(data) {
 
 // Global handler for suggestion clicks
 function handleSuggestionClick(e) {
-    if (e.target.classList.contains('suggestion-item')) {
+    // Check if clicked element is a suggestion item or inside one
+    const suggestionItem = e.target.classList.contains('suggestion-item') 
+        ? e.target 
+        : e.target.closest('.suggestion-item');
+    
+    if (suggestionItem) {
         e.stopPropagation();
         e.preventDefault();
-        const eventName = e.target.getAttribute('data-event');
+        const eventName = suggestionItem.getAttribute('data-event');
         const input = document.getElementById('eventFilter');
         if (input && eventName) {
+            console.log('Clicked suggestion:', eventName); // Debug log
             input.value = eventName;
             eventFilter = eventName;
             hideEventSuggestions();
