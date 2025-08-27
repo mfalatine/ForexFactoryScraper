@@ -592,8 +592,9 @@ footer a {
     z-index: 99999;
     display: none;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-    margin-top: 2px;
     text-align: left;
+    padding: 0;
+    margin: 0;
 }
 
 .suggestion-item {
@@ -608,6 +609,13 @@ footer a {
     overflow: hidden;
     text-overflow: ellipsis;
     display: block;
+    pointer-events: auto;
+    position: relative;
+}
+
+.suggestion-item:first-child {
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
 }
 
 .suggestion-item:last-child {

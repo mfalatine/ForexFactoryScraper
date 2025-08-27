@@ -611,7 +611,7 @@ function showEventSuggestions(searchText) {
     
     // Position the dropdown below the input using fixed positioning
     const rect = filterInput.getBoundingClientRect();
-    suggestionsDiv.style.top = (rect.bottom + 2) + 'px';
+    suggestionsDiv.style.top = (rect.bottom + 4) + 'px';  // Increased gap slightly
     suggestionsDiv.style.left = rect.left + 'px';
     suggestionsDiv.style.width = rect.width + 'px';
     
@@ -765,6 +765,23 @@ function renderTable(data) {
     setupEventFilterListeners();
 }
 
+// Global handler for suggestion clicks
+function handleSuggestionClick(e) {
+    if (e.target.classList.contains('suggestion-item')) {
+        e.stopPropagation();
+        e.preventDefault();
+        const eventName = e.target.getAttribute('data-event');
+        const input = document.getElementById('eventFilter');
+        if (input && eventName) {
+            input.value = eventName;
+            eventFilter = eventName;
+            hideEventSuggestions();
+            // Apply the filter immediately
+            applyEventFilter();
+        }
+    }
+}
+
 function setupEventFilterListeners() {
     const filterInput = document.getElementById('eventFilter');
     const searchButton = document.getElementById('searchEventFilter');
@@ -808,22 +825,10 @@ function setupEventFilterListeners() {
         });
     }
     
-    // Handle clicking on suggestions
-    if (suggestionsDiv) {
-        suggestionsDiv.addEventListener('click', (e) => {
-            if (e.target.classList.contains('suggestion-item')) {
-                const eventName = e.target.getAttribute('data-event');
-                const input = document.getElementById('eventFilter');
-                if (input) {
-                    input.value = eventName;
-                    eventFilter = eventName;
-                    hideEventSuggestions();
-                    // Apply the filter immediately
-                    applyEventFilter();
-                }
-            }
-        });
-    }
+    // Handle clicking on suggestions - use event delegation on body
+    // Remove any existing listener first
+    document.body.removeEventListener('click', handleSuggestionClick);
+    document.body.addEventListener('click', handleSuggestionClick);
     
     if (searchButton) {
         // Remove existing listeners to prevent duplicates
