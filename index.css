@@ -575,6 +575,45 @@ footer a {
     display: block;
 }
 
+/* Event Suggestions Dropdown */
+.event-suggestions-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 60px;
+    background: #2c3e50;
+    border: 1px solid #34495e;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.suggestion-item {
+    padding: 8px 12px;
+    color: #ecf0f1;
+    cursor: pointer;
+    font-size: 0.85em;
+    transition: background 0.2s ease;
+    border-bottom: 1px solid #34495e;
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.suggestion-item:hover {
+    background: #34495e;
+}
+
+.suggestion-item strong {
+    color: #3498db;
+    font-weight: bold;
+}
+
 .impact-flag {
     width: 12px;
     height: 8px;

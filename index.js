@@ -556,8 +556,6 @@ async function init() {
 function applyEventFilter() {
     const filterText = eventFilter.toLowerCase().trim();
     
-    console.log('Applying filter:', filterText, 'Total events:', calendarData.length);
-    
     if (!filterText) {
         filteredData = [...calendarData];
     } else {
@@ -566,8 +564,6 @@ function applyEventFilter() {
             return eventName.includes(filterText);
         });
     }
-    
-    console.log('Filtered results:', filteredData.length);
     
     // Reset to first page when filter changes
     currentPage = 1;
@@ -582,20 +578,44 @@ function updateEventSuggestions() {
             uniqueEventNames.add(item.event);
         }
     });
+}
+
+function showEventSuggestions(searchText) {
+    const suggestionsDiv = document.getElementById('eventSuggestions');
+    if (!suggestionsDiv) return;
     
-    // Populate datalist for autocomplete if it exists
-    const datalist = document.getElementById('eventSuggestions');
-    if (!datalist) return; // Element doesn't exist yet
+    if (!searchText || searchText.length < 2) {
+        suggestionsDiv.style.display = 'none';
+        return;
+    }
     
-    datalist.innerHTML = '';
+    const searchLower = searchText.toLowerCase();
+    const matches = Array.from(uniqueEventNames)
+        .filter(event => event.toLowerCase().includes(searchLower))
+        .sort()
+        .slice(0, 10); // Limit to 10 suggestions
     
-    // Sort event names and add to datalist
-    const sortedEvents = Array.from(uniqueEventNames).sort();
-    sortedEvents.forEach(eventName => {
-        const option = document.createElement('option');
-        option.value = eventName;
-        datalist.appendChild(option);
-    });
+    if (matches.length === 0) {
+        suggestionsDiv.style.display = 'none';
+        return;
+    }
+    
+    // Build suggestions HTML
+    suggestionsDiv.innerHTML = matches.map(event => {
+        // Highlight matching text
+        const regex = new RegExp(`(${searchText})`, 'gi');
+        const highlighted = event.replace(regex, '<strong>$1</strong>');
+        return `<div class="suggestion-item" data-event="${event}">${highlighted}</div>`;
+    }).join('');
+    
+    suggestionsDiv.style.display = 'block';
+}
+
+function hideEventSuggestions() {
+    const suggestionsDiv = document.getElementById('eventSuggestions');
+    if (suggestionsDiv) {
+        suggestionsDiv.style.display = 'none';
+    }
 }
 
 function displayTable(data) {
@@ -656,11 +676,10 @@ function renderTable(data) {
                                    id="eventFilter" 
                                    class="event-filter-input" 
                                    placeholder="Filter events..." 
-                                   list="eventSuggestions"
                                    autocomplete="off">
                             <button id="searchEventFilter" class="search-filter-btn" title="Search">🔍</button>
                             <button id="clearEventFilter" class="clear-filter-btn" title="Clear filter">✕</button>
-                            <datalist id="eventSuggestions"></datalist>
+                            <div id="eventSuggestions" class="event-suggestions-dropdown"></div>
                         </div>
                     </th>
                     <th colspan="6"></th>
@@ -743,6 +762,7 @@ function setupEventFilterListeners() {
     const filterInput = document.getElementById('eventFilter');
     const searchButton = document.getElementById('searchEventFilter');
     const clearButton = document.getElementById('clearEventFilter');
+    const suggestionsDiv = document.getElementById('eventSuggestions');
     
     if (filterInput) {
         // Restore filter value if it exists
@@ -752,13 +772,48 @@ function setupEventFilterListeners() {
         const newFilterInput = filterInput.cloneNode(true);
         filterInput.parentNode.replaceChild(newFilterInput, filterInput);
         
+        // Show suggestions as user types
+        newFilterInput.addEventListener('input', (e) => {
+            showEventSuggestions(e.target.value);
+        });
+        
         // Handle Enter key - this triggers the filter
         newFilterInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 eventFilter = e.target.value;
-                console.log('Enter pressed, filtering:', eventFilter);
+                hideEventSuggestions();
                 applyEventFilter();
+            }
+        });
+        
+        // Hide suggestions when clicking outside
+        newFilterInput.addEventListener('blur', () => {
+            // Delay to allow clicking on suggestions
+            setTimeout(hideEventSuggestions, 200);
+        });
+        
+        // Focus shows suggestions if there's text
+        newFilterInput.addEventListener('focus', (e) => {
+            if (e.target.value.length >= 2) {
+                showEventSuggestions(e.target.value);
+            }
+        });
+    }
+    
+    // Handle clicking on suggestions
+    if (suggestionsDiv) {
+        suggestionsDiv.addEventListener('click', (e) => {
+            if (e.target.classList.contains('suggestion-item')) {
+                const eventName = e.target.getAttribute('data-event');
+                const input = document.getElementById('eventFilter');
+                if (input) {
+                    input.value = eventName;
+                    eventFilter = eventName;
+                    hideEventSuggestions();
+                    // Optionally auto-apply the filter
+                    applyEventFilter();
+                }
             }
         });
     }
@@ -769,11 +824,10 @@ function setupEventFilterListeners() {
         searchButton.parentNode.replaceChild(newSearchButton, searchButton);
         
         newSearchButton.addEventListener('click', () => {
-            console.log('Search button clicked');
             const input = document.getElementById('eventFilter');
             if (input) {
                 eventFilter = input.value;
-                console.log('Filter value:', eventFilter);
+                hideEventSuggestions();
                 applyEventFilter();
             }
         });
@@ -788,7 +842,7 @@ function setupEventFilterListeners() {
             eventFilter = '';
             const input = document.getElementById('eventFilter');
             if (input) input.value = '';
-            console.log('Clear button clicked');
+            hideEventSuggestions();
             applyEventFilter();
         });
     }
