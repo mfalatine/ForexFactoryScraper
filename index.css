@@ -497,6 +497,67 @@ footer a {
     gap: 4px;
 }
 
+/* Event Filter Styling */
+.filter-row th {
+    padding: 0;
+    border: none;
+    background: transparent;
+}
+
+.event-filter-cell {
+    padding: 8px !important;
+}
+
+.event-filter-container {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    position: relative;
+}
+
+.event-filter-input {
+    width: 100%;
+    padding: 6px 28px 6px 8px;
+    font-size: 0.85em;
+    background: #2c3e50;
+    color: #ecf0f1;
+    border: 1px solid #34495e;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.event-filter-input:focus {
+    outline: none;
+    background: #34495e;
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.event-filter-input::placeholder {
+    color: #7f8c8d;
+}
+
+.clear-filter-btn {
+    position: absolute;
+    right: 4px;
+    background: transparent;
+    border: none;
+    color: #7f8c8d;
+    cursor: pointer;
+    padding: 4px 6px;
+    font-size: 1.1em;
+    transition: color 0.2s ease;
+    display: none;
+}
+
+.clear-filter-btn:hover {
+    color: #e74c3c;
+}
+
+.event-filter-input:not(:placeholder-shown) ~ .clear-filter-btn {
+    display: block;
+}
+
 .impact-flag {
     width: 12px;
     height: 8px;

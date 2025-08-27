@@ -10,10 +10,13 @@ const csvUrlBase = '/.netlify/functions/scrape?format=csv';
 const githubUrl = `https://github.com/${GITHUB_USER}/${REPO_NAME}`;
 
 let calendarData = [];
+let filteredData = []; // Store filtered results
+let eventFilter = ''; // Current event filter text
 let currentQuery = ''; // Track the current query parameters
 let currentPage = 1;
 const ROWS_PER_PAGE = 200;
 let eventTypeLookup = new Map(); // Event type lookup table
+let uniqueEventNames = new Set(); // Store unique event names for autocomplete
 
 // Function to open ForexFactory event detail in popup window
 function openEventDetail(url) {
@@ -552,10 +555,64 @@ async function init() {
     }
 }
 
+// Filter functions
+function applyEventFilter() {
+    const filterText = eventFilter.toLowerCase().trim();
+    
+    if (!filterText) {
+        filteredData = [...calendarData];
+    } else {
+        filteredData = calendarData.filter(item => {
+            const eventName = (item.event || '').toLowerCase();
+            return eventName.includes(filterText);
+        });
+    }
+    
+    // Reset to first page when filter changes
+    currentPage = 1;
+    renderTable(filteredData);
+}
+
+function updateEventSuggestions() {
+    // Build unique event names from current data
+    uniqueEventNames.clear();
+    calendarData.forEach(item => {
+        if (item.event) {
+            uniqueEventNames.add(item.event);
+        }
+    });
+    
+    // Populate datalist for autocomplete
+    const datalist = document.getElementById('eventSuggestions');
+    datalist.innerHTML = '';
+    
+    // Sort event names and add to datalist
+    const sortedEvents = Array.from(uniqueEventNames).sort();
+    sortedEvents.forEach(eventName => {
+        const option = document.createElement('option');
+        option.value = eventName;
+        datalist.appendChild(option);
+    });
+}
+
 function displayTable(data) {
     if (!data || data.length === 0) {
         document.getElementById('tableContainer').innerHTML = 
             '<p>No data available</p>';
+        document.getElementById('paginationControls').style.display = 'none';
+        return;
+    }
+    
+    // Initialize filtered data
+    filteredData = [...data];
+    updateEventSuggestions();
+    renderTable(filteredData);
+}
+
+function renderTable(data) {
+    if (!data || data.length === 0) {
+        document.getElementById('tableContainer').innerHTML = 
+            '<p>No events match your filter criteria</p>';
         document.getElementById('paginationControls').style.display = 'none';
         return;
     }
@@ -574,6 +631,22 @@ function displayTable(data) {
     let html = `
         <table>
             <thead>
+                <tr class="filter-row">
+                    <th colspan="7"></th>
+                    <th class="event-filter-cell">
+                        <div class="event-filter-container">
+                            <input type="text" 
+                                   id="eventFilter" 
+                                   class="event-filter-input" 
+                                   placeholder="Filter events..." 
+                                   list="eventSuggestions"
+                                   autocomplete="off">
+                            <button id="clearEventFilter" class="clear-filter-btn" title="Clear filter">✕</button>
+                            <datalist id="eventSuggestions"></datalist>
+                        </div>
+                    </th>
+                    <th colspan="6"></th>
+                </tr>
                 <tr>
                     <th class="link-column"><img src="details_icon_small.png" alt="Link" width="20" height="25"></th>
                     <th>Day</th>
@@ -643,6 +716,42 @@ function displayTable(data) {
     `;
     
     document.getElementById('tableContainer').innerHTML = html;
+    
+    // Add event listeners for filter after rendering
+    setupEventFilterListeners();
+}
+
+function setupEventFilterListeners() {
+    const filterInput = document.getElementById('eventFilter');
+    const clearButton = document.getElementById('clearEventFilter');
+    
+    if (filterInput) {
+        // Restore filter value if it exists
+        filterInput.value = eventFilter;
+        
+        // Live filtering on input
+        filterInput.addEventListener('input', (e) => {
+            eventFilter = e.target.value;
+            applyEventFilter();
+        });
+        
+        // Handle Enter key
+        filterInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                eventFilter = e.target.value;
+                applyEventFilter();
+            }
+        });
+    }
+    
+    if (clearButton) {
+        clearButton.addEventListener('click', () => {
+            eventFilter = '';
+            if (filterInput) filterInput.value = '';
+            applyEventFilter();
+        });
+    }
 }
 
 function downloadJSON() {
@@ -991,6 +1100,16 @@ function updatePaginationControls(totalRows, totalPages, rowsShown) {
     document.getElementById('rowsShown').textContent = rowsShown;
     document.getElementById('totalRows').textContent = totalRows;
     
+    // Update event count to show filtered vs total
+    const eventCountEl = document.getElementById('eventCount');
+    if (eventCountEl) {
+        if (eventFilter && filteredData.length < calendarData.length) {
+            eventCountEl.textContent = `${filteredData.length} of ${calendarData.length} events`;
+        } else {
+            eventCountEl.textContent = `${calendarData.length} events`;
+        }
+    }
+    
     // Show/hide pagination controls
     const paginationControls = document.getElementById('paginationControls');
     if (totalPages > 1) {
@@ -1008,12 +1127,13 @@ function updatePaginationControls(totalRows, totalPages, rowsShown) {
 }
 
 function changePage(direction) {
-    const totalPages = Math.ceil(calendarData.length / ROWS_PER_PAGE);
+    const dataToUse = filteredData.length > 0 ? filteredData : calendarData;
+    const totalPages = Math.ceil(dataToUse.length / ROWS_PER_PAGE);
     const newPage = currentPage + direction;
     
     if (newPage >= 1 && newPage <= totalPages) {
         currentPage = newPage;
-        displayTable(calendarData);
+        renderTable(dataToUse);
     }
 }
 
