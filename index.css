@@ -261,7 +261,7 @@ tr:hover {
     background: #dc3545;
     color: white;
     border: none;
-    padding: 8px 30px;
+    padding: 8px 20px;
     font-size: 0.8em;
     border-radius: 6px;
     cursor: pointer;
@@ -269,7 +269,11 @@ tr:hover {
     transition: all 0.2s ease;
     font-weight: 600;
     white-space: nowrap;
-    width: 100%;
+    width: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
 .btn-clear-all:hover {
@@ -712,7 +716,7 @@ footer a {
     justify-content: center;
     gap: 8px;
     font-size: 0.8em;
-    width: 100%;
+    width: 200px;
 }
 
 .btn-open-ff {
