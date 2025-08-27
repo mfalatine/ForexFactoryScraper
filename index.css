@@ -588,6 +588,7 @@ footer a {
     max-height: 250px;
     min-width: 250px;
     overflow-y: auto;
+    overflow-x: hidden;
     z-index: 99999;
     display: none;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
@@ -601,6 +602,10 @@ footer a {
     font-size: 0.85em;
     transition: background 0.2s ease;
     border-bottom: 1px solid #34495e;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .suggestion-item:last-child {
