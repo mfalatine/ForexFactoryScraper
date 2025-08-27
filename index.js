@@ -533,9 +533,6 @@ async function init() {
         // Reset pagination
         currentPage = 1;
         
-        // Update stats
-        document.getElementById('eventCount').textContent = `${calendarData.length} events`;
-        
         // Update last update time
         if (calendarData.length > 0 && calendarData[0].scraped_at) {
             const date = new Date(calendarData[0].scraped_at);
@@ -582,8 +579,10 @@ function updateEventSuggestions() {
         }
     });
     
-    // Populate datalist for autocomplete
+    // Populate datalist for autocomplete if it exists
     const datalist = document.getElementById('eventSuggestions');
+    if (!datalist) return; // Element doesn't exist yet
+    
     datalist.innerHTML = '';
     
     // Sort event names and add to datalist
@@ -600,12 +599,26 @@ function displayTable(data) {
         document.getElementById('tableContainer').innerHTML = 
             '<p>No data available</p>';
         document.getElementById('paginationControls').style.display = 'none';
+        document.getElementById('eventCount').textContent = '0 events';
         return;
     }
     
-    // Initialize filtered data
+    // Update event count
+    document.getElementById('eventCount').textContent = `${data.length} events`;
+    
+    // Initialize filtered data with all data
     filteredData = [...data];
+    
+    // Reset filter
+    eventFilter = '';
+    
+    // Update autocomplete suggestions
     updateEventSuggestions();
+    
+    // Reset to first page
+    currentPage = 1;
+    
+    // Render the table
     renderTable(filteredData);
 }
 
@@ -959,7 +972,6 @@ async function loadSelectedPeriods() {
     currentPage = 1;
     
     // Update display
-    document.getElementById('eventCount').textContent = `${calendarData.length} events`;
     displayTable(calendarData);
     
     hideLoadingOverlay();
@@ -1075,8 +1087,6 @@ async function fetchQuick(mode, value) {
         
         // Reset pagination
         currentPage = 1;
-        
-        document.getElementById('eventCount').textContent = `${calendarData.length} events`;
         
         // Update last update time
         if (calendarData.length > 0 && calendarData[0].scraped_at) {
