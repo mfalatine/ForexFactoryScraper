@@ -9,236 +9,206 @@
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); min-height: 100vh; padding: 20px; }
         .container { max-width: 1000px; margin: 0 auto; }
         header { background: white; border-radius: 15px; padding: 30px; margin-bottom: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
-        h1 { color: #1e3c72; margin: 0; }
-        .card { background: white; border-radius: 15px; padding: 20px 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
-        .entry { border-left: 4px solid #667eea; padding-left: 12px; margin: 18px 0; }
-        .date { font-weight: 700; color: #1e3c72; }
-        .desc { color: #333; margin-top: 4px; }
+        h1 { color: #1e3c72; margin: 0 0 10px 0; }
+        h2 { color: #2a5298; margin: 25px 0 15px 0; font-size: 1.4em; }
+        h3 { color: #667eea; margin: 20px 0 12px 0; font-size: 1.2em; }
+        .card { background: white; border-radius: 15px; padding: 25px 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+        ul { margin: 10px 0; padding-left: 25px; }
+        li { margin: 8px 0; color: #333; line-height: 1.6; }
+        strong { color: #1e3c72; }
         .back { display: inline-block; margin-bottom: 16px; color: #1e3c72; font-weight: 600; text-decoration: none; }
         .back:hover { text-decoration: underline; }
     </style>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // If query contains ?from=index allow a back link to try to preserve flow
-        });
-    </script>
-    </head>
+</head>
 <body>
     <div class="container">
         <header>
             <h1>📌 Change History - Forex Factory Data Scraper</h1>
         </header>
         <div class="card">
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-27]</span> <strong>X89: Timestamp Format Cleanup</strong> - Changed download filename timestamps from HH.mm.ss to HHmmss format for cleaner, more standard filenames (e.g., forex-factory-data-2025-08-27-143522.json).</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-27]</span> <strong>X88: Unique Download Filenames</strong> - Added timestamp to JSON and CSV download filenames to prevent overwriting. Each download now includes date and time (YYYY-MM-DD-HHmmss).</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-27]</span> <strong>X87: Simplified Bulk Selection</strong> - Removed redundant "Uncheck All" button since "Clear" already exists. Kept "Check Visible" for selecting all items in current view while "Clear" removes all selections across all dates.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-27]</span> <strong>X86: Check All Button for Date Selectors</strong> - Added "Check Visible" button to both week and month selectors for quickly selecting all visible items in the current month/year view.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-27]</span> <strong>X85: Filter UI Improvements</strong> - Moved search and clear buttons next to input box with inline-flex layout. Styled buttons with colors (Search: purple, Clear: red with disabled state). Improved visual design and layout flow.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-27]</span> <strong>X84: Smooth Filtering Without Screen Movement</strong> - Major UX improvement: moved filter UI outside table to fixed bar, table structure persists with only tbody updates, preserves scroll position and input focus during filtering. No more screen jumping or flickering.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-27]</span> <strong>X83: First Suggestion Click Fix</strong> - Fixed issue where first item in autocomplete suggestions wasn't clickable. Used closest() for better click detection and added pointer-events handling.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-27]</span> <strong>X82-X81: Suggestion Dropdown Refinements</strong> - Fixed dropdown positioning with fixed positioning immune to overflow clipping. Force left-aligned text in suggestions with proper CSS overrides.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-27]</span> <strong>X80-X79: Dropdown Display Fixes</strong> - Fixed horizontal scrollbar in suggestions with overflow-x: hidden. Improved dropdown visibility with higher z-index and proper positioning calculations.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-27]</span> <strong>X78-X77: Event Filter Autocomplete</strong> - Added smart autocomplete suggestions dropdown showing up to 10 matching event names with highlighting. Click suggestion to autofill and apply filter instantly. Fixed dropdown visibility issues.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-27]</span> <strong>X76-X75: Event Filter Functionality</strong> - Removed problematic live filtering that caused focus loss. Added search button (🔍) for manual filtering. Filter applies on Enter key or Search button click only.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-27]</span> <strong>X74-X73: Event Table Filter Feature</strong> - Added event filter input directly above Event column with live filtering, autocomplete suggestions, and clear button. Shows "X of Y events" when filtered with seamless pagination support.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-25]</span> <strong>X72-X63: Repository and Documentation Updates</strong> - Fixed website and change history URLs in README. Improved button font consistency and Clear All button width. Removed internal version references and made API examples consistent and functional.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-25]</span> <strong>X62: Button Height Consistency</strong> - Adjusted "Open FIRST week/month in Forex Factory" button height to match Quick Links buttons by updating padding from 4px 6px to 6px 8px for consistent visual alignment across interface.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-25]</span> <strong>X61: Critical Deduplication Fix</strong> - Fixed critical bug where events with duplicate eventIds were falling through conditional logic and appearing as duplicates in results. Restructured deduplication algorithm with proper if/else logic to handle all cases correctly.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-25]</span> <strong>X60: Month Boundary Filtering</strong> - Fixed issue where September month selections returned October events due to ForexFactory's calendar view. Added month boundary filtering in backend to ensure only events within selected month date range are returned.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-25]</span> <strong>X59: Removed Conflict Warning</strong> - Removed mutual exclusion warning message as week and month selections can now be combined for flexible date range querying.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-25]</span> <strong>X58: Combined Week+Month Selections</strong> - Enabled powerful combination of week and month selections by removing mutual exclusion logic. Users can now select multiple weeks AND months simultaneously for comprehensive date range coverage with automatic deduplication.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-25]</span> <strong>X57: Repository Cleanup</strong> - Removed unnecessary 'Data' folder from repository as it was not required for application functionality.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-25]</span> <strong>X56: Enhanced Filter Interface</strong> - Converted tiny "all/none" text links to proper vertically stacked buttons for all filter sections (Expected Impact, Event Types, Currencies). Improved usability with larger click targets and better visual hierarchy.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-25]</span> <strong>X55: Updated Change History</strong> - Comprehensive update to change history documenting major developments and milestones from recent enhancement phases.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-25]</span> <strong>X54: Enhanced Table Interaction & Visual Polish</strong> - Brightened table row hover effects for better visibility while maintaining text readability. Improved popup window size to 1440x900 for optimal ForexFactory viewing experience. Enhanced user interaction feedback with professional blue-tinted hover highlighting.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-25]</span> <strong>X48-52: Clickable Event Detail Links</strong> - Added new first column with clickable image icons linking directly to specific ForexFactory event detail pages. Implemented popup window functionality (1440x900) with fallback to new tabs. Integrated actual event URLs from backend data. Fixed JavaScript syntax issues and optimized image display (20x25px) for consistent table layout. Each event now provides instant access to detailed ForexFactory information.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-25]</span> <strong>X46: Complete Timezone Fix - Open in FF Button</strong> - Fixed final timezone issue where Open in FF button generated URLs with dates one day off from displayed table. Updated openInForexFactory function to parse date components directly instead of using Date constructor, eliminating timezone interpretation issues. ForexFactory website now shows exact same date range as scraper table.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-25]</span> <strong>X45: Eliminate All Timezone Issues</strong> - Completely removed timezone processing from backend scrape.js and fixed getDayOfWeek function to parse date components directly. Eliminated day-off and hour-off problems that were recurring issues. ForexFactory times and dates now kept exactly as provided without any timezone adjustments. Times between website and displayed table now match perfectly.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-25]</span> <strong>X44: Day of Week Column Enhancement</strong> - Added new Day of Week column as first column in both displayed table and CSV exports, showing Monday, Tuesday, etc. for better weekly planning. Implemented getDayOfWeek helper function with timezone-safe date parsing. All existing columns shifted right to accommodate new Day column.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-25]</span> <strong>X43: Clean Interface - Remove Event ID Column</strong> - Removed Event ID column from displayed table for cleaner interface while maintaining full data availability in CSV exports. Reduced table from 13 to 12 columns for better visual organization.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-25]</span> <strong>X41: Event Type Classification & Filter Consistency</strong> - Integrated EventTypes.csv lookup table to add accurate Event Type columns to both display table and CSV exports. Created EventCrawler tool for comprehensive ForexFactory event type mapping collection across full year of data. Fixed quick links to apply UI filter settings consistently with manual date selectors. Added week day range clarification and enhanced quick links with button styling.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-25]</span> <strong>X38: EventCrawler & Enhanced Data Export</strong> - Created EventCrawler tool for comprehensive ForexFactory event type mapping collection. Added CSV export with all 24+ data fields including rich metadata, URLs, and timestamps. Fixed month data loading by removing search limits and unnecessary filtering. Implemented mutual exclusion between week/month selections. Enhanced quick links with button styling and improved Open in FF button sizing.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-25]</span> <strong>X31: Month Data Loading Fix</strong> - Resolved critical issue where certain months (February, April, May) returned test data instead of real ForexFactory events. Fixed JSON extraction algorithm that was failing on large HTML responses due to 500K character search limit. All months now load correctly with full event data.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-25]</span> <strong>X29: Backend Filtering Optimization</strong> - Removed unnecessary month filtering logic that was incorrectly removing events after ForexFactory had already filtered them. Download buttons now export actual table data instead of re-querying API, ensuring downloads match displayed results for multiple month/week selections.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-25]</span> <strong>X26: Mutual Exclusion & UI Improvements</strong> - Implemented mutual exclusion between week and month selections to prevent data conflicts. Added week day range clarification (Sunday-Saturday) to interface. Enhanced quick links with proper button styling and improved spacing.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-25]</span> <strong>X24: Compact Layout & UI Redesign</strong> - Completely redesigned interface for better space utilization. Removed expandable popups and made week/month selectors always visible in a side-by-side layout. Moved filters and quick links below date selectors in organized sections. Reduced font sizes by 2-3 points across entire site and tightened all spacing for more professional, compact appearance. Enhanced mobile responsiveness with optimized single-column layouts.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-25]</span> <strong>X23: Advanced Date Range Selection System</strong> - Major enhancement replacing single date input with sophisticated week/month selector system supporting 2007-2035 date ranges. Added comprehensive DateRangeManager class with navigation controls, batch data loading with progress indicators, smart filter integration mapping UI to ForexFactory numeric codes, and enhanced backend parameter parsing. Includes responsive design, loading overlays, and ForexFactory link generation.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-24]</span> Implemented table pagination with 200-row limit per page - large datasets now display in manageable pages with navigation controls and row count indicators.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-24]</span> Cleaned up interface by removing "Extra Fields Available" section for better visual organization.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-24]</span> Added functional "all" and "none" links to filter sections - users can now quickly check or uncheck entire categories (Impact, Event Types, Currencies).</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-24]</span> Improved table layout - made table auto-expand to fit all content without cutting off data, added more compact styling with reduced padding and font sizes.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-24]</span> Enhanced table presentation - centered all table headers and prevented text wrapping in table cells for better readability.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-24]</span> Consolidated project structure - removed original basic version and made detailed version the main version. Renamed <code>index_detailed.*</code> files to <code>index.*</code> and <code>scrape_detailed.js</code> to <code>scrape.js</code>. Updated all internal references and removed "DETAILED" branding.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-24]</span> Separated JavaScript from HTML into <code>index_detailed.js</code> for better organization, maintainability, and caching performance.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-24]</span> Separated CSS from HTML into <code>index_detailed.css</code> for better organization, maintainability, and caching performance.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-24]</span> Enhanced JSON extraction with proper brace counting algorithm, successfully parsing rich event data from <code>window.calendarComponentStates[1]</code> - now extracting 20+ fields per event including eventId, country, revision, leaked status, etc.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-24]</span> Added Event Filters panel to DETAILED version with Impact, Event Types, and Currencies filter options - dark themed interface matching Forex Factory style.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-23]</span> Added post-processing to fill missing times - events in the same time block now all show the same time instead of having blanks.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-23]</span> Added cache-busting timestamps to all fetch requests to prevent browser caching issues with stale data.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-23]</span> Fixed download buttons to use current query parameters - JSON/CSV downloads now match the displayed data when using quick links (Today, Last Week, etc.).</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-23]</span> Removed deprecated Python scraper (<code>scrape.py</code>) and GitHub Actions workflow - project now uses Netlify Functions exclusively.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-23]</span> Fixed timezone offset issue - removed +1 hour offset that was incorrectly applied to ForexFactory times (changed default from 1 to 0).</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-23]</span> Improved date parsing to use explicit dates from ForexFactory headers directly without complex offset calculations.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-23]</span> Calendar selection now uses <code>start=</code> to return exactly 7 days (date +6).</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-23]</span> Week quick-links use <code>week=last|this|next</code> and compute correct Monday (Sunday bug fixed).</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-23]</span> Explicit <code>week=aug19.2025</code> parsing updated; baseline uses the explicit date.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-23]</span> Frontend buttons (Load/Download/Raw) aligned with <code>start=</code> behavior.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-23]</span> Manual scraping UI compacted; columns aligned; stacked action buttons.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-23]</span> Fixed quick-links JS error (orphaned <code>else</code>) and improved mobile spacing.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-23]</span> Removed "API Usage" section from the index page to simplify the interface.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-23]</span> Fixed date selection bug: explicit dates (e.g., Aug 19, 2025) now return data starting from the selected date, not from Monday of that week.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-23]</span> Default date now uses local time (fixed off-by-one day).</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-23]</span> "Open Week on ForexFactory" builds the exact week URL from the selected date.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-23]</span> Initial load now fetches data via <code>week=</code> for parity with the FF button.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-23]</span> Added Change History page and link from the home page.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-23]</span> Data preview now shows all events; removed 20-item cap and updated header/note.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-23]</span> Fixed markdownlint by ignoring <code>LICENSE</code> via <code>.markdownlintignore</code> (MD041).</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-23]</span> Removed "Generate Scraping Command" feature (button, UI, and related JavaScript).</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-23]</span> Rearranged layout: Data Preview placed below buttons; Manual Scraping above Data Preview; API Usage moved to page bottom.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-23]</span> Changed backend to return a rolling 7-day window starting from the selected date; frontend default date is today.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-23]</span> Removed "Format" and "Cost" info cards from the header stats.</div>
-            </div>
-            <div class="entry">
-                <div class="desc"><span class="date">[2025-08-23]</span> Updated info card text to "Returned Data — Selected Date +6 days = 7 day return".</div>
-            </div>
+            <a href="index.html" class="back">← Back to Scraper</a>
+
+            <h2>2025-08-27 Updates</h2>
+
+            <h3>Code Quality & Performance</h3>
+            <ul>
+                <li><strong>X94: Complete Production Cleanup</strong> - Removed all console.error statements, eliminated dead debugging code (26 lines of unused variables), removed unused cheerio dependency from package.json</li>
+                <li><strong>X93: Backend Error Handling</strong> - Replaced dummy test data return with proper error throwing to warn users when JSON extraction fails, removed 80+ lines of commented HTML parsing fallback code, cleaned all debug console.log statements from production</li>
+            </ul>
+
+            <h3>UI Polish & Consistency</h3>
+            <ul>
+                <li><strong>X91-92: Button Standardization</strong> - Fixed Clear All and Load Selected button dimensions to match (same width, height, padding), centered both buttons in container with consistent styling</li>
+            </ul>
+
+            <h3>Event Filtering & Search Improvements</h3>
+            <ul>
+                <li><strong>X84: Smooth Filtering</strong> - Major UX improvement with fixed filter bar outside table, preserving scroll position and input focus during filtering</li>
+                <li><strong>X78-83: Autocomplete System</strong> - Added smart autocomplete dropdown for event filtering with:
+                    <ul>
+                        <li>Up to 10 matching suggestions with highlighting</li>
+                        <li>Fixed dropdown positioning and click detection</li>
+                        <li>Proper CSS overrides for consistent display</li>
+                        <li>Search button (🔍) and Enter key support</li>
+                    </ul>
+                </li>
+                <li><strong>X74-76: Event Filter UI</strong> - Added event filter input above Event column with live filtering, clear button, and "X of Y events" counter</li>
+                <li><strong>X85: Filter UI Polish</strong> - Moved search/clear buttons inline with purple/red color coding</li>
+            </ul>
+
+            <h3>File Management</h3>
+            <ul>
+                <li><strong>X88-89: Download Improvements</strong>
+                    <ul>
+                        <li>Added timestamps to filenames (YYYY-MM-DD-HHmmss format)</li>
+                        <li>Changed from HH.mm.ss to cleaner HHmmss format</li>
+                        <li>Prevents file overwriting with unique names</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3>UI Enhancements</h3>
+            <ul>
+                <li><strong>X86-87: Bulk Selection</strong> - Added "Check Visible" buttons for week/month selectors, removed redundant "Uncheck All" button</li>
+            </ul>
+
+            <h2>2025-08-25 Major Release</h2>
+
+            <h3>Core Functionality</h3>
+            <ul>
+                <li><strong>X45-46: Complete Timezone Fix</strong> - Eliminated all timezone processing issues:
+                    <ul>
+                        <li>Times and dates kept exactly as ForexFactory provides</li>
+                        <li>Fixed day-off and hour-off problems</li>
+                        <li>Perfect match between website and table display</li>
+                    </ul>
+                </li>
+                <li><strong>X58-60: Enhanced Date Selection</strong>
+                    <ul>
+                        <li>Enabled combined week+month selections (removed mutual exclusion)</li>
+                        <li>Fixed month boundary filtering for accurate date ranges</li>
+                        <li>Automatic deduplication of events</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3>Data Enhancement</h3>
+            <ul>
+                <li><strong>X41-43: Event Classification</strong>
+                    <ul>
+                        <li>Integrated EventTypes.csv lookup table</li>
+                        <li>Added Event Type columns to display and exports</li>
+                        <li>Created EventCrawler tool for comprehensive event mapping</li>
+                        <li>Added Day of Week column as first column</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3>User Interface Redesign</h3>
+            <ul>
+                <li><strong>X24: Compact Layout Overhaul</strong>
+                    <ul>
+                        <li>Side-by-side week/month selectors (always visible)</li>
+                        <li>Removed expandable popups</li>
+                        <li>Reduced font sizes by 2-3 points</li>
+                        <li>Optimized mobile responsive design</li>
+                    </ul>
+                </li>
+                <li><strong>X48-52: Event Detail Links</strong>
+                    <ul>
+                        <li>Added clickable icons linking to ForexFactory event pages</li>
+                        <li>Popup windows (1440x900) with fallback to new tabs</li>
+                        <li>Integrated actual event URLs from backend</li>
+                    </ul>
+                </li>
+                <li><strong>X54-56: Visual Polish</strong>
+                    <ul>
+                        <li>Enhanced table row hover effects with blue tinting</li>
+                        <li>Converted filter links to proper stacked buttons</li>
+                        <li>Improved click targets and visual hierarchy</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3>Backend Optimization</h3>
+            <ul>
+                <li><strong>X29-31: Data Loading Fixes</strong>
+                    <ul>
+                        <li>Fixed critical month loading issues (February, April, May)</li>
+                        <li>Resolved JSON extraction for large HTML responses</li>
+                        <li>Download buttons now export actual displayed data</li>
+                    </ul>
+                </li>
+                <li><strong>X23: Advanced Date Range System</strong>
+                    <ul>
+                        <li>DateRangeManager class supporting 2007-2035</li>
+                        <li>Batch data loading with progress indicators</li>
+                        <li>Smart filter integration with ForexFactory codes</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h2>2025-08-24 Foundation Updates</h2>
+
+            <h3>Table & Display</h3>
+            <ul>
+                <li>Implemented 200-row pagination with navigation controls</li>
+                <li>Auto-expanding table layout without data cutoff</li>
+                <li>Centered headers and prevented text wrapping</li>
+                <li>Added functional "all/none" filter links</li>
+            </ul>
+
+            <h3>Project Structure</h3>
+            <ul>
+                <li>Consolidated to single version (removed basic/detailed split)</li>
+                <li>Separated JavaScript and CSS into external files</li>
+                <li>Enhanced JSON extraction with brace counting algorithm</li>
+                <li>Added dark-themed Event Filters panel</li>
+            </ul>
+
+            <h2>2025-08-23 Initial Release</h2>
+
+            <h3>Core Features</h3>
+            <ul>
+                <li>Post-processing to fill missing times in event blocks</li>
+                <li>Cache-busting timestamps on all fetch requests</li>
+                <li>Fixed timezone offset issues (removed incorrect +1 hour)</li>
+                <li>Improved date parsing using explicit ForexFactory headers</li>
+            </ul>
+
+            <h3>API & Backend</h3>
+            <ul>
+                <li>Switched to Netlify Functions (removed Python scraper)</li>
+                <li>Calendar selection returns exactly 7 days (date +6)</li>
+                <li>Week quick-links with correct Monday calculation</li>
+                <li>Rolling 7-day window from selected date</li>
+            </ul>
+
+            <h3>UI/UX</h3>
+            <ul>
+                <li>Compacted manual scraping interface</li>
+                <li>Aligned and stacked action buttons</li>
+                <li>Fixed quick-links JavaScript errors</li>
+                <li>Improved mobile spacing</li>
+                <li>Added Change History page</li>
+            </ul>
+
+            <h3>Data Preview</h3>
+            <ul>
+                <li>Shows all events (removed 20-item cap)</li>
+                <li>Updated header and note information</li>
+                <li>Streamlined layout with Data Preview below buttons</li>
+            </ul>
+
+            <h2>Repository & Documentation</h2>
+            <ul>
+                <li><strong>X62-72</strong>: Various updates to README, button consistency, API examples</li>
+                <li><strong>X57</strong>: Removed unnecessary 'Data' folder</li>
+                <li><strong>X59</strong>: Updated documentation for combined selections</li>
+            </ul>
         </div>
     </div>
 </body>
