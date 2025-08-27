@@ -844,6 +844,37 @@ footer a {
   margin-bottom: 10px;
 }
 
+.selector-bulk-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.btn-check-all,
+.btn-uncheck-all {
+  padding: 4px 12px;
+  font-size: 0.75em;
+  border: 1px solid #ddd;
+  background: white;
+  color: #333;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-check-all:hover {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
+}
+
+.btn-uncheck-all:hover {
+  background: #e53e3e;
+  color: white;
+  border-color: #e53e3e;
+}
+
 .selector-navigation button {
   padding: 3px 6px;
   background: #fff;

@@ -309,11 +309,47 @@ class DateRangeManager {
     this.updateWeekDisplay();
   }
 
+  checkAllWeeks() {
+    // Check all visible week checkboxes
+    document.querySelectorAll('#weekGrid input[type="checkbox"]').forEach(cb => {
+      if (!cb.checked) {
+        cb.click(); // This will trigger the toggle event
+      }
+    });
+  }
+
+  uncheckAllWeeks() {
+    // Uncheck all visible week checkboxes
+    document.querySelectorAll('#weekGrid input[type="checkbox"]').forEach(cb => {
+      if (cb.checked) {
+        cb.click(); // This will trigger the toggle event
+      }
+    });
+  }
+
   // Clear all months
   clearAllMonths() {
     this.selectedMonths.clear();
     document.querySelectorAll('#monthGrid input[type="checkbox"]').forEach(cb => cb.checked = false);
     this.updateMonthDisplay();
+  }
+
+  checkAllMonths() {
+    // Check all visible month checkboxes
+    document.querySelectorAll('#monthGrid input[type="checkbox"]').forEach(cb => {
+      if (!cb.checked) {
+        cb.click(); // This will trigger the toggle event
+      }
+    });
+  }
+
+  uncheckAllMonths() {
+    // Uncheck all visible month checkboxes
+    document.querySelectorAll('#monthGrid input[type="checkbox"]').forEach(cb => {
+      if (cb.checked) {
+        cb.click(); // This will trigger the toggle event
+      }
+    });
   }
 
   // Get selection mode
@@ -491,8 +527,24 @@ function clearWeekSelection() {
   dateManager.clearAllWeeks();
 }
 
+function checkAllWeeks() {
+  dateManager.checkAllWeeks();
+}
+
+function uncheckAllWeeks() {
+  dateManager.uncheckAllWeeks();
+}
+
 function clearMonthSelection() {
   dateManager.clearAllMonths();
+}
+
+function checkAllMonths() {
+  dateManager.checkAllMonths();
+}
+
+function uncheckAllMonths() {
+  dateManager.uncheckAllMonths();
 }
 
 function clearAllSelections() {
