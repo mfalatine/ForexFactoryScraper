@@ -556,6 +556,8 @@ async function init() {
 function applyEventFilter() {
     const filterText = eventFilter.toLowerCase().trim();
     
+    console.log('Applying filter:', filterText, 'Total events:', calendarData.length);
+    
     if (!filterText) {
         filteredData = [...calendarData];
     } else {
@@ -564,6 +566,8 @@ function applyEventFilter() {
             return eventName.includes(filterText);
         });
     }
+    
+    console.log('Filtered results:', filteredData.length);
     
     // Reset to first page when filter changes
     currentPage = 1;
@@ -744,29 +748,47 @@ function setupEventFilterListeners() {
         // Restore filter value if it exists
         filterInput.value = eventFilter;
         
+        // Remove existing listeners to prevent duplicates
+        const newFilterInput = filterInput.cloneNode(true);
+        filterInput.parentNode.replaceChild(newFilterInput, filterInput);
+        
         // Handle Enter key - this triggers the filter
-        filterInput.addEventListener('keypress', (e) => {
+        newFilterInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 eventFilter = e.target.value;
+                console.log('Enter pressed, filtering:', eventFilter);
                 applyEventFilter();
             }
         });
     }
     
     if (searchButton) {
-        searchButton.addEventListener('click', () => {
-            if (filterInput) {
-                eventFilter = filterInput.value;
+        // Remove existing listeners to prevent duplicates
+        const newSearchButton = searchButton.cloneNode(true);
+        searchButton.parentNode.replaceChild(newSearchButton, searchButton);
+        
+        newSearchButton.addEventListener('click', () => {
+            console.log('Search button clicked');
+            const input = document.getElementById('eventFilter');
+            if (input) {
+                eventFilter = input.value;
+                console.log('Filter value:', eventFilter);
                 applyEventFilter();
             }
         });
     }
     
     if (clearButton) {
-        clearButton.addEventListener('click', () => {
+        // Remove existing listeners to prevent duplicates
+        const newClearButton = clearButton.cloneNode(true);
+        clearButton.parentNode.replaceChild(newClearButton, clearButton);
+        
+        newClearButton.addEventListener('click', () => {
             eventFilter = '';
-            if (filterInput) filterInput.value = '';
+            const input = document.getElementById('eventFilter');
+            if (input) input.value = '';
+            console.log('Clear button clicked');
             applyEventFilter();
         });
     }
