@@ -509,7 +509,7 @@ footer a {
 }
 
 .event-filter-container {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 8px;
     position: relative;
@@ -524,7 +524,7 @@ footer a {
 .event-filter-input {
     width: 300px;
     max-width: 100%;
-    padding: 6px 60px 6px 8px;
+    padding: 6px 8px;
     font-size: 0.85em;
     background: white;
     color: #333;
@@ -545,48 +545,46 @@ footer a {
 }
 
 .search-filter-btn {
-    position: absolute;
-    right: 32px;
-    background: transparent;
+    background: #667eea;
     border: none;
-    color: #3498db;
+    color: white;
     cursor: pointer;
-    padding: 4px 6px;
-    font-size: 1em;
+    padding: 6px 12px;
+    font-size: 0.9em;
+    border-radius: 4px;
     transition: all 0.2s ease;
 }
 
 .search-filter-btn:hover {
-    color: #2980b9;
-    transform: scale(1.1);
+    background: #5a67d8;
+    transform: scale(1.05);
 }
 
 .clear-filter-btn {
-    position: absolute;
-    right: 4px;
-    background: transparent;
+    background: #e53e3e;
     border: none;
-    color: #7f8c8d;
+    color: white;
     cursor: pointer;
-    padding: 4px 6px;
-    font-size: 1.1em;
-    transition: color 0.2s ease;
-    display: none;
+    padding: 6px 12px;
+    font-size: 0.9em;
+    border-radius: 4px;
+    transition: all 0.2s ease;
 }
 
 .clear-filter-btn:hover {
-    color: #e74c3c;
+    background: #c53030;
 }
 
-.event-filter-input:not(:placeholder-shown) ~ .clear-filter-btn {
-    display: block;
+.clear-filter-btn:not(.has-value) {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 /* Event Suggestions Dropdown */
 .event-suggestions-dropdown {
     position: fixed;
-    background: #2c3e50;
-    border: 1px solid #34495e;
+    background: white;
+    border: 1px solid #ced4da;
     border-radius: 4px;
     max-height: 250px;
     min-width: 250px;
@@ -594,7 +592,7 @@ footer a {
     overflow-x: hidden;
     z-index: 99999;
     display: none;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     text-align: left;
     padding: 0;
     margin: 0;
@@ -602,11 +600,11 @@ footer a {
 
 .suggestion-item {
     padding: 8px 12px;
-    color: #ecf0f1;
+    color: #333;
     cursor: pointer;
     font-size: 0.85em;
     transition: background 0.2s ease;
-    border-bottom: 1px solid #34495e;
+    border-bottom: 1px solid #f0f0f0;
     text-align: left !important;
     white-space: nowrap;
     overflow: hidden;
@@ -628,11 +626,11 @@ footer a {
 }
 
 .suggestion-item:hover {
-    background: #34495e;
+    background: #f8f9fa;
 }
 
 .suggestion-item strong {
-    color: #3498db;
+    color: #667eea;
     font-weight: bold;
     text-align: left;
     pointer-events: none;

@@ -813,9 +813,28 @@ function setupEventFilterListeners() {
     // Restore filter value if it exists
     filterInput.value = eventFilter;
     
+    // Set initial clear button state
+    const clearBtn = document.getElementById('clearEventFilter');
+    if (clearBtn) {
+        if (eventFilter) {
+            clearBtn.classList.add('has-value');
+        } else {
+            clearBtn.classList.remove('has-value');
+        }
+    }
+    
     // Show suggestions as user types
     filterInput.addEventListener('input', (e) => {
         showEventSuggestions(e.target.value);
+        // Update clear button state
+        const clearBtn = document.getElementById('clearEventFilter');
+        if (clearBtn) {
+            if (e.target.value) {
+                clearBtn.classList.add('has-value');
+            } else {
+                clearBtn.classList.remove('has-value');
+            }
+        }
     });
     
     // Handle Enter key - this triggers the filter
@@ -866,6 +885,7 @@ function setupEventFilterListeners() {
             eventFilter = '';
             const input = document.getElementById('eventFilter');
             if (input) input.value = '';
+            clearButton.classList.remove('has-value');
             hideEventSuggestions();
             applyEventFilter();
         });
