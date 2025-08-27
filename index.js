@@ -924,12 +924,16 @@ function downloadJSON() {
         return;
     }
     
+    const now = new Date();
+    const date = now.toISOString().split('T')[0];
+    const time = now.toTimeString().split(' ')[0].replace(/:/g, '.');  // HH.mm.ss format
+    
     const jsonStr = JSON.stringify(calendarData, null, 2);
     const blob = new Blob([jsonStr], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `forex-factory-data-${new Date().toISOString().split('T')[0]}.json`;
+    a.download = `forex-factory-data-${date}-${time}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -982,11 +986,15 @@ function downloadCSV() {
         ].join(','))
     ].join('\n');
     
+    const now = new Date();
+    const date = now.toISOString().split('T')[0];
+    const time = now.toTimeString().split(' ')[0].replace(/:/g, '.');  // HH.mm.ss format
+    
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `forex-factory-data-${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `forex-factory-data-${date}-${time}.csv`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
