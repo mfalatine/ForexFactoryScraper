@@ -811,7 +811,7 @@ function setupEventFilterListeners() {
                     input.value = eventName;
                     eventFilter = eventName;
                     hideEventSuggestions();
-                    // Optionally auto-apply the filter
+                    // Apply the filter immediately
                     applyEventFilter();
                 }
             }

@@ -150,6 +150,8 @@ button:hover {
     padding: 15px;
     box-shadow: 0 6px 20px rgba(0,0,0,0.1);
     overflow-x: auto;
+    overflow-y: visible;
+    position: relative;
 }
 
 table {
@@ -506,6 +508,8 @@ footer a {
 
 .event-filter-cell {
     padding: 8px !important;
+    position: relative;
+    overflow: visible;
 }
 
 .event-filter-container {
@@ -578,18 +582,18 @@ footer a {
 /* Event Suggestions Dropdown */
 .event-suggestions-dropdown {
     position: absolute;
-    top: 100%;
+    top: calc(100% - 1px);
     left: 0;
     right: 60px;
     background: #2c3e50;
     border: 1px solid #34495e;
-    border-top: none;
-    border-radius: 0 0 4px 4px;
-    max-height: 200px;
+    border-radius: 4px;
+    max-height: 250px;
     overflow-y: auto;
-    z-index: 1000;
+    z-index: 10000;
     display: none;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    margin-top: 2px;
 }
 
 .suggestion-item {
