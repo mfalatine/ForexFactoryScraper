@@ -1024,7 +1024,7 @@ function viewGitHub() {
 }
 
 function viewChangeHistory() {
-    window.open('change-history.html', '_blank');
+    window.location.href = 'change-history.html';
 }
 
 
