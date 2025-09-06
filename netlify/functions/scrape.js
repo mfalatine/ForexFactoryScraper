@@ -478,8 +478,15 @@ exports.handler = async (event) => {
 
     let filtered = rows;
     if (mode === 'day') {
-      const iso = formatDateLocal(baseline);
-      filtered = rows.filter((r) => r.date === iso);
+      // For relative day parameters (today, yesterday, tomorrow), trust ForexFactory's response
+      // Don't filter by date since FF already returns the correct data for these keywords
+      if (dayParamRaw === 'today' || dayParamRaw === 'yesterday' || dayParamRaw === 'tomorrow') {
+        filtered = rows; // Use all rows returned by ForexFactory
+      } else {
+        // For explicit date formats, filter by the calculated baseline date
+        const iso = formatDateLocal(baseline);
+        filtered = rows.filter((r) => r.date === iso);
+      }
     } else if (mode === 'range') {
       const startDate = new Date(start);
       const startIso = `${startDate.getFullYear()}-${String(startDate.getMonth()+1).padStart(2,'0')}-${String(startDate.getDate()).padStart(2,'0')}`;
