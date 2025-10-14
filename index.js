@@ -931,7 +931,7 @@ function downloadJSON() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `forex-factory-data-${date}-${time}.json`;
+    a.download = `Journal File-Daily-${date}-${time}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -992,7 +992,7 @@ function downloadCSV() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `forex-factory-data-${date}-${time}.csv`;
+    a.download = `Journal File-Daily-${date}-${time}.csv`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
