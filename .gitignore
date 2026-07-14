@@ -41,3 +41,5 @@ wheels/
 .venv/
 *.csv
 *.json
+# Local Netlify folder
+.netlify

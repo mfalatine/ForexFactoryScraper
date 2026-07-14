@@ -525,9 +525,26 @@ function clearAllSelections() {
   dateManager.clearAllMonths();
 }
 
+// Access key management: the scrape function requires a key (SCRAPE_ACCESS_KEY on Netlify)
+const ACCESS_KEY_STORAGE = 'ff_access_key';
+function getAccessKey() {
+    let key = localStorage.getItem(ACCESS_KEY_STORAGE) || '';
+    if (!key) {
+        key = (prompt('This scraper is private. Enter the access key:') || '').trim();
+        if (key) localStorage.setItem(ACCESS_KEY_STORAGE, key);
+    }
+    return key;
+}
+
 // Helper function to prevent caching
 function fetchNoCache(url) {
-    return fetch(`${url}&_t=${Date.now()}`, { cache: 'no-store' });
+    return fetch(`${url}&_t=${Date.now()}`, { cache: 'no-store', headers: { 'X-Api-Key': getAccessKey() } }).then((res) => {
+        if (res.status === 403) {
+            localStorage.removeItem(ACCESS_KEY_STORAGE);
+            alert('Access key missing or incorrect. Reload the page and enter the correct key.');
+        }
+        return res;
+    });
 }
 
 // Initialize page

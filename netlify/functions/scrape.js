@@ -295,9 +295,16 @@ exports.handler = async (event) => {
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type'
+    'Access-Control-Allow-Headers': 'Content-Type, X-Api-Key'
   };
   if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers, body: '' };
+
+  // Access gate: the public endpoint was being hit ~108K times/day after the URL leaked.
+  // The key lives in the SCRAPE_ACCESS_KEY environment variable on Netlify. Fails closed if unset.
+  const expectedKey = process.env.SCRAPE_ACCESS_KEY || '';
+  const providedKey = (event.headers && (event.headers['x-api-key'] || event.headers['X-Api-Key'])) || (event.queryStringParameters && event.queryStringParameters.key) || '';
+  if (!expectedKey) return { statusCode: 503, headers, body: JSON.stringify({ error: 'Access key not configured. Set SCRAPE_ACCESS_KEY in the Netlify environment and redeploy.' }) };
+  if (providedKey !== expectedKey) return { statusCode: 403, headers, body: JSON.stringify({ error: 'Access key required.' }) };
 
   try {
     const qs = event.queryStringParameters || {};

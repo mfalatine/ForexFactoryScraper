@@ -49,14 +49,14 @@ See full [Legal Disclaimer](#-full-legal-disclaimer) at the bottom of this docum
 - **Currencies**: Filter by major currency pairs (USD, EUR, GBP, JPY, etc.)
 - **Quick Links**: One-click access to common date ranges
 
-## 📊 Live API Access
+## 📊 API Access
 
-### ⚠️ Rate Limiting Required
-Please implement a minimum 2-3 second delay between API requests to respect ForexFactory's servers.
+**The hosted instance is private.** Its scrape endpoint requires an access key (`X-Api-Key` header or `?key=` parameter) and returns `403` without one. Keys are not distributed.
 
-### Base Endpoint
+For programmatic access, **deploy your own instance**: fork this repo, connect it to your own Netlify account, and set a `SCRAPE_ACCESS_KEY` environment variable. Your instance's endpoint will be:
+
 ```
-https://forexfactoryscrape.netlify.app/.netlify/functions/scrape
+https://YOUR-SITE.netlify.app/.netlify/functions/scrape
 ```
 
 ### Required Parameters
@@ -69,23 +69,8 @@ All API calls need these parameters to work:
 - `currencies=1,2,3,4,5,6,7,8,9` - Currency IDs
 - `format=json|csv` - Optional output format (default: json)
 
-### Working API Examples
-
-```bash
-# January 2025 - Complete working URL (all events, all currencies, all impacts)
-https://forexfactoryscrape.netlify.app/.netlify/functions/scrape?month=jan01.2025&permalink=true&impacts=3,2,1,0&event_types=1,2,3,4,5,7,8,9,10,11&currencies=1,2,3,4,5,6,7,8,9
-
-# February 2025 - Get as JSON
-https://forexfactoryscrape.netlify.app/.netlify/functions/scrape?month=feb01.2025&permalink=true&impacts=3,2,1,0&event_types=1,2,3,4,5,7,8,9,10,11&currencies=1,2,3,4,5,6,7,8,9
-
-# March 2025 - Get as CSV  
-https://forexfactoryscrape.netlify.app/.netlify/functions/scrape?month=mar01.2025&format=csv&permalink=true&impacts=3,2,1,0&event_types=1,2,3,4,5,7,8,9,10,11&currencies=1,2,3,4,5,6,7,8,9
-
-# Download with curl
-curl -o "jan_2025.json" "https://forexfactoryscrape.netlify.app/.netlify/functions/scrape?month=jan01.2025&permalink=true&impacts=3,2,1,0&event_types=1,2,3,4,5,6,7,8,9,10,11&currencies=1,2,3,4,5,6,7,8,9"
-
-curl -o "feb_2025.csv" "https://forexfactoryscrape.netlify.app/.netlify/functions/scrape?month=feb01.2025&format=csv&permalink=true&impacts=3,2,1,0&event_types=1,2,3,4,5,6,7,8,9,10,11&currencies=1,2,3,4,5,6,7,8,9"
-```
+### ⚠️ Rate Limiting Required
+Please implement a minimum 2-3 second delay between API requests to respect ForexFactory's servers.
 
 ## 📋 Data Fields
 
@@ -112,7 +97,7 @@ Includes all display fields plus:
 - detailHash: Event detail page identifier
 - Additional metadata fields
 
-## 💡 Using the API from JavaScript
+## 💡 Using the API from JavaScript (your own instance)
 
 ```javascript
 // IMPORTANT: Add delay between requests
@@ -121,8 +106,10 @@ const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 async function fetchForexData() {
   // Wait 3 seconds between requests
   await delay(3000);
-  
-  const response = await fetch('https://forexfactoryscrape.netlify.app/.netlify/functions/scrape?month=jan01.2025&permalink=true&impacts=3,2,1,0&event_types=1,2,3,4,5,6,7,8,9,10,11&currencies=1,2,3,4,5,6,7,8,9');
+
+  const response = await fetch('https://YOUR-SITE.netlify.app/.netlify/functions/scrape?month=jan01.2025&permalink=true&impacts=3,2,1,0&event_types=1,2,3,4,5,6,7,8,9,10,11&currencies=1,2,3,4,5,6,7,8,9', {
+    headers: { 'X-Api-Key': 'your-access-key' }
+  });
   const data = await response.json();
   console.log(data);
 }
